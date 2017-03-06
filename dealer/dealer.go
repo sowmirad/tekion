@@ -32,6 +32,8 @@ type DealerMaster struct {
 	VehicleDamageId   []string `bson:"vehicleDamage" json:"vehicleDamage"` //Note: Stores Id's of all vehicle Damages serviced by dealer. Multiple dealers can support same vehicle damage, so for improved fetch of vehicle damage, DealerMaster holds this array.
 	ServicesId        []string `bson:"services" json:"services"`           //Note: Stores Id's of all Services provided by dealer. Multiple dealers can provide same service, so for improved fetch of services provided by a dealer, DealerMaster holds this array.
 	TimeZone          string   `bson:"timeZone" json:"timeZone"`           //Used for time conversions.
+	Currency          string   `bson:"currency" json:"currency"`
+	SkillSet          []string   `bson:"skillSet" json:"skillSet"`
 }
 
 func (dealer DealerMaster) Insert(ctx apiContext.APIContext) error {
@@ -76,9 +78,9 @@ func GetDamageTypes(ctx apiContext.APIContext, dealerid string) (interface{}, er
 }
 
 // Function to get dealer by dealer ID
-func GetDealerById(ctx apiContext.APIContext, dealerId string) (DealerMaster, error) {
+func GetDealerById(ctx apiContext.APIContext, dealerID string) (DealerMaster, error) {
 
-	log.Info("GetDealerById dealerId : ", dealerId)
+	log.Info("GetDealerById dealerId : ", dealerID)
 	dealer := DealerMaster{}
 
 	session, err := mMgr.GetS(ctx.Tenant)
@@ -89,7 +91,7 @@ func GetDealerById(ctx apiContext.APIContext, dealerId string) (DealerMaster, er
 	defer session.Close()
 
 	//Fetch timezone for dealer
-	err = session.DB(ctx.Tenant).C(dealerCollectionName).Find(bson.M{"_id": dealerId}).One(&dealer)
+	err = session.DB(ctx.Tenant).C(dealerCollectionName).Find(bson.M{"_id": dealerID}).One(&dealer)
 
 	log.Warning("GetDealerById dealer ", dealer)
 
