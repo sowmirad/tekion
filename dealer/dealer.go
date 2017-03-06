@@ -39,9 +39,9 @@ type Dealer struct {
 
 // Insert : function to insert dealers to DB
 func (dealer Dealer) Insert(ctx apiContext.APIContext) error {
-	s, e := mMgr.GetS(ctx.Tenant)
-	if e != nil {
-		return e
+	s, err := mMgr.GetS(ctx.Tenant)
+	if err != nil {
+		return err
 	}
 	defer s.Close()
 	return s.DB(ctx.Tenant).C(dealerCollectionName).Insert(dealer)
@@ -50,35 +50,6 @@ func (dealer Dealer) Insert(ctx apiContext.APIContext) error {
 //SelectDamageResponse : structure for SelectDamageResponse
 type SelectDamageResponse struct {
 	VehicleDamage []vehicle.VehicleDamageMaster `json:"vehicleDamage"`
-}
-
-//GetDamageTypes : function to get DamageTypes
-func GetDamageTypes(ctx apiContext.APIContext, dealerID string) (interface{}, error) {
-	dealerResult := []Dealer{}
-	result := []SelectDamageResponse{}
-
-	session, err := mMgr.GetS(ctx.Tenant)
-	if err != nil {
-		log.Error("Session error ", err.Error())
-		return result, err
-	}
-	defer session.Close()
-	err = session.DB(ctx.Tenant).C(dealerCollectionName).Find(bson.M{"_id": dealerID}).All(&dealerResult)
-
-	for _, val := range dealerResult {
-		resp := SelectDamageResponse{}
-		vehicleDamageResult := []vehicle.VehicleDamageMaster{}
-
-		//todo: add this query in vehicleDamage
-		err2 := session.DB(ctx.Tenant).C(vehicle.VehicleDamageCollectionName).Find(bson.M{"_id": bson.M{"$in": val.VehicleDamageID}}).All(&vehicleDamageResult)
-		if err2 != nil {
-			log.Error("Query Error  ", err2.Error())
-			return []SelectDamageResponse{}, err2
-		}
-		resp.VehicleDamage = vehicleDamageResult
-		result = append(result, resp)
-	}
-	return result, err
 }
 
 //GetDealerByID : Function to get dealer by dealer ID
@@ -99,7 +70,6 @@ func GetDealerByID(ctx apiContext.APIContext, dealerID string) (Dealer, error) {
 		log.Error("not found dealer", err.Error())
 		return dealer, err
 	}
-
 	//Return dealer detail
 	return dealer, nil
 }

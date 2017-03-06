@@ -31,4 +31,27 @@ func TestGetDealerByID(t *testing.T) {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
+
+	// Testing handler function
+	req1, err := http.NewRequest("GET", "http://localhost:8079/tdealer/getDealerById", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ctx1 := apiContext.APIContext{Tenant: "Buck", DealerID: "1adad"}
+	context.Set(req1, "apiContext", ctx1)
+	req.Header.Add("tekion-api-token", "TestToken")
+
+	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
+	rr1 := httptest.NewRecorder()
+
+	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
+	// directly and pass in our Request and ResponseRecorder.
+	GetDealerByID(rr1,req1)
+
+	// Check the status code is what we expect.
+	if status := rr1.Code; status != http.StatusNotFound {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusNotFound)
+	}
 }
