@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bitbucket.org/tekion/tbaas/tapi"
 	"bitbucket.org/tekion/tdealer/tdealerService"
 	"fmt"
-	"bitbucket.org/tekion/tbaas/tapi"
 )
 
 func main() {
