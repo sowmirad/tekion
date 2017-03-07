@@ -1,0 +1,22 @@
+{
+  "name": "tcustomer",
+  "version": "1.0.1",
+  "description": "tdealer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/tekion/tdealer.git"
+  },
+  "keywords": [
+    "login",
+    "service"
+  ],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/tekion/tdealer#readme"
+}
+
+	
