@@ -1,4 +1,5 @@
 package tdealerService
+
 import (
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"github.com/gorilla/context"
@@ -47,7 +48,7 @@ func TestGetDealerByID(t *testing.T) {
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
-	GetDealerByID(rr1,req1)
+	GetDealerByID(rr1, req1)
 
 	// Check the status code is what we expect.
 	if status := rr1.Code; status != http.StatusNotFound {
