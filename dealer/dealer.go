@@ -36,10 +36,10 @@ type Dealer struct {
 	Currency            string   `bson:"currency" json:"currency"`
 	Logo                string   `bson:"logo" json:"logo"`
 	WorkingDaysAndHours string   `bson:"workingDaysAndHours" json:"workingDaysAndHours"`
-	TaxPercentage       string   `bson:"taxPercentage" json:"taxPercentage"`
+	TaxPercentage       float32   `bson:"taxPercentage" json:"taxPercentage"`
 	Disclaimer          string   `bson:"disclaimer" json:"disclaimer"`
 	SkillSet            []string `bson:"skillSet" json:"skillSet"`
-	//todo : Do we need []VehicleComponentInspection here ?
+	//todo : add need []VehicleComponentInspection here ?
 }
 
 // Insert : function to insert dealers to DB
