@@ -6,8 +6,6 @@ import (
 	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
 	"bitbucket.org/tekion/tvehicle/vehicle"
 	"gopkg.in/mgo.v2/bson"
-	"github.com/aws/awssdkgo/aws/session"
-	"github.com/fzzy/radix/redis/resp"
 )
 
 //dealerCollectionName : collection name of DealerMaster
