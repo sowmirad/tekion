@@ -72,10 +72,10 @@ func GetDamageTypes(ctx apiContext.APIContext, dealerID string) (interface{}, er
 				vehicleDamageResult := []vehicle.VehicleDamageMaster{}
 		
 					//todo: add this query in vehicleDamage
-						err2 := session.DB(ctx.Tenant).C(vehicle.VehicleDamageCollectionName).Find(bson.M{"_id": bson.M{"$in": val.VehicleDamageID}}).All(&vehicleDamageResult)
-				if err2 != nil {
-						log.Error("Query Error  ", err2.Error())
-						return []SelectDamageResponse{}, err2
+						err = session.DB(ctx.Tenant).C(vehicle.VehicleDamageCollectionName).Find(bson.M{"_id": bson.M{"$in": val.VehicleDamageID}}).All(&vehicleDamageResult)
+				if err != nil {
+						log.Error("Query Error  ", err.Error())
+						return []SelectDamageResponse{}, err
 					}
 				resp.VehicleDamage = vehicleDamageResult
 				result = append(result, resp)
