@@ -39,7 +39,13 @@ type Dealer struct {
 	TaxPercentage       float32   `bson:"taxPercentage" json:"taxPercentage"`
 	Disclaimer          string   `bson:"disclaimer" json:"disclaimer"`
 	SkillSet            []string `bson:"skillSet" json:"skillSet"`
-	//todo : add need []VehicleComponentInspection here ?
+	VehicleComponentInspection []VehicleComponentInspection `bson:"vehicleComponentInspection" json:"vehicleComponentInspection"`
+}
+
+//VehicleComponentInspection -   This is array coming from look, specific to each dealer -- This would come from master data table -- @@Mani@@
+type VehicleComponentInspection struct {
+	InspectionName string `bson:"inspectionName" json:"inspectionName"` //'Under Hood Inspection',
+	Status         string `bson:"status" json:"status"`                 //'OK', // OK, Need Attn., N/A
 }
 
 // Insert : function to insert dealers to DB
