@@ -68,7 +68,7 @@ func TestGetDealerByIDMethod(t *testing.T) {
 }
 
 func TestInsertMethod(t *testing.T) {
-	dealerInputeObject := Dealer{DealerName:"Seaside Infiniti", SkillSet:[]string{"Engine"},ServiceGroup:[]string{""},}
+	dealerInputeObject := Dealer{DealerName: "Seaside Infiniti", SkillSet: []string{"Engine"}, ServiceGroup: []string{""}}
 	Convey("Create a context for right db i.e Buck", t, func() {
 		Convey("Get dealer info for valid context", func() {
 			ctx := apiContext.APIContext{Tenant: "Buck"}
@@ -76,7 +76,7 @@ func TestInsertMethod(t *testing.T) {
 
 			Convey("Verify dealer response for  valid context", func() {
 				Convey("error should not  be nil", func() {
-					So(err, ShouldNotBeEmpty)
+					So(err, ShouldNotBeNil)
 				})
 
 			})
