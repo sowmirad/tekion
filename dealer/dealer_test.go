@@ -14,9 +14,10 @@ func TestGetDealerByIDMethod(t *testing.T) {
 			ctx := apiContext.APIContext{Tenant: "Buck"}
 			loanerVehicleresponse, err := GetDealerByID(ctx, validDealerID)
 
-			Convey("Verify dealer response for  validDealerID", func() {
+			Convey("Verify existing dealer (before new fields added) for the data", func() {
 				So(loanerVehicleresponse, ShouldNotBeNil)
-
+				So(loanerVehicleresponse.SkillSet, ShouldBeEmpty)
+				So(loanerVehicleresponse.ServiceGroup, ShouldBeEmpty)
 				Convey("error should not  be nil", func() {
 					So(err, ShouldEqual, nil)
 				})
@@ -67,7 +68,7 @@ func TestGetDealerByIDMethod(t *testing.T) {
 }
 
 func TestInsertMethod(t *testing.T) {
-	dealerInputeObject := Dealer{}
+	dealerInputeObject := Dealer{DealerName:"Seaside Infiniti", SkillSet:[]string{"Engine"},ServiceGroup:[]string{""},}
 	Convey("Create a context for right db i.e Buck", t, func() {
 		Convey("Get dealer info for valid context", func() {
 			ctx := apiContext.APIContext{Tenant: "Buck"}
