@@ -3,7 +3,9 @@ package dealer
 import (
 	"bitbucket.org/tekion/tbaas/apiContext"
 	. "github.com/smartystreets/goconvey/convey"
+	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestGetDealerByIDMethod(t *testing.T) {
@@ -68,17 +70,18 @@ func TestGetDealerByIDMethod(t *testing.T) {
 }
 
 func TestInsertMethod(t *testing.T) {
-	dealerInputeObject := Dealer{DealerName: "Seaside Infiniti", SkillSet: []string{"Engine"}, ServiceGroup: []string{""}}
+	rand.Seed(time.Now().UnixNano())
+	r := rand.Intn(99)
+	dealerInputeObject := Dealer{ID: string(r), DealerName: "Seaside Infiniti", SkillSet: []string{"Engine"}, ServiceGroup: []string{""}}
 	Convey("Create a context for right db i.e Buck", t, func() {
 		Convey("Get dealer info for valid context", func() {
 			ctx := apiContext.APIContext{Tenant: "Buck"}
 			err := dealerInputeObject.Insert(ctx)
 
 			Convey("Verify dealer response for  valid context", func() {
-				Convey("error should not  be nil", func() {
-					So(err, ShouldNotBeNil)
+				Convey("error should be nil", func() {
+					So(err, ShouldEqual, nil)
 				})
-
 			})
 		})
 
