@@ -3,7 +3,9 @@ package dealer
 import (
 	"bitbucket.org/tekion/tbaas/apiContext"
 	. "github.com/smartystreets/goconvey/convey"
+	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestGetDealerByIDMethod(t *testing.T) {
@@ -14,9 +16,10 @@ func TestGetDealerByIDMethod(t *testing.T) {
 			ctx := apiContext.APIContext{Tenant: "Buck"}
 			loanerVehicleresponse, err := GetDealerByID(ctx, validDealerID)
 
-			Convey("Verify dealer response for  validDealerID", func() {
+			Convey("Verify existing dealer (before new fields added) for the data", func() {
 				So(loanerVehicleresponse, ShouldNotBeNil)
-
+				So(loanerVehicleresponse.SkillSet, ShouldBeEmpty)
+				So(loanerVehicleresponse.ServiceGroup, ShouldBeEmpty)
 				Convey("error should not  be nil", func() {
 					So(err, ShouldEqual, nil)
 				})
@@ -67,17 +70,18 @@ func TestGetDealerByIDMethod(t *testing.T) {
 }
 
 func TestInsertMethod(t *testing.T) {
-	dealerInputeObject := Dealer{}
+	rand.Seed(time.Now().UnixNano())
+	r := rand.Intn(99)
+	dealerInputeObject := Dealer{ID: string(r), DealerName: "Seaside Infiniti", SkillSet: []string{"Engine"}, ServiceGroup: []string{""}}
 	Convey("Create a context for right db i.e Buck", t, func() {
 		Convey("Get dealer info for valid context", func() {
 			ctx := apiContext.APIContext{Tenant: "Buck"}
 			err := dealerInputeObject.Insert(ctx)
 
 			Convey("Verify dealer response for  valid context", func() {
-				Convey("error should not  be nil", func() {
-					So(err, ShouldNotBeEmpty)
+				Convey("error should be nil", func() {
+					So(err, ShouldEqual, nil)
 				})
-
 			})
 		})
 
