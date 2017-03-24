@@ -15,27 +15,38 @@ var (
 
 //Dealer : Model to store master data about each dealer
 type Dealer struct {
-	ID                string   `bson:"_id" json:"dealerId"`
-	DealerName        string   `bson:"dealerName" json:"dealerName"`
-	DealerDisplayName string   `bson:"dealerDisplayName" json:"dealerDisplayName"`
-	TenantID          string   `bson:"tenantId" json:"tenantId"`
-	TenantDisplayName string   `bson:"tenantDisplayName" json:"tenantDisplayName"`
-	EPANumber         string   `bson:"epaNumber" json:"epaNumber"` // 'ADB 1343857'
-	BARNumber         string   `bson:"barNumber" json:"barNumber"` // 'CAL00234957'
-	Email             string   `bson:"email" json:"email"`
-	PhoneNumber       string   `bson:"phoneNumber" json:"phoneNumber"`
-	StreetAddress1    string   `bson:"streetAddress1" json:"streetAddress1"`
-	City              string   `bson:"city" json:"city"`
-	State             string   `bson:"state" json:"state"`
-	Country           string   `bson:"country" json:"country"`
-	PostalCode        string   `bson:"postalCode" json:"postalCode"`
-	Website           string   `bson:"website" json:"website"`
-	VehicleDamageID   []string `bson:"vehicleDamage" json:"vehicleDamage"` //Note: Stores Id's of all vehicle Damages serviced by dealer. Multiple dealers can support same vehicle damage, so for improved fetch of vehicle damage, DealerMaster holds this array.
-	ServicesID        []string `bson:"services" json:"services"`           //Note: Stores Id's of all Services provided by dealer. Multiple dealers can provide same service, so for improved fetch of services provided by a dealer, DealerMaster holds this array.
-	TimeZone          string   `bson:"timeZone" json:"timeZone"`           //Used for time conversions.
-	Currency          string   `bson:"currency" json:"currency"`
-	SkillSet          []string `bson:"skillSet" json:"skillSet"`
-	ServiceGroup      []string `bson:"serviceGroup" json:"serviceGroup"`
+	ID                         string                       `bson:"_id" json:"dealerId"`
+	DealerName                 string                       `bson:"dealerName" json:"dealerName"`
+	DealerDisplayName          string                       `bson:"dealerDisplayName" json:"dealerDisplayName"`
+	TenantID                   string                       `bson:"tenantId" json:"tenantId"`
+	TenantDisplayName          string                       `bson:"tenantDisplayName" json:"tenantDisplayName"`
+	EPANumber                  string                       `bson:"epaNumber" json:"epaNumber"` // 'ADB 1343857'
+	BARNumber                  string                       `bson:"barNumber" json:"barNumber"` // 'CAL00234957'
+	Email                      string                       `bson:"email" json:"email"`
+	PhoneNumber                string                       `bson:"phoneNumber" json:"phoneNumber"`
+	StreetAddress1             string                       `bson:"streetAddress1" json:"streetAddress1"`
+	City                       string                       `bson:"city" json:"city"`
+	State                      string                       `bson:"state" json:"state"`
+	Country                    string                       `bson:"country" json:"country"`
+	PostalCode                 string                       `bson:"postalCode" json:"postalCode"`
+	Website                    string                       `bson:"website" json:"website"`
+	VehicleDamageID            []string                     `bson:"vehicleDamage" json:"vehicleDamage"` //Note: Stores Id's of all vehicle Damages serviced by dealer. Multiple dealers can support same vehicle damage, so for improved fetch of vehicle damage, DealerMaster holds this array.
+	ServicesID                 []string                     `bson:"services" json:"services"`           //Note: Stores Id's of all Services provided by dealer. Multiple dealers can provide same service, so for improved fetch of services provided by a dealer, DealerMaster holds this array.
+	TimeZone                   string                       `bson:"timeZone" json:"timeZone"`           //Used for time conversions.
+	Currency                   string                       `bson:"currency" json:"currency"`
+	Logo                       string                       `bson:"logo" json:"logo"`
+	WorkingDaysAndHours        string                       `bson:"workingDaysAndHours" json:"workingDaysAndHours"`
+	TaxPercentage              float32                      `bson:"taxPercentage" json:"taxPercentage"`
+	Disclaimer                 string                       `bson:"disclaimer" json:"disclaimer"`
+	SkillSet                   []string                     `bson:"skillSet" json:"skillSet"`
+	VehicleComponentInspection []VehicleComponentInspection `bson:"vehicleComponentInspection" json:"vehicleComponentInspection"`
+	ServiceGroup               []string                     `bson:"serviceGroup" json:"serviceGroup"`
+}
+
+//VehicleComponentInspection -   This is array coming from look, specific to each dealer -- This would come from master data table -- @@Mani@@
+type VehicleComponentInspection struct {
+	InspectionName string `bson:"inspectionName" json:"inspectionName"` //'Under Hood Inspection',
+	Status         string `bson:"status" json:"status"`                 //'OK', // OK, Need Attn., N/A
 }
 
 // Insert : function to insert dealers to DB
