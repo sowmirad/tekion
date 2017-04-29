@@ -31,7 +31,6 @@ type Dealer struct {
 	PostalCode                 string                       `bson:"postalCode" json:"postalCode"`
 	Website                    string                       `bson:"website" json:"website"`
 	VehicleDamageID            []string                     `bson:"vehicleDamage" json:"vehicleDamage"` //Note: Stores Id's of all vehicle Damages serviced by dealer. Multiple dealers can support same vehicle damage, so for improved fetch of vehicle damage, DealerMaster holds this array.
-	ServicesID                 []string                     `bson:"services" json:"services"`           //Note: Stores Id's of all Services provided by dealer. Multiple dealers can provide same service, so for improved fetch of services provided by a dealer, DealerMaster holds this array.
 	TimeZone                   string                       `bson:"timeZone" json:"timeZone"`           //Used for time conversions.
 	Currency                   string                       `bson:"currency" json:"currency"`
 	Logo                       string                       `bson:"logo" json:"logo"`
@@ -40,7 +39,6 @@ type Dealer struct {
 	Disclaimer                 string                       `bson:"disclaimer" json:"disclaimer"`
 	SkillSet                   []string                     `bson:"skillSet" json:"skillSet"`
 	VehicleComponentInspection []VehicleComponentInspection `bson:"vehicleComponentInspection" json:"vehicleComponentInspection"`
-	ServiceGroup               []string                     `bson:"serviceGroup" json:"serviceGroup"`
 }
 
 //VehicleComponentInspection -   This is array coming from look, specific to each dealer -- This would come from master data table -- @@Mani@@

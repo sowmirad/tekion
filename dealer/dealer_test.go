@@ -19,7 +19,6 @@ func TestGetDealerByIDMethod(t *testing.T) {
 			Convey("Verify existing dealer (before new fields added) for the data", func() {
 				So(loanerVehicleresponse, ShouldNotBeNil)
 				So(loanerVehicleresponse.SkillSet, ShouldBeEmpty)
-				So(loanerVehicleresponse.ServiceGroup, ShouldBeEmpty)
 				Convey("error should not  be nil", func() {
 					So(err, ShouldEqual, nil)
 				})
@@ -72,7 +71,7 @@ func TestGetDealerByIDMethod(t *testing.T) {
 func TestInsertMethod(t *testing.T) {
 	rand.Seed(time.Now().UnixNano())
 	r := rand.Intn(99)
-	dealerInputeObject := Dealer{ID: string(r), DealerName: "Seaside Infiniti", SkillSet: []string{"Engine"}, ServiceGroup: []string{""}}
+	dealerInputeObject := Dealer{ID: string(r), DealerName: "Seaside Infiniti", SkillSet: []string{"Engine"}}
 	Convey("Create a context for right db i.e Buck", t, func() {
 		Convey("Get dealer info for valid context", func() {
 			ctx := apiContext.APIContext{Tenant: "Buck"}
