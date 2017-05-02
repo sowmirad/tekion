@@ -39,6 +39,7 @@ type Dealer struct {
 	Disclaimer                 string                       `bson:"disclaimer" json:"disclaimer"`
 	SkillSet                   []string                     `bson:"skillSet" json:"skillSet"`
 	VehicleComponentInspection []VehicleComponentInspection `bson:"vehicleComponentInspection" json:"vehicleComponentInspection"`
+	ServiceGroup               []string                     `bson:"serviceGroup" json:"serviceGroup"`
 }
 
 //VehicleComponentInspection -   This is array coming from look, specific to each dealer -- This would come from master data table -- @@Mani@@
