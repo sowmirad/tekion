@@ -7,7 +7,7 @@ import (
 	"bitbucket.org/tekion/tbaas/mongoManager"
 	"bitbucket.org/tekion/tbaas/log"
 	"gopkg.in/mgo.v2/bson"
- )
+)
 
 var (
 
@@ -126,5 +126,34 @@ func TestInsertMethod(t *testing.T) {
 			})
 		})
 		clearTestData()
+	})
+}
+
+func TestGetDamageTypes(t *testing.T) {
+	Convey("Testing function GetDamageTypes ", t, func(){
+		err := setupTestData()
+		Convey("setup test data should not give error ", func(){
+			So(err, ShouldBeNil)
+		})
+		Convey("Testing for valid context", func(){
+			vehicleDamageResponse, err := GetDamageTypes(ctxD3, testDealerID)
+			Convey("Error should not be returned by GetDamageTypes function ", func(){
+				So(err, ShouldBeNil)
+			})
+			Convey("vehicleDamageResponse object returned by GetDamageTypes should be same as VehicleDamageMaster", func(){
+				So(vehicleDamageResponse, ShouldHaveSameTypeAs, []SelectDamageResponse{})
+			})
+		})
+		Convey("Testing for invalid context ", func(){
+			_, err := GetDamageTypes(ctxIncorrect, testDealerID)
+			Convey("Error should be returned by GetDamageTypes function ", func(){
+				So(err, ShouldNotBeNil)
+			})
+		})
+
+		err = clearTestData()
+		Convey("Clear test data should not give error ", func(){
+			So(err, ShouldBeNil)
+		})
 	})
 }

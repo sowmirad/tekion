@@ -63,8 +63,8 @@ type SelectDamageResponse struct {
 	VehicleDamage []vehicle.VehicleDamageMaster `json:"vehicleDamage"`
 }
 
-//GetDamageTypes : function to get DamageTypes
-func GetDamageTypes(ctx apiContext.APIContext, dealerID string) (interface{}, error) {
+//GetDamageTypes : function to get DamageTypes based on dealerID
+func GetDamageTypes(ctx apiContext.APIContext, dealerID string) ([]SelectDamageResponse, error) {
 	dealerResult := []Dealer{}
 	result := []SelectDamageResponse{}
 
@@ -80,7 +80,6 @@ func GetDamageTypes(ctx apiContext.APIContext, dealerID string) (interface{}, er
 		resp := SelectDamageResponse{}
 		vehicleDamageResult := []vehicle.VehicleDamageMaster{}
 
-		//todo: add this query in vehicleDamage
 		err = session.DB(ctx.Tenant).C(vehicle.VehicleDamageCollectionName).Find(bson.M{"_id": bson.M{"$in": val.VehicleDamageID}}).All(&vehicleDamageResult)
 		if err != nil {
 			log.Error("Query Error  ", err.Error())
@@ -104,7 +103,7 @@ func GetDealerByID(ctx apiContext.APIContext, dealerID string) (Dealer, error) {
 	}
 	defer session.Close()
 
-	//Fetch timezone for dealer
+	//Fetch dealer object based on dealerID passed as agrument
 	err = session.DB(ctx.Tenant).C(dealerCollectionName).Find(bson.M{"_id": dealerID}).One(&dealer)
 	if err != nil {
 		log.Error("not found dealer", err.Error())

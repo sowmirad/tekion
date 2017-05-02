@@ -7,7 +7,7 @@ import (
 //Start : function to start route
 func Start() {
 	tapi.AddRoutes(
-		"Login",
+		"API to get dealer by dealer ID",
 		"GET",
 		"/getDealerById",
 		GetDealerByID,
