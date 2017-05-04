@@ -3,110 +3,157 @@ package dealer
 import (
 	"bitbucket.org/tekion/tbaas/apiContext"
 	. "github.com/smartystreets/goconvey/convey"
-	"math/rand"
 	"testing"
-	"time"
+	"bitbucket.org/tekion/tbaas/mongoManager"
+	"bitbucket.org/tekion/tbaas/log"
+	"gopkg.in/mgo.v2/bson"
 )
 
+var (
+
+	testDealerID = "testDealerId" //this id should not exist in Database
+	testDealerName = "test Dealer Name"
+	testTenantID = "test tenant Id"
+	testTenantDisplayName = "Buck"
+
+	//test tenantName and dealerID used in context
+	correctTenantName   = "Buck"
+	correctDealerID     = "3"
+	incorrectTenantName = "ABCCD"
+	incorrectDealerID   = "99"
+
+	ctxD3        = apiContext.APIContext{Tenant: correctTenantName, DealerID: correctDealerID}
+	ctxIncorrect = apiContext.APIContext{Tenant: incorrectTenantName, DealerID: incorrectDealerID}
+
+	testDealerObject = Dealer{
+		ID : testDealerID,
+		DealerName: testDealerName,
+		TenantID: testTenantID,
+		TenantDisplayName: testTenantDisplayName,
+		SkillSet: []string{"Engine"},
+	}
+
+
+)
+//function to insert test data in Database
+func setupTestData() (error){
+	session, err := mongoManager.GetS(ctxD3.Tenant)
+	if err != nil {
+		log.Error("mongo session error", err.Error())
+		return err
+	}
+	defer session.Close()
+
+	//inserting test dealer in database
+	err = testDealerObject.Insert(ctxD3)
+	if err != nil {
+		log.Error("Unable to insert dealer into Database ", err.Error())
+		return err
+	}
+	return err
+}
+
+//function to delete test data from Database
+func clearTestData() (error){
+	session, err := mongoManager.GetS(ctxD3.Tenant)
+	if err != nil {
+		log.Error("mongo session error", err.Error())
+		return err
+	}
+	defer session.Close()
+
+	//deleting test dealer from Database
+	err = session.DB(ctxD3.Tenant).C(dealerCollectionName).Remove(bson.M{"_id": testDealerID})
+	if err != nil {
+		log.Error("unable to delete dealer from DB", err.Error())
+		return err
+	}
+	return err
+}
+
 func TestGetDealerByIDMethod(t *testing.T) {
-	validDealerID := "3"
-	invalidDealerID := "2131242adasf"
-	Convey("Create a context for right db i.e Buck", t, func() {
-		Convey("Get dealer info for valid dealerId", func() {
-			ctx := apiContext.APIContext{Tenant: "Buck"}
-			loanerVehicleresponse, err := GetDealerByID(ctx, validDealerID)
-
-			Convey("Verify existing dealer (before new fields added) for the data", func() {
-				So(loanerVehicleresponse, ShouldNotBeNil)
-				So(loanerVehicleresponse.SkillSet, ShouldBeEmpty)
-				So(loanerVehicleresponse.ServiceGroup, ShouldBeEmpty)
-				Convey("error should not  be nil", func() {
-					So(err, ShouldEqual, nil)
-				})
-
-			})
+	Convey("Testing GetDealerByID function ", t, func(){
+		err := setupTestData()
+		Convey("setup test data should not give error ", func(){
+			So(err, ShouldBeNil)
 		})
-		Convey("Get dealer info for invalid dealerId", func() {
-			ctx := apiContext.APIContext{Tenant: "Buck"}
-			loanerAgreementResponse, err := GetDealerByID(ctx, invalidDealerID)
-
-			Convey("Verify dealer response for  invalidDealerID", func() {
-				So(loanerAgreementResponse, ShouldNotBeNil)
-
-				Convey("error should not be nil", func() {
-					So(err, ShouldNotBeNil)
-				})
-
+		Convey("Testing for correct context ", func(){
+			dealerObject, err := GetDealerByID(ctxD3, testDealerID)
+			Convey("error returned by GetDealerByID function should be nil", func(){
+				So(err, ShouldBeNil)
 			})
 
-		})
-		Convey("Create a context for wrong tenant i.e Buck1", func() {
-			ctx := apiContext.APIContext{Tenant: "Buck1"}
-			Convey("Get error response ", func() {
-				loanerAgreementResponse, err := GetDealerByID(ctx, validDealerID)
-				Convey("error should not be empty", func() {
-					So(err, ShouldNotBeEmpty)
-					So(loanerAgreementResponse, ShouldNotBeNil)
-				})
-
+			Convey("dealer object returned by GetDealerByID should be same as dealer object", func(){
+				So(dealerObject, ShouldHaveSameTypeAs, Dealer{})
 			})
-
-		})
-		Convey("Get dealer response if error in finding data for dealerId ", func() {
-			object := "qewrwr2131243124"
-			ctx := apiContext.APIContext{Tenant: "Buck"}
-			loanerAgreementResponse, err := GetDealerByID(ctx, object)
-			Convey("Verify the error for dealerId  response", func() {
-				Convey("error should not be nil", func() {
-					So(err, ShouldNotBeNil)
-					So(loanerAgreementResponse, ShouldNotBeNil)
-				})
-
+			Convey("Returned dealer object's dealer Name should be same as test dealer Name", func(){
+				So(dealerObject.DealerName, ShouldEqual, testDealerName)
 			})
-
+			Convey("Returned dealer object's TenantID should be same as TenantID", func(){
+				So(dealerObject.TenantID, ShouldEqual, testTenantID)
+			})
+			Convey("Returned dealer object's TenantDisplayName should be same as testTenantDisplayName", func(){
+				So(dealerObject.TenantDisplayName, ShouldEqual, testTenantDisplayName)
+			})
 		})
-
+		Convey("Testing for incorrect context ", func(){
+			_, err := GetDealerByID(ctxIncorrect, testDealerID)
+			Convey("Error returned by GetDealerByID should return an error", func(){
+				So(err, ShouldNotBeNil)
+			})
+		})
+		err = clearTestData()
+		Convey("Clear test data should not give error ", func(){
+			So(err, ShouldBeNil)
+		})
 	})
+
 }
 
 func TestInsertMethod(t *testing.T) {
-	rand.Seed(time.Now().UnixNano())
-	r := rand.Intn(99)
-	dealerInputeObject := Dealer{ID: string(r), DealerName: "Seaside Infiniti", SkillSet: []string{"Engine"}, ServiceGroup: []string{""}}
-	Convey("Create a context for right db i.e Buck", t, func() {
-		Convey("Get dealer info for valid context", func() {
-			ctx := apiContext.APIContext{Tenant: "Buck"}
-			err := dealerInputeObject.Insert(ctx)
+	Convey("Testing Insert function ", t ,func(){
 
-			Convey("Verify dealer response for  valid context", func() {
-				Convey("error should be nil", func() {
-					So(err, ShouldEqual, nil)
-				})
+		Convey("Inserting dealer object for correct context ", func(){
+			err := testDealerObject.Insert(ctxD3)
+			Convey("Insert test dealer should not give error", func(){
+				So(err,ShouldBeNil)
+			})
+		})
+		Convey("Inserting dealer object for incorrect context ", func(){
+			err := testDealerObject.Insert(ctxIncorrect)
+			Convey("Insert function should give error ", func(){
+				So(err, ShouldNotBeEmpty)
+			})
+		})
+		clearTestData()
+	})
+}
+
+func TestGetDamageTypes(t *testing.T) {
+	Convey("Testing function GetDamageTypes ", t, func(){
+		err := setupTestData()
+		Convey("setup test data should not give error ", func(){
+			So(err, ShouldBeNil)
+		})
+		Convey("Testing for valid context", func(){
+			vehicleDamageResponse, err := GetDamageTypes(ctxD3, testDealerID)
+			Convey("Error should not be returned by GetDamageTypes function ", func(){
+				So(err, ShouldBeNil)
+			})
+			Convey("vehicleDamageResponse object returned by GetDamageTypes should be same as VehicleDamageMaster", func(){
+				So(vehicleDamageResponse, ShouldHaveSameTypeAs, []SelectDamageResponse{})
+			})
+		})
+		Convey("Testing for invalid context ", func(){
+			_, err := GetDamageTypes(ctxIncorrect, testDealerID)
+			Convey("Error should be returned by GetDamageTypes function ", func(){
+				So(err, ShouldNotBeNil)
 			})
 		})
 
-		Convey("Create a context for wrong tenant i.e Buck1", func() {
-			ctx := apiContext.APIContext{Tenant: "Buck1"}
-			Convey("Get error response ", func() {
-				err := dealerInputeObject.Insert(ctx)
-				Convey("error should not be empty", func() {
-					So(err, ShouldNotBeEmpty)
-				})
-
-			})
-
+		err = clearTestData()
+		Convey("Clear test data should not give error ", func(){
+			So(err, ShouldBeNil)
 		})
-		Convey("Create a context for wrong dealerId i.e 123asdas", func() {
-			ctx := apiContext.APIContext{DealerID: "123asdas"}
-			Convey("Get error response ", func() {
-				err := dealerInputeObject.Insert(ctx)
-				Convey("error should not be empty", func() {
-					So(err, ShouldNotBeEmpty)
-				})
-
-			})
-
-		})
-
 	})
 }
