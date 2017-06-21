@@ -7,10 +7,12 @@ if [ -d "vendor" ]; then
     rm -rf "vendor"
 fi
 
-#DIRS=`find ./* -name '*.go'  | awk -F'/' '{print $2}' | grep -v *.go | sort -u`
+#DIRS=`find . -name '*.go'  | awk -F'/' '{print $2}' | grep -v *.go | sort -u`
 DIRS=`find . -name '*.go' | awk 'BEGIN{FS=OFS="/"}{sub(/.\//,"",$0);print}'|awk 'BEGIN{FS=OFS="/"}{sub(/[^\/ ]*.go/,"",$0);print}' | sort -u`
-#DIRS=`find . -type d -print | grep -v *.go `
+#DIRS=`ls -l . | egrep '^d' | awk '{print $9}'`
+#DIRS=`find ./* -type d | grep -v .git | sort -u`
 #echo $DIRS
+
 
 List=()
 
@@ -51,3 +53,7 @@ done
 
 
 cd $GOPATH/src/bitbucket.org/tekion/$currentDir
+
+
+
+
