@@ -5,13 +5,14 @@ import (
 	"bitbucket.org/tekion/tbaas/log"
 	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
 	"bitbucket.org/tekion/tmodel/common"
-	"bitbucket.org/tekion/tvehicle/vehicle"
 	"gopkg.in/mgo.v2/bson"
 )
 
 //dealerCollectionName : collection name of DealerMaster
 var (
 	dealerCollectionName = "DealerMaster"
+	//VehicleDamageCollectionName - Name of collection for VehicleDamage
+	VehicleDamageCollectionName = "VehicleDamageMaster"
 )
 
 //Dealer : Model to store master data about each dealer
@@ -93,7 +94,7 @@ func GetDamageTypes(ctx apiContext.APIContext, dealerID string) ([]SelectDamageR
 		vehicleDamageResult := []common.VehicleDamageMaster{}
 
 		//query to find list of vehicle damage to be appended in response
-		err = session.DB(ctx.Tenant).C(vehicle.VehicleDamageCollectionName).Find(bson.M{"_id": bson.M{"$in": val.VehicleDamageID}}).All(&vehicleDamageResult)
+		err = session.DB(ctx.Tenant).C(VehicleDamageCollectionName).Find(bson.M{"_id": bson.M{"$in": val.VehicleDamageID}}).All(&vehicleDamageResult)
 		if err != nil {
 			log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
 			return []SelectDamageResponse{}, err
