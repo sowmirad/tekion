@@ -4,6 +4,7 @@ import (
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"bitbucket.org/tekion/tbaas/log"
 	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
+	"bitbucket.org/tekion/tmodel/common"
 	"bitbucket.org/tekion/tvehicle/vehicle"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -61,7 +62,7 @@ func (dealer Dealer) Insert(ctx apiContext.APIContext) error {
 
 //SelectDamageResponse : structure for SelectDamageResponse
 type SelectDamageResponse struct {
-	VehicleDamage []vehicle.VehicleDamageMaster `json:"vehicleDamage"`
+	VehicleDamage []common.VehicleDamageMaster `json:"vehicleDamage"`
 }
 
 //GetDamageTypes : function to get DamageTypes based on dealerID
@@ -89,7 +90,7 @@ func GetDamageTypes(ctx apiContext.APIContext, dealerID string) ([]SelectDamageR
 	//looping through the dealer list to get vehicle damage
 	for _, val := range dealerResult {
 		resp := SelectDamageResponse{}
-		vehicleDamageResult := []vehicle.VehicleDamageMaster{}
+		vehicleDamageResult := []common.VehicleDamageMaster{}
 
 		//query to find list of vehicle damage to be appended in response
 		err = session.DB(ctx.Tenant).C(vehicle.VehicleDamageCollectionName).Find(bson.M{"_id": bson.M{"$in": val.VehicleDamageID}}).All(&vehicleDamageResult)

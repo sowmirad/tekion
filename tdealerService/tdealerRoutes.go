@@ -1,8 +1,8 @@
 package tdealerService
 
 import (
-	"bitbucket.org/tekion/tbaas/tapi"
 	"bitbucket.org/tekion/tbaas/log"
+	"bitbucket.org/tekion/tbaas/tapi"
 )
 
 //Start : function to start route

@@ -2,17 +2,17 @@ package tdealerService
 
 import (
 	"bitbucket.org/tekion/tbaas/apiContext"
+	"bitbucket.org/tekion/tbaas/log"
+	"bitbucket.org/tekion/tbaas/mongoManager"
+	"bitbucket.org/tekion/tdealer/dealer"
 	"github.com/gorilla/context"
+	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"bitbucket.org/tekion/tdealer/dealer"
-	"bitbucket.org/tekion/tbaas/mongoManager"
-	"bitbucket.org/tekion/tbaas/log"
-	"gopkg.in/mgo.v2/bson"
 )
 
-var(
+var (
 	dealerCollectionName = "DealerMaster"
 
 	//test tenantName and dealerID used in context
@@ -24,22 +24,22 @@ var(
 	ctxD3        = apiContext.APIContext{Tenant: correctTenantName, DealerID: correctDealerID}
 	ctxIncorrect = apiContext.APIContext{Tenant: incorrectTenantName, DealerID: incorrectDealerID}
 
-
-	testDealerID = "testDealerId" //this id should not exist in Database
-	testDealerName = "test Dealer Name"
-	testTenantID = "test tenant Id"
+	testDealerID          = "testDealerId" //this id should not exist in Database
+	testDealerName        = "test Dealer Name"
+	testTenantID          = "test tenant Id"
 	testTenantDisplayName = "Buck"
 
 	testDealerObject = dealer.Dealer{
-		ID : testDealerID,
-		DealerName: testDealerName,
-		TenantID: testTenantID,
+		ID:                testDealerID,
+		DealerName:        testDealerName,
+		TenantID:          testTenantID,
 		TenantDisplayName: testTenantDisplayName,
-		SkillSet: []string{"Engine"},
+		SkillSet:          []string{"Engine"},
 	}
 )
+
 //function to insert test data in Database
-func setupTestData() (error){
+func setupTestData() error {
 	session, err := mongoManager.GetS(ctxD3.Tenant)
 	if err != nil {
 		log.Error("mongo session error", err.Error())
@@ -57,7 +57,7 @@ func setupTestData() (error){
 }
 
 //function to delete test data from Database
-func clearTestData() (error){
+func clearTestData() error {
 	session, err := mongoManager.GetS(ctxD3.Tenant)
 	if err != nil {
 		log.Error("mongo session error", err.Error())
@@ -73,7 +73,6 @@ func clearTestData() (error){
 	}
 	return err
 }
-
 
 func TestGetDealerByID(t *testing.T) {
 	setupTestData()
