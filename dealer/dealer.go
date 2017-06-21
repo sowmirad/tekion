@@ -15,10 +15,10 @@ var (
 
 //Dealer : Model to store master data about each dealer
 type Dealer struct {
-	ID                         string                       `bson:"_id" json:"dealerId"`
+	ID                         string                       `bson:"_id" json:"dealerID"`
 	DealerName                 string                       `bson:"dealerName" json:"dealerName"`
 	DealerDisplayName          string                       `bson:"dealerDisplayName" json:"dealerDisplayName"`
-	TenantID                   string                       `bson:"tenantId" json:"tenantId"`
+	TenantID                   string                       `bson:"tenantId" json:"tenantID"`
 	TenantDisplayName          string                       `bson:"tenantDisplayName" json:"tenantDisplayName"`
 	EPANumber                  string                       `bson:"epaNumber" json:"epaNumber"` // 'ADB 1343857'
 	BARNumber                  string                       `bson:"barNumber" json:"barNumber"` // 'CAL00234957'
@@ -30,7 +30,7 @@ type Dealer struct {
 	Country                    string                       `bson:"country" json:"country"`
 	PostalCode                 string                       `bson:"postalCode" json:"postalCode"`
 	Website                    string                       `bson:"website" json:"website"`
-	VehicleDamageID            []string                     `bson:"vehicleDamage" json:"vehicleDamage"` //Note: Stores Id's of all vehicle Damages serviced by dealer. Multiple dealers can support same vehicle damage, so for improved fetch of vehicle damage, DealerMaster holds this array.
+	VehicleDamageID            []string                     `bson:"vehicleDamage" json:"vehicleDamage"` //Note: Stores ID's of all vehicle Damages serviced by dealer. Multiple dealers can support same vehicle damage, so for improved fetch of vehicle damage, DealerMaster holds this array.
 	TimeZone                   string                       `bson:"timeZone" json:"timeZone"`           //Used for time conversions.
 	Currency                   string                       `bson:"currency" json:"currency"`
 	Logo                       string                       `bson:"logo" json:"logo"`
@@ -42,7 +42,7 @@ type Dealer struct {
 	ServiceGroup               []string                     `bson:"serviceGroup" json:"serviceGroup"`
 }
 
-//VehicleComponentInspection -   This is array coming from look, specific to each dealer -- This would come from master data table -- @@Mani@@
+//VehicleComponentInspection - Structure of vehicle component inspection for a dealer
 type VehicleComponentInspection struct {
 	InspectionName string `bson:"inspectionName" json:"inspectionName"` //'Under Hood Inspection',
 	Status         string `bson:"status" json:"status"`                 //'OK', // OK, Need Attn., N/A
@@ -52,7 +52,7 @@ type VehicleComponentInspection struct {
 func (dealer Dealer) Insert(ctx apiContext.APIContext) error {
 	session, err := mMgr.GetS(ctx.Tenant)
 	if err != nil {
-		log.Error("mongo session error " , err.Error())
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
 		return err
 	}
 	defer session.Close()
@@ -75,14 +75,14 @@ func GetDamageTypes(ctx apiContext.APIContext, dealerID string) ([]SelectDamageR
 
 	session, err := mMgr.GetS(ctx.Tenant)
 	if err != nil {
-		log.Error("Session error ", err.Error())
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
 		return result, err
 	}
 	defer session.Close()
 
 	err = session.DB(ctx.Tenant).C(dealerCollectionName).Find(bson.M{"_id": dealerID}).All(&dealerResult)
 	if err != nil {
-		log.Error("Unable to find dealer ", err.Error())
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
 		return result, err
 	}
 
@@ -94,7 +94,7 @@ func GetDamageTypes(ctx apiContext.APIContext, dealerID string) ([]SelectDamageR
 		//query to find list of vehicle damage to be appended in response
 		err = session.DB(ctx.Tenant).C(vehicle.VehicleDamageCollectionName).Find(bson.M{"_id": bson.M{"$in": val.VehicleDamageID}}).All(&vehicleDamageResult)
 		if err != nil {
-			log.Error("Query Error  ", err.Error())
+			log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
 			return []SelectDamageResponse{}, err
 		}
 		resp.VehicleDamage = vehicleDamageResult
@@ -110,7 +110,7 @@ func GetDealerByID(ctx apiContext.APIContext, dealerID string) (Dealer, error) {
 
 	session, err := mMgr.GetS(ctx.Tenant)
 	if err != nil {
-		log.Error("Session error ", err.Error())
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
 		return dealer, err
 	}
 	defer session.Close()
@@ -118,7 +118,7 @@ func GetDealerByID(ctx apiContext.APIContext, dealerID string) (Dealer, error) {
 	//Fetch dealer object based on dealerID passed as agrument
 	err = session.DB(ctx.Tenant).C(dealerCollectionName).Find(bson.M{"_id": dealerID}).One(&dealer)
 	if err != nil {
-		log.Error("not found dealer", err.Error())
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
 		return dealer, err
 	}
 	//Return dealer detail

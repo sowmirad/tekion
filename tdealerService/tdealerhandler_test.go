@@ -78,7 +78,7 @@ func clearTestData() (error){
 func TestGetDealerByID(t *testing.T) {
 	setupTestData()
 	// Testing handler function
-	req, err := http.NewRequest("GET", "http://localhost:8079/tdealer/getDealerById", nil)
+	req, err := http.NewRequest("GET", "http://localhost:8079/tdealer/getDealerByID", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -102,7 +102,7 @@ func TestGetDealerByID(t *testing.T) {
 	}
 
 	// Testing handler function for incorrect context
-	req1, err := http.NewRequest("GET", "http://localhost:8079/tdealer/getDealerById", nil)
+	req1, err := http.NewRequest("GET", "http://localhost:8079/tdealer/getDealerByID", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -119,9 +119,9 @@ func TestGetDealerByID(t *testing.T) {
 	GetDealerByID(rr1, req1)
 
 	// Check the status code is what we expect.
-	if status := rr1.Code; status != http.StatusNotFound {
+	if status := rr1.Code; status != http.StatusBadRequest {
 		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusNotFound)
+			status, http.StatusBadRequest)
 	}
 	clearTestData()
 }

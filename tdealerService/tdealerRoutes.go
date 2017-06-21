@@ -2,6 +2,7 @@ package tdealerService
 
 import (
 	"bitbucket.org/tekion/tbaas/tapi"
+	"bitbucket.org/tekion/tbaas/log"
 )
 
 //Start : function to start route
@@ -9,10 +10,23 @@ func Start() {
 	tapi.AddRoutes(
 		"API to get dealer by dealer ID",
 		"GET",
-		"/getDealerById",
+		"/getDealerByID",
 		GetDealerByID,
 		tapi.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
+
+	tapi.AddRoutes(
+		"API to get dealer by dealer ID",
+		"GET",
+		"/selectdamage",
+		getDamageTypes,
+		tapi.ACLStruct{
+			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
+		},
+	)
+
+	log.GenericInfo("", "", "", "tdealer service started on port :8079")
+	tapi.Start("8079", "/tdealer")
 }

@@ -7,24 +7,36 @@ import (
 	"bitbucket.org/tekion/tbaas/tapi"
 	"bitbucket.org/tekion/tdealer/dealer"
 	"github.com/gorilla/context"
-	"github.com/unrolled/render"
+	"bitbucket.org/tekion/erratum"
+)
+
+var (
+	serviceName = "estimate"
 )
 
 //GetDealerByID :  Get Dealer By Id
 func GetDealerByID(w http.ResponseWriter, r *http.Request) {
-
-	render := render.New()
-
 	// Get context
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 
 	dealerResponse, err := dealer.GetDealerByID(ctx, ctx.DealerID)
 	if err != nil {
-		res := tapi.ConstructResponse(http.StatusNotFound, err.Error(), nil)
-		render.JSON(w, http.StatusNotFound, res)
+		tapi.WriteHTTPErrorResponse(w, serviceName, erratum.ErrorQueryingDB, err)
 		return
 	}
-	res := tapi.ConstructResponse(http.StatusOK, "Dealer Response ", dealerResponse)
-	render.JSON(w, http.StatusOK, res)
 
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Dealer Response ", dealerResponse)
+	return
+}
+
+func getDamageTypes(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	res, err := dealer.GetDamageTypes(ctx, ctx.DealerID)
+	if err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceName, erratum.ErrorQueryingDB, err)
+		return
+	}
+
+	tapi.WriteHTTPResponse(w, http.StatusOK, "GetDamageTypes Response ", res)
+	return
 }
