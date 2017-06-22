@@ -4,7 +4,6 @@ import (
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"bitbucket.org/tekion/tbaas/log"
 	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
-	"bitbucket.org/tekion/tmodel/common"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -20,7 +19,7 @@ type Dealer struct {
 	ID                         string                       `bson:"_id" json:"dealerID"`
 	DealerName                 string                       `bson:"dealerName" json:"dealerName"`
 	DealerDisplayName          string                       `bson:"dealerDisplayName" json:"dealerDisplayName"`
-	TenantID                   string                       `bson:"tenantId" json:"tenantID"`
+	TenantID                   string                       `bson:"tenantID" json:"tenantID"`
 	TenantDisplayName          string                       `bson:"tenantDisplayName" json:"tenantDisplayName"`
 	EPANumber                  string                       `bson:"epaNumber" json:"epaNumber"` // 'ADB 1343857'
 	BARNumber                  string                       `bson:"barNumber" json:"barNumber"` // 'CAL00234957'
@@ -63,7 +62,16 @@ func (dealer Dealer) Insert(ctx apiContext.APIContext) error {
 
 //SelectDamageResponse : structure for SelectDamageResponse
 type SelectDamageResponse struct {
-	VehicleDamage []common.VehicleDamageMaster `json:"vehicleDamage"`
+	VehicleDamage []VehicleDamageMaster `json:"vehicleDamage"`
+}
+
+//VehicleDamageMaster - datamodel for vehicle damage
+type VehicleDamageMaster struct {
+	ID          string `bson:"_id" json:"vehicleDamageID"`
+	ImageURL    string `bson:"imageURL" json:"imageURL"`
+	DamageType  string `bson:"damageType" json:"damageType"`
+	Description string `bson:"description" json:"description"`
+	Priority    int    `bson:"priority" json:"priority"`
 }
 
 //GetDamageTypes : function to get DamageTypes based on dealerID
@@ -91,7 +99,7 @@ func GetDamageTypes(ctx apiContext.APIContext, dealerID string) ([]SelectDamageR
 	//looping through the dealer list to get vehicle damage
 	for _, val := range dealerResult {
 		resp := SelectDamageResponse{}
-		vehicleDamageResult := []common.VehicleDamageMaster{}
+		vehicleDamageResult := []VehicleDamageMaster{}
 
 		//query to find list of vehicle damage to be appended in response
 		err = session.DB(ctx.Tenant).C(VehicleDamageCollectionName).Find(bson.M{"_id": bson.M{"$in": val.VehicleDamageID}}).All(&vehicleDamageResult)
