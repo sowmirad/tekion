@@ -2,17 +2,17 @@ package tdealerService
 
 import (
 	"bitbucket.org/tekion/tbaas/apiContext"
+	"bitbucket.org/tekion/tbaas/log"
+	"bitbucket.org/tekion/tbaas/mongoManager"
+	"bitbucket.org/tekion/tdealer/dealer"
 	"github.com/gorilla/context"
+	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"bitbucket.org/tekion/tdealer/dealer"
-	"bitbucket.org/tekion/tbaas/mongoManager"
-	"bitbucket.org/tekion/tbaas/log"
-	"gopkg.in/mgo.v2/bson"
 )
 
-var(
+var (
 	dealerCollectionName = "DealerMaster"
 
 	//test tenantName and dealerID used in context
@@ -24,22 +24,22 @@ var(
 	ctxD3        = apiContext.APIContext{Tenant: correctTenantName, DealerID: correctDealerID}
 	ctxIncorrect = apiContext.APIContext{Tenant: incorrectTenantName, DealerID: incorrectDealerID}
 
-
-	testDealerID = "testDealerId" //this id should not exist in Database
-	testDealerName = "test Dealer Name"
-	testTenantID = "test tenant Id"
+	testDealerID          = "testDealerId" //this id should not exist in Database
+	testDealerName        = "test Dealer Name"
+	testTenantID          = "test tenant Id"
 	testTenantDisplayName = "Buck"
 
 	testDealerObject = dealer.Dealer{
-		ID : testDealerID,
-		DealerName: testDealerName,
-		TenantID: testTenantID,
+		ID:                testDealerID,
+		DealerName:        testDealerName,
+		TenantID:          testTenantID,
 		TenantDisplayName: testTenantDisplayName,
-		SkillSet: []string{"Engine"},
+		SkillSet:          []string{"Engine"},
 	}
 )
+
 //function to insert test data in Database
-func setupTestData() (error){
+func setupTestData() error {
 	session, err := mongoManager.GetS(ctxD3.Tenant)
 	if err != nil {
 		log.Error("mongo session error", err.Error())
@@ -57,7 +57,7 @@ func setupTestData() (error){
 }
 
 //function to delete test data from Database
-func clearTestData() (error){
+func clearTestData() error {
 	session, err := mongoManager.GetS(ctxD3.Tenant)
 	if err != nil {
 		log.Error("mongo session error", err.Error())
@@ -74,11 +74,10 @@ func clearTestData() (error){
 	return err
 }
 
-
 func TestGetDealerByID(t *testing.T) {
 	setupTestData()
 	// Testing handler function
-	req, err := http.NewRequest("GET", "http://localhost:8079/tdealer/getDealerById", nil)
+	req, err := http.NewRequest("GET", "http://localhost:8079/tdealer/getDealerByID", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -102,7 +101,7 @@ func TestGetDealerByID(t *testing.T) {
 	}
 
 	// Testing handler function for incorrect context
-	req1, err := http.NewRequest("GET", "http://localhost:8079/tdealer/getDealerById", nil)
+	req1, err := http.NewRequest("GET", "http://localhost:8079/tdealer/getDealerByID", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -119,9 +118,9 @@ func TestGetDealerByID(t *testing.T) {
 	GetDealerByID(rr1, req1)
 
 	// Check the status code is what we expect.
-	if status := rr1.Code; status != http.StatusNotFound {
+	if status := rr1.Code; status != http.StatusBadRequest {
 		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusNotFound)
+			status, http.StatusBadRequest)
 	}
 	clearTestData()
 }

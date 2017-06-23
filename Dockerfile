@@ -1,5 +1,5 @@
 # workspace (GOPATH) configured at /go.
-FROM tekion/tekidock
+FROM tekion/tekidock:3
 
 RUN printf "machine bitbucket.org\nlogin tekion_build\npassword t3k10n_team" > ~/.netrc ## build account on bitbucket
 
