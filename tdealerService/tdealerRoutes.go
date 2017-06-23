@@ -10,7 +10,7 @@ func Start() {
 	tapi.AddRoutes(
 		"API to get dealer by dealer ID",
 		"GET",
-		"/getDealerDetail",
+		"/dealerDetail",
 		GetDealerByID,
 		tapi.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
@@ -20,7 +20,7 @@ func Start() {
 	tapi.AddRoutes(
 		"API to get dealer by dealer ID",
 		"GET",
-		"/getDamageType",
+		"/damageType",
 		getDamageTypes,
 		tapi.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
