@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bitbucket.org/tekion/tdealer/dealerService"
+	"bitbucket.org/tekion/tdealer/tdealerService"
 )
 
 func main() {
-	dealerService.Start()
+	tdealerService.Start()
 }
