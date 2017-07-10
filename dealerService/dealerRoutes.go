@@ -81,6 +81,6 @@ func Start() {
 		},
 	)
 	//log service start info
-	log.GenericInfo("", "", "", "Started Tekion tdealer on port:8083")
-	tapi.Start("8083", "/tdealer")
+	log.GenericInfo("", "", "", "Started Tekion tdealer on port:8079")
+	tapi.Start("8079", "/tdealer")
 }
