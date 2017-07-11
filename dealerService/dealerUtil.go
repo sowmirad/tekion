@@ -9,7 +9,9 @@ import (
 	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
 )
 
-// fetchFieldsFromRequest -
+// TODO : should be moved to some common library
+// fetchFieldsFromRequest reads the query string and fetches "fields" parameter.
+// It return slice of strings or nil if "fields" parameter was not found in query string.
 func fetchFieldsFromRequest(r *http.Request) []string {
 	q := r.URL.Query()
 	requestedFields := q.Get("fields")
@@ -20,7 +22,8 @@ func fetchFieldsFromRequest(r *http.Request) []string {
 	}
 }
 
-// selectedFields -
+// TODO : should be moved to some common library
+// selectedFields forms a map, key = selected field and value = 1
 func selectedFields(fields []string) bson.M {
 	selected := make(bson.M, len(fields))
 	for _, s := range fields {
@@ -29,7 +32,9 @@ func selectedFields(fields []string) bson.M {
 	return selected
 }
 
-// ReadOne - reads only one object from mongo. Returns 1st object if multiple objects are selected by selector parameter
+// TODO : should be moved to some common library
+// readOne reads only one object from mongo and populates it in data parameter passed to the function.
+// Returns 1st object if multiple objects are selected by selector parameter.
 func readOne(tenantName, collectionName string, selector bson.M, fields []string, data interface{}) error {
 	mongo, err := mMgr.GetS(tenantName)
 	if err != nil {
@@ -46,14 +51,15 @@ func readOne(tenantName, collectionName string, selector bson.M, fields []string
 	return nil
 }
 
-// readAllGroups -
-func readAllGroups(tenantName, collectionName string, selector bson.M, fields []string, data *[]DealerGroup) error {
+// readDealerGroups reads list of dealer groups from mongo based on the selector passed.
+// Populates it in data parameter passed to the function.
+func readDealerGroups(tenantName string, selector bson.M, fields []string, data *[]DealerGroup) error {
 	mongo, err := mMgr.GetS(tenantName)
 	if err != nil {
 		return err
 	}
 	// Collection
-	c := mongo.DB(tenantName).C(collectionName)
+	c := mongo.DB(tenantName).C(getDealerGroupCollectionName())
 
 	err = c.Find(selector).Select(selectedFields(fields)).All(data)
 	if err != nil {
@@ -62,14 +68,15 @@ func readAllGroups(tenantName, collectionName string, selector bson.M, fields []
 	return nil
 }
 
-// readAllContacts -
-func readAllContacts(tenantName, collectionName string, selector bson.M, fields []string, data *[]DealerContact) error {
+// readDealerContacts reads list of dealer contacts from mongo based on the selector passed.
+// Populates it in data parameter passed to the function.
+func readDealerContacts(tenantName string, selector bson.M, fields []string, data *[]DealerContact) error {
 	mongo, err := mMgr.GetS(tenantName)
 	if err != nil {
 		return err
 	}
 	// Collection
-	c := mongo.DB(tenantName).C(collectionName)
+	c := mongo.DB(tenantName).C(getDealerContactCollectionName())
 
 	err = c.Find(selector).Select(selectedFields(fields)).All(data)
 	if err != nil {
@@ -78,14 +85,15 @@ func readAllContacts(tenantName, collectionName string, selector bson.M, fields 
 	return nil
 }
 
-// readAllFixedOperations -
-func readAllFixedOperations(tenantName, collectionName string, selector bson.M, fields []string, data *[]FixedOperation) error {
+// readFixedOperations reads list of dealer fixed operations from mongo based on the selector passed.
+// Populates it in data parameter passed to the function.
+func readFixedOperations(tenantName string, selector bson.M, fields []string, data *[]FixedOperation) error {
 	mongo, err := mMgr.GetS(tenantName)
 	if err != nil {
 		return err
 	}
 	// Collection
-	c := mongo.DB(tenantName).C(collectionName)
+	c := mongo.DB(tenantName).C(getDealerFixedOperationCollectionName())
 
 	err = c.Find(selector).Select(selectedFields(fields)).All(data)
 	if err != nil {
@@ -94,14 +102,15 @@ func readAllFixedOperations(tenantName, collectionName string, selector bson.M, 
 	return nil
 }
 
-// readAllGoals -
-func readAllGoals(tenantName, collectionName string, selector bson.M, fields []string, data *[]DealerGoal) error {
+// readDealerGoals reads list of dealer goals from mongo based on the selector passed.
+// Populates it in data parameter passed to the function.
+func readDealerGoals(tenantName string, selector bson.M, fields []string, data *[]DealerGoal) error {
 	mongo, err := mMgr.GetS(tenantName)
 	if err != nil {
 		return err
 	}
 	// Collection
-	c := mongo.DB(tenantName).C(collectionName)
+	c := mongo.DB(tenantName).C(getDealerGoalCollectionName())
 
 	err = c.Find(selector).Select(selectedFields(fields)).All(data)
 	if err != nil {

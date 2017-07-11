@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
+// Collection names used by dealer service
 const (
-	tenantCollectionName               = "TenantMaster"
 	dealerCollectionName               = "DealerMaster"
 	dealerFixedOperationCollectionName = "FixedOperation"
 	dealerContactCollectionName        = "DealerContact"
@@ -15,37 +15,32 @@ const (
 	dealerGroupCollectionName          = "DealerGroup"
 )
 
-// GetCollectionName returns the database collection name
-func getTenantCollectionName() string {
-	return tenantCollectionName
-}
-
-// GetCollectionName returns the database collection name
+// getDealerCollectionName returns dealer collection name
 func getDealerCollectionName() string {
 	return dealerCollectionName
 }
 
-// GetCollectionName returns the database collection name
+// getDealerFixedOperationCollectionName returns dealer fixed operation collection name
 func getDealerFixedOperationCollectionName() string {
 	return dealerFixedOperationCollectionName
 }
 
-// GetCollectionName returns the database collection name
+// getDealerContactCollectionName returns the dealer contact collection name
 func getDealerContactCollectionName() string {
 	return dealerContactCollectionName
 }
 
-// GetCollectionName returns the database collection name
+// getDealerGoalCollectionName returns the dealer goal collection name
 func getDealerGoalCollectionName() string {
 	return dealerGoalCollectionName
 }
 
-// GetCollectionName returns the database collection name
+// dealerGroupCollectionName returns the dealer group collection name
 func getDealerGroupCollectionName() string {
 	return dealerGroupCollectionName
 }
 
-// GetModuleID returns the module id
+// getModuleID returns the module id
 func getModuleID() string {
 	return "tdealer"
 }
@@ -61,6 +56,8 @@ Email                 		string  				`bson:"email" json:"email"`
 Not sure about dealerShipCode mapping with dealerGroups
 Created a new collection for dealer group
 */
+
+// Dealer struct contains details of the dealer
 type Dealer struct {
 	ID                       string                    `bson:"_id" json:"dealerID,omitempty"`                                        //Dealer Identification  - Keep it Unique across the tenant
 	Name                     string                    `bson:"dealerName" json:"dealerName,omitempty"`                               //Dealer Name
@@ -88,9 +85,9 @@ type Dealer struct {
 	DocumentVersion          float32                   `bson:"documentVersion" json:"documentVersion,omitempty"`                     // Document version to keep track of the changes -- DEFAULT 1.0
 }
 
-// DealerContact -- Details of the primary contact to the dealer -- embedded object in dealer object
+// DealerContact struct contains details of the primary contacts to the dealer
 type DealerContact struct {
-	ID                       string    `bson:"_id" json:"dealerContactID,omitempty"`
+	ID                       string    `bson:"_id" json:"dealerContactID,omitempty"`                               //
 	DealerID                 string    `bson:"dealerID" json:"dealerID,omitempty"`                                 // Dealer Identification Number
 	DealerOperationType      string    `bson:"dealerOperationType" json:"dealerOperationType,omitempty"`           // Dealer Operation Type - // Fixed Operations-Services, Sales, Parts, Management etc
 	User                     string    `bson:"user" json:"user,omitempty"`                                         // User Id or Login name ( ex: sig@tekion.com )
@@ -105,7 +102,7 @@ type DealerContact struct {
 
 // Embedded objects in Dealer -- start
 
-// image -- details of the image stored in S3 bucket -- embedded slice in dealer object
+// image struct contains details of the image stored in S3 bucket, stored as slice of embedded objects in dealer struct
 type image struct {
 	Width   string `bson:"width" json:"width,omitempty"`     //required
 	Height  string `bson:"height" json:"height,omitempty"`   //required
@@ -113,7 +110,7 @@ type image struct {
 	ImageID string `bson:"imageID" json:"imageID,omitempty"` //UUID => name of the image stored in S3 bucket
 }
 
-// dealerAddress -- dealer address details -- embedded object in dealer object
+// dealerAddress struct contains details of the dealer address, stored as embedded objects in dealer struct
 type dealerAddress struct {
 	ID             string `bson:"dealerAddressID" json:"dealerAddressID,omitempty"` // Dealer Identification
 	AddressType    string `bson:"addressType" json:"addressType,omitempty"`         // Dealer Address Type like Service, Sales, Parts etc
@@ -127,9 +124,10 @@ type dealerAddress struct {
 	IsActive       bool   `bson:"isActive" json:"isActive,omitempty"`               // Is Active T or F (TRUE or FALSE) -- DEFAULT 'T'
 }
 
-// dealerCommunication -- dealer communication details -- embedded slice in dealer object
+// TODO : still unclear where and how to store it
+// dealerCommunication struct contains details of the dealer communication
 type dealerCommunication struct {
-	ID                          string `bson:"dealerCommunicationID" json:"dealerCommunicationID,omitempty"`
+	ID                          string `bson:"dealerCommunicationID" json:"dealerCommunicationID,omitempty"`             //
 	DealerID                    string `bson:"dealerID" json:"dealerID,omitempty"`                                       // Dealer Identification  - Keep it Unique across the tenant
 	CustomerCommunicationSource string `bson:"customerCommunicationSource" json:"customerCommunicationSource,omitempty"` // Customer Communication Source ? Any example
 	OutGoingEmail               string `bson:"outGoingEmail" json:"outGoingEmail,omitempty"`                             // Customer communication Out going email ?
@@ -138,40 +136,42 @@ type dealerCommunication struct {
 	IsActive                    bool   `bson:"isActive" json:"isActive,omitempty"`                                       // Is Active T or F (TRUE or FALSE) -- DEFAULT 'T'
 }
 
-// dealerDocumentTemplate -- templates specific to the dealer -- embedded slice in dealer object
+// dealerDocumentTemplate struct contains details of the templates specific to the dealer, stored as slice of embedded objects in dealer struct
 type dealerDocumentTemplate struct {
-	ID              string `bson:"dealerDocumentTemplateID" json:"dealerDocumentTemplateID,omitempty"`
-	TemplateName    string `bson:"templateName" json:"templateName,omitempty"`       // Template Name ( What is the use of this templates)
-	TemplateType    string `bson:"templateType" json:"templateType,omitempty"`       // Template Type like Appointment, Estimate, Repair Order, Invoice etc
-	TemplateImageID string `bson:"templateImageID" json:"templateImageID,omitempty"` // Changed from Template URL to TemplateImageID stored in S3 bucket
-	IsActive        bool   `bson:"isActive" json:"isActive,omitempty"`               // Is Active T or F (TRUE or FALSE) -- DEFAULT 'T'
+	ID              string `bson:"dealerDocumentTemplateID" json:"dealerDocumentTemplateID,omitempty"` //
+	TemplateName    string `bson:"templateName" json:"templateName,omitempty"`                         // Template Name ( What is the use of this templates)
+	TemplateType    string `bson:"templateType" json:"templateType,omitempty"`                         // Template Type like Appointment, Estimate, Repair Order, Invoice etc
+	TemplateImageID string `bson:"templateImageID" json:"templateImageID,omitempty"`                   // Changed from Template URL to TemplateImageID stored in S3 bucket
+	IsActive        bool   `bson:"isActive" json:"isActive,omitempty"`                                 // Is Active T or F (TRUE or FALSE) -- DEFAULT 'T'
 }
 
+// dealerOperationSchedule struct contains details of the dealer operation schedule, stored as slice of embedded objects in dealer struct
 type dealerOperationSchedule struct {
-	ID                  string `bson:"dealerOperationScheduleID" json:"dealerOperationScheduleID,omitempty"`
-	DealerOperationType string `bson:"dealerOperationType" json:"dealerOperationType,omitempty"` //Dealer Operation Type - // Fixed Operations-Services, Sales, Parts, Management etc
-	SundayOpenHour      string `bson:"sundayOpenHour" json:"sundayOpenHour,omitempty"`           // Business Open Hour or Office start time today : 7:00 AM
-	SundayCloseHour     string `bson:"sundayCloseHour" json:"sundayCloseHour,omitempty"`         // Business Close Hour or Office end time today: 5:00 PM
-	MondayOpenHour      string `bson:"mondayOpenHour" json:"mondayOpenHour,omitempty"`           // Business Open Hour or Office start time today : 7:00 AM
-	MondayCloseHour     string `bson:"mondayCloseHour" json:"mondayCloseHour,omitempty"`         // Business Close Hour or Office end time today: 5:00 PM
-	TuesdayOpenHour     string `bson:"tuesdayOpenHour" json:"tuesdayOpenHour,omitempty"`         // Business Open Hour or Office start time today : 7:00 AM
-	TuesdayCloseHour    string `bson:"tuesdayCloseHour" json:"tuesdayCloseHour,omitempty"`       // Business Close Hour or Office end time today: 5:00 PM
-	WednesdayOpenHour   string `bson:"wednesdayOpenHour" json:"wednesdayOpenHour,omitempty"`     // Business Open Hour or Office start time today : 7:00 AM
-	WednesdayCloseHour  string `bson:"wednesdayCloseHour" json:"wednesdayCloseHour,omitempty"`   // Business Close Hour or Office end time today: 5:00 PM
-	ThursdayOpenHour    string `bson:"thursdayOpenHour" json:"thursdayOpenHour,omitempty"`       // Business Open Hour or Office start time today : 7:00 AM
-	ThursdayCloseHour   string `bson:"thursdayCloseHour" json:"thursdayCloseHour,omitempty"`     // Business Close Hour or Office end time today: 5:00 PM
-	FridayOpenHour      string `bson:"fridayOpenHour" json:"fridayOpenHour,omitempty"`           // Business Open Hour or Office start time today : 7:00 AM
-	FridayCloseHour     string `bson:"fridayCloseHour" json:"fridayCloseHour,omitempty"`         // Business Close Hour or Office end time today: 5:00 PM
-	SaturdayOpenHour    string `bson:"saturdayOpenHour" json:"saturdayOpenHour,omitempty"`       // Business Open Hour or Office start time today : 7:00 AM
-	SaturdayCloseHour   string `bson:"saturdayCloseHour" json:"saturdayCloseHour,omitempty"`     // Business Close Hour or Office end time today: 5:00 PM
+	ID                  string `bson:"dealerOperationScheduleID" json:"dealerOperationScheduleID,omitempty"` //
+	DealerOperationType string `bson:"dealerOperationType" json:"dealerOperationType,omitempty"`             //Dealer Operation Type - // Fixed Operations-Services, Sales, Parts, Management etc
+	SundayOpenHour      string `bson:"sundayOpenHour" json:"sundayOpenHour,omitempty"`                       // Business Open Hour or Office start time today : 7:00 AM
+	SundayCloseHour     string `bson:"sundayCloseHour" json:"sundayCloseHour,omitempty"`                     // Business Close Hour or Office end time today: 5:00 PM
+	MondayOpenHour      string `bson:"mondayOpenHour" json:"mondayOpenHour,omitempty"`                       // Business Open Hour or Office start time today : 7:00 AM
+	MondayCloseHour     string `bson:"mondayCloseHour" json:"mondayCloseHour,omitempty"`                     // Business Close Hour or Office end time today: 5:00 PM
+	TuesdayOpenHour     string `bson:"tuesdayOpenHour" json:"tuesdayOpenHour,omitempty"`                     // Business Open Hour or Office start time today : 7:00 AM
+	TuesdayCloseHour    string `bson:"tuesdayCloseHour" json:"tuesdayCloseHour,omitempty"`                   // Business Close Hour or Office end time today: 5:00 PM
+	WednesdayOpenHour   string `bson:"wednesdayOpenHour" json:"wednesdayOpenHour,omitempty"`                 // Business Open Hour or Office start time today : 7:00 AM
+	WednesdayCloseHour  string `bson:"wednesdayCloseHour" json:"wednesdayCloseHour,omitempty"`               // Business Close Hour or Office end time today: 5:00 PM
+	ThursdayOpenHour    string `bson:"thursdayOpenHour" json:"thursdayOpenHour,omitempty"`                   // Business Open Hour or Office start time today : 7:00 AM
+	ThursdayCloseHour   string `bson:"thursdayCloseHour" json:"thursdayCloseHour,omitempty"`                 // Business Close Hour or Office end time today: 5:00 PM
+	FridayOpenHour      string `bson:"fridayOpenHour" json:"fridayOpenHour,omitempty"`                       // Business Open Hour or Office start time today : 7:00 AM
+	FridayCloseHour     string `bson:"fridayCloseHour" json:"fridayCloseHour,omitempty"`                     // Business Close Hour or Office end time today: 5:00 PM
+	SaturdayOpenHour    string `bson:"saturdayOpenHour" json:"saturdayOpenHour,omitempty"`                   // Business Open Hour or Office start time today : 7:00 AM
+	SaturdayCloseHour   string `bson:"saturdayCloseHour" json:"saturdayCloseHour,omitempty"`                 // Business Close Hour or Office end time today: 5:00 PM
 }
 
+// vehicleDamage struct contains details of the dealer vehicle damage types, stored as slice of embedded objects in dealer struct
 type vehicleDamage struct {
-	ID          string `bson:"vehicleDamageID" json:"vehicleDamageID"`
-	ImageURL    string `bson:"imageURL" json:"imageURL"`
-	DamageType  string `bson:"damageType" json:"damageType"`
-	Description string `bson:"description" json:"description"`
-	Priority    int    `bson:"priority" json:"priority"`
+	ID          string `bson:"vehicleDamageID" json:"vehicleDamageID"` //
+	ImageURL    string `bson:"imageURL" json:"imageURL"`               //
+	DamageType  string `bson:"damageType" json:"damageType"`           //
+	Description string `bson:"description" json:"description"`         //
+	Priority    int    `bson:"priority" json:"priority"`               // Decided the sequence in which damage types will be displayed on UI
 }
 
 // Embedded objects in Dealer -- end
@@ -179,9 +179,10 @@ type vehicleDamage struct {
 // When get appointment hrs check it its a holiday or not
 // date is stored in utc
 // date should be converted to dealer time zone
-// FixedOperation -- dealer fixed operation details
+
+// FixedOperation struct contains dealer fixed operation details
 type FixedOperation struct {
-	ID                       string                `bson:"_id" json:"fixedOperationID,omitempty"`
+	ID                       string                `bson:"_id" json:"fixedOperationID,omitempty"`                              //
 	DealerID                 string                `bson:"dealerID" json:"dealerID,omitempty"`                                 // Dealer Identification
 	EPANumber                string                `bson:"EPANumber" json:"EPANumber,omitempty"`                               // Name correction -- capitalize abbreviations
 	BARNumber                string                `bson:"BARNumber" json:"BARNumber,omitempty"`                               // Name correction -- capitalize abbreviations
@@ -202,7 +203,9 @@ type FixedOperation struct {
 }
 
 // Embedded structures in fixed operations-- start
-// holidays -- list of all the holidays for the dealer -- embedded slice in dealer object -- need inputs from Venkat
+
+// TODO : need inputs from Venkat on start end and carryover fields
+// holiday struct contains details of holidays, stored as slice of embedded objects in fixed operation struct
 type holiday struct {
 	Date               string `bson:"date" json:"date,omitempty"`                             // ask for date format used in Tekion
 	StartOperationHour string `bson:"startOperationHour" json:"startOperationHour,omitempty"` // not sure about its use ??
@@ -210,15 +213,15 @@ type holiday struct {
 	CarryOver          bool   `bson:"carryOver" json:"carryOver,omitempty"`                   // not sure about its use ??
 }
 
+// users struct contains details of the users detail specific to the dealer, stored as slice of embedded objects in fixed operation struct
 // Using generic user type instead of serviceAdvisor type
-// users -- user details specific to the dealer
 type users struct {
 	DealerID string `bson:"dealerID" json:"dealerID,omitempty"` // maps to Dealer.ID
-	UserID   string `bson:"userID" json:"userID,omitempty"`     // maps to User._id
-	JobTitle string `bson:"userID" json:"userID,omitempty"`     // maps to User.jobTitle
+	UserID   string `bson:"userID" json:"userID,omitempty"`     // maps to User.ID
+	JobTitle string `bson:"jobTitle" json:"jobTitle,omitempty"` // maps to User.jobTitle
 }
 
-// floorCapacity -- dealer floor capacity
+// floorCapacity struct contains details of dealer floor capacities, , stored as slice of embedded objects in fixed operation struct
 type floorCapacity struct {
 	SkillCode     string `bson:"skillCode" json:"skillCode,omitempty"`         // maps to SkillMaster.ID
 	SkillName     string `bson:"skillName" json:"skillName,omitempty"`         // maps to skillMaster.Name added // Name is rarely going to change, keeping a copy here to avoid extra call to skillMaster
@@ -232,25 +235,25 @@ type floorCapacity struct {
 	Total         string `bson:"total" json:"total"`                           // added ask // Can also be calculated by front end
 }
 
-// appointmentHour -- time during which appointment can be made
+// appointmentHour struct contains details appointment hours, stored as embedded object in fixed operation struct
 type appointmentHour struct {
-	SundayOpenHour     string `bson:"sundayOpenHour" json:"sundayOpenHour,omitempty"`
-	SundayCloseHour    string `bson:"sundayCloseHour" json:"sundayCloseHour,omitempty"`
-	MondayOpenHour     string `bson:"mondayOpenHour" json:"mondayOpenHour,omitempty"`
-	MondayCloseHour    string `bson:"mondayCloseHour" json:"mondayCloseHour,omitempty"`
-	TuesdayOpenHour    string `bson:"tuesdayOpenHour" json:"tuesdayOpenHour,omitempty"`
-	TuesdayCloseHour   string `bson:"tuesdayCloseHour" json:"tuesdayCloseHour,omitempty"`
-	WednesdayOpenHour  string `bson:"wednesdayOpenHour" json:"wednesdayOpenHour,omitempty"`
-	WednesdayCloseHour string `bson:"wednesdayCloseHour" json:"wednesdayCloseHour,omitempty"`
-	ThursdayOpenHour   string `bson:"thursdayOpenHour" json:"thursdayOpenHour,omitempty"`
-	ThursdayCloseHour  string `bson:"thursdayCloseHour" json:"thursdayCloseHour,omitempty"`
-	FridayOpenHour     string `bson:"fridayOpenHour" json:"fridayOpenHour,omitempty"`
-	FridayCloseHour    string `bson:"fridayCloseHour" json:"fridayCloseHour,omitempty"`
-	SaturdayOpenHour   string `bson:"saturdayOpenHour" json:"saturdayOpenHour,omitempty"`
-	SaturdayCloseHour  string `bson:"saturdayCloseHour" json:"saturdayCloseHour,omitempty"`
+	SundayOpenHour     string `bson:"sundayOpenHour" json:"sundayOpenHour,omitempty"`         //
+	SundayCloseHour    string `bson:"sundayCloseHour" json:"sundayCloseHour,omitempty"`       //
+	MondayOpenHour     string `bson:"mondayOpenHour" json:"mondayOpenHour,omitempty"`         //
+	MondayCloseHour    string `bson:"mondayCloseHour" json:"mondayCloseHour,omitempty"`       //
+	TuesdayOpenHour    string `bson:"tuesdayOpenHour" json:"tuesdayOpenHour,omitempty"`       //
+	TuesdayCloseHour   string `bson:"tuesdayCloseHour" json:"tuesdayCloseHour,omitempty"`     //
+	WednesdayOpenHour  string `bson:"wednesdayOpenHour" json:"wednesdayOpenHour,omitempty"`   //
+	WednesdayCloseHour string `bson:"wednesdayCloseHour" json:"wednesdayCloseHour,omitempty"` //
+	ThursdayOpenHour   string `bson:"thursdayOpenHour" json:"thursdayOpenHour,omitempty"`     //
+	ThursdayCloseHour  string `bson:"thursdayCloseHour" json:"thursdayCloseHour,omitempty"`   //
+	FridayOpenHour     string `bson:"fridayOpenHour" json:"fridayOpenHour,omitempty"`         //
+	FridayCloseHour    string `bson:"fridayCloseHour" json:"fridayCloseHour,omitempty"`       //
+	SaturdayOpenHour   string `bson:"saturdayOpenHour" json:"saturdayOpenHour,omitempty"`     //
+	SaturdayCloseHour  string `bson:"saturdayCloseHour" json:"saturdayCloseHour,omitempty"`   //
 }
 
-// appointmentCapacity -- number of hours present for each skill
+// appointmentCapacity struct contains details of the number of hours present for each skill, stored as slice of embedded objects in fixed operation struct
 type appointmentCapacity struct {
 	SkillCode               string    `bson:"skillCode" json:"skillCode,omitempty"`                             // maps to SkillMaster._id
 	SkillName               string    `bson:"skillName" json:"skillName,omitempty"`                             // maps to skillMaster.Name added // Name is rarely going to change, keeping a copy here to avoid extra call
@@ -266,6 +269,7 @@ type appointmentCapacity struct {
 	Saturday                string    `bson:"saturday" json:"saturday,omitempty"`                               //
 }
 
+// amenities struct contains list of dealer amenities, stored as slice of embedded objects in fixed operation struct
 type amenities struct {
 	ID   string `bson:"amenityID" json:"amenityID,omitempty"` //maps to AmenitiesMaster._id
 	Name string `bson:"name" json:"name,omitempty"`           // maps to AmenitiesMaster.name
@@ -273,6 +277,7 @@ type amenities struct {
 
 // Embedded structures in fixed operations-- end
 
+// DealerGoal struct contains dealer goals
 type DealerGoal struct {
 	ID                             string    `bson:"_id" json:"dealerGoalID,omitempty"`                                              //
 	DealerID                       string    `bson:"dealerID" json:"dealerID,omitempty"`                                             //
@@ -285,11 +290,12 @@ type DealerGoal struct {
 	DocumentVersion                float32   `bson:"documentVersion" json:"documentVersion,omitempty"`                               // Document version to keep track of the changes -- DEFAULT 1.0
 }
 
+// DealerGroup struct contains groups to which dealer belong
 type DealerGroup struct {
-	ID                       string    `bson:"_id" json:"dealerGroupID,omitempty"`
-	Name                     string    `bson:"dealerGroupName" json:"dealerGroupName,omitempty"`
-	Dealers                  []string  `bson:"dealers" json:"dealers,omitempty"`
-	Desc                     string    `bson:"description" json:"description,omitempty"`
+	ID                       string    `bson:"_id" json:"dealerGroupID,omitempty"`                                 //
+	Name                     string    `bson:"dealerGroupName" json:"dealerGroupName,omitempty"`                   //
+	Dealers                  []string  `bson:"dealers" json:"dealers,omitempty"`                                   //
+	Desc                     string    `bson:"description" json:"description,omitempty"`                           //
 	LastUpdatedByUser        string    `bson:"lastUpdatedByUser" json:"lastUpdatedByUser,omitempty"`               // Last Updated By User
 	LastUpdatedByDisplayName string    `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName,omitempty"` // This is to Display the Name in the application
 	LastUpdatedDateTime      time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"`           // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP

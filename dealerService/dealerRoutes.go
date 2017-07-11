@@ -6,7 +6,8 @@ import (
 	"bitbucket.org/tekion/tbaas/tapi"
 )
 
-// Start - start the service console app
+//TODO : Need new admin scope
+// Start add routes and start the service at specified port
 func Start() {
 	tapi.AddRoutes(
 		"Read dealer info",

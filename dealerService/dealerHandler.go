@@ -1,3 +1,11 @@
+/*
+Package dealerService implements dealer micro service. It provides api's to perform
+CURD operations on dealer object. dealerService package is divided into 4 file.
+1. dealerRoutes.go -> contain routes.
+2. dealerHandler.go -> containing handler functions.
+3. dealerModel.go -> containing models.
+4. dealerUtils.go -> containing util functions.
+*/
 package dealerService
 
 // This file contains handler functions
@@ -102,8 +110,7 @@ func ReadFixedOperations(w http.ResponseWriter, r *http.Request) {
 
 	var fixedOperations []FixedOperation
 	fields := fetchFieldsFromRequest(r)
-	err := readAllFixedOperations(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
-		getDealerFixedOperationCollectionName(),
+	err := readFixedOperations(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
 		bson.M{"dealerID": dealerID},
 		fields,
 		&fixedOperations,
@@ -172,8 +179,7 @@ func ReadContacts(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var contacts []DealerContact
-	err := readAllContacts(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
-		getDealerContactCollectionName(),
+	err := readDealerContacts(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
 		bson.M{"dealerID": dealerID},
 		fields,
 		&contacts,
@@ -242,8 +248,7 @@ func ReadGoals(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var goals []DealerGoal
-	err := readAllGoals(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
-		getDealerGoalCollectionName(),
+	err := readDealerGoals(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
 		bson.M{"dealerID": dealerID},
 		fields,
 		&goals,
@@ -277,8 +282,7 @@ func ReadGroups(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var groups []DealerGroup
-	err := readAllGroups(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
-		getDealerGroupCollectionName(),
+	err := readDealerGroups(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
 		bson.M{"dealers": dealerID},
 		fields,
 		&groups,
