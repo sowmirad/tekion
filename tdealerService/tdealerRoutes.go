@@ -3,6 +3,7 @@ package tdealerService
 import (
 	"bitbucket.org/tekion/tbaas/log"
 	"bitbucket.org/tekion/tbaas/tapi"
+	"bitbucket.org/tekion/tacl/acl"
 )
 
 //Start : function to start route
@@ -12,7 +13,7 @@ func Start() {
 		"GET",
 		"/dealerDetail",
 		GetDealerByID,
-		tapi.ACLStruct{
+		acl.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
@@ -22,7 +23,7 @@ func Start() {
 		"GET",
 		"/damageType",
 		getDamageTypes,
-		tapi.ACLStruct{
+		acl.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
