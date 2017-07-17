@@ -28,4 +28,5 @@
 
 	# External packages folder
 	vendor/
+    dealerService/cover.out
     tdealer
