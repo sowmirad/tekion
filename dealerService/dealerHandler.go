@@ -17,33 +17,31 @@ import (
 	//third party libraries
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
+	"github.com/pkg/errors"
 	"gopkg.in/mgo.v2/bson"
 
 	//tekion specific libraries
 	"bitbucket.org/tekion/erratum"
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"bitbucket.org/tekion/tbaas/tapi"
-	"github.com/pkg/errors"
 )
 
 // ReadDealer - this handler function returns the Dealer Object. Reads the Dealer object from database identified by the Dealer.ID passed in header.
 // By default ReadDealer returns complete Dealer object. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 // E.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
-// @param - dealerid - (required) - unique identifier of the Dealer.
-// @param - fields - (optional) - list of comma separated fields you want in response instead of complete Dealer object.
-// @returns - json of Dealer object.
+// header - dealerid - (required) - unique identifier of the Dealer.
+// query - fields - (optional) - list of comma separated fields you want in response instead of complete Dealer object.
+// returns - json of Dealer object.
 func ReadDealer(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	//assuming logged in user has access to view all the dealers
-	dealerID := r.Header.Get("dealerid") // should be corrected to Dealer-ID
-	if len(dealerID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer id missing in request"))
-		return
-	}
+	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
 	var dealer Dealer
-	err := readOne(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
+
+	err := fetchOne(ctx,
 		getDealerCollectionName(),
 		bson.M{"_id": dealerID},
 		fields,
@@ -61,14 +59,12 @@ func ReadDealer(w http.ResponseWriter, r *http.Request) {
 // By default ReadFixedOperation returns whole FixedOperation object. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 // E.g /fixedoperation/{id}?fields=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
-// @param - {id} - (required) - unique identifier of the FixedOperation.
-// @param - fields - (optional) - list of comma separated fields you want in response instead of complete FixedOperation object.
-// @returns - json of  FixedOperation object.
+// url - {id} - (required) - unique identifier of the FixedOperation.
+// query - fields - (optional) - list of comma separated fields you want in response instead of complete FixedOperation object.
+// returns - json of  FixedOperation object.
 func ReadFixedOperation(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	fixedOperationID := vars["id"]
-	//vars = context.Get(r, 0).(map[string]string)
-	//fixedOperationID = vars["id"]
 	if len(fixedOperationID) == 0 {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("fixed operation id missing in request"))
 		return
@@ -76,8 +72,9 @@ func ReadFixedOperation(w http.ResponseWriter, r *http.Request) {
 
 	var fixedOperation FixedOperation
 	fields := fetchFieldsFromRequest(r)
-	err := readOne(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
-		getDealerFixedOperationCollectionName(),
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	err := fetchOne(ctx,
+		getFixedOperationCollectionName(),
 		bson.M{"_id": fixedOperationID},
 		fields,
 		&fixedOperation,
@@ -87,30 +84,23 @@ func ReadFixedOperation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := "Document found"
-	if fixedOperation.ID == "" {
-		msg = "Document not found"
-	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, msg, fixedOperation)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperation)
 }
 
 // ReadFixedOperations - this handler function returns json array of FixedOperation objects. Reads the FixedOperation object from database identified by Dealer.ID passed in header.
 // By default ReadFixedOperations returns complete FixedOperation objects. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 // E.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
-// @param - dealerid - (required) - unique identifier of the Dealer.
-// @param - fields - (optional) - list of comma separated fields you want in response instead of complete FixedOperation object.
-// @returns - json array of FixedOperation objects.
+// header - dealerid - (required) - unique identifier of the Dealer.
+// query - fields - (optional) - list of comma separated fields you want in response instead of complete FixedOperation object.
+// returns - json array of FixedOperation objects.
 func ReadFixedOperations(w http.ResponseWriter, r *http.Request) {
-	dealerID := r.Header.Get("dealerid") // should be corrected to Dealer-ID
-	if len(dealerID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("fixed operation id and dealer id missing in request"))
-		return
-	}
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	var fixedOperations []FixedOperation
 	fields := fetchFieldsFromRequest(r)
-	err := readFixedOperations(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
+	err := fetchFixedOperations(ctx,
 		bson.M{"dealerID": dealerID},
 		fields,
 		&fixedOperations,
@@ -131,9 +121,9 @@ func ReadFixedOperations(w http.ResponseWriter, r *http.Request) {
 // By default ReadContact returns whole DealerContact object. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 // E.g /contact/{id}?fields=user,userDisplayName,userDisplayTitle
-// @param - {id} - (required) - unique identifier of the DealerContact.
-// @param - fields - (optional) - list of comma separated fields you want in response instead of complete DealerContact object.
-// @returns - json of DealerContact object.
+// url - {id} - (required) - unique identifier of the DealerContact.
+// query - fields - (optional) - list of comma separated fields you want in response instead of complete DealerContact object.
+// returns - json of DealerContact object.
 func ReadContact(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	contactID := vars["id"]
@@ -144,7 +134,8 @@ func ReadContact(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var contact DealerContact
-	err := readOne(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	err := fetchOne(ctx,
 		getDealerContactCollectionName(),
 		bson.M{"_id": contactID},
 		fields,
@@ -155,31 +146,23 @@ func ReadContact(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := "Document found"
-	if contact.ID == "" {
-		msg = "Document not found"
-	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, msg, contact)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", contact)
 }
 
 // ReadContacts - this handler function returns json array of DealerContact Objects. Reads the DealerContact object from database identified by the Dealer.ID passed as part of header.
 // By default ReadContacts returns complete DealerContact objects. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 // E.g /contacts?fields=user,userDisplayName,userDisplayTitle
-// @param - dealerid - (required) - unique identifier of the Dealer.
-// @param - fields - (optional) - list of comma separated fields you want in response instead of complete DealerContact object.
-// @returns - json array of DealerContact objects.
+// header - dealerid - (required) - unique identifier of the Dealer.
+// query - fields - (optional) - list of comma separated fields you want in response instead of complete DealerContact object.
+// returns - json array of DealerContact objects.
 func ReadContacts(w http.ResponseWriter, r *http.Request) {
-	//assuming logged in user has access to view all the dealers
-	dealerID := r.Header.Get("dealerid") // should be corrected to Dealer-ID
-	if len(dealerID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer id missing in request"))
-		return
-	}
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
 	var contacts []DealerContact
-	err := readDealerContacts(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
+	err := fetchDealerContacts(ctx,
 		bson.M{"dealerID": dealerID},
 		fields,
 		&contacts,
@@ -200,9 +183,9 @@ func ReadContacts(w http.ResponseWriter, r *http.Request) {
 // By default ReadGoal returns complete DealerGoal object. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 // E.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
-// @param - {id} - (required) - unique identifier of the DealerGoal.
-// @param - fields - (optional) - list of comma separated fields you want in response instead of complete DealerGoal object.
-// @returns - json of DealerGoal object.
+// url - {id} - (required) - unique identifier of the DealerGoal.
+// query - fields - (optional) - list of comma separated fields you want in response instead of complete DealerGoal object.
+// returns - json of DealerGoal object.
 func ReadGoal(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	goalID := vars["id"]
@@ -213,8 +196,8 @@ func ReadGoal(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var dealerGoal DealerGoal
-
-	err := readOne(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	err := fetchOne(ctx,
 		getDealerGoalCollectionName(),
 		bson.M{"_id": goalID},
 		fields,
@@ -225,30 +208,23 @@ func ReadGoal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := "Document found"
-	if dealerGoal.ID == "" {
-		msg = "Document not found"
-	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, msg, dealerGoal)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealerGoal)
 }
 
 // ReadGoals - this handler function returns json array of DealerGoal Objects. Reads the DealerGoal object from database identified by the dealer id passed in header.
 // By default ReadGoals returns complete DealerGoal objects. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 // E.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
-// @param - dealerid - (required) - unique identifier of the Dealer.
-// @param - fields - (optional) - list of comma separated fields you want in response instead of complete DealerGoal objects.
-// @returns - json array of DealerGoal objects.
+// header - dealerid - (required) - unique identifier of the Dealer.
+// query - fields - (optional) - list of comma separated fields you want in response instead of complete DealerGoal objects.
+// returns - json array of DealerGoal objects.
 func ReadGoals(w http.ResponseWriter, r *http.Request) {
-	dealerID := r.Header.Get("dealerid") // should be corrected to Dealer-ID
-	if len(dealerID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer id missing in request"))
-		return
-	}
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
 	var goals []DealerGoal
-	err := readDealerGoals(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
+	err := fetchDealerGoals(ctx,
 		bson.M{"dealerID": dealerID},
 		fields,
 		&goals,
@@ -270,19 +246,16 @@ func ReadGoals(w http.ResponseWriter, r *http.Request) {
 // By default ReadGroups returns complete DealerGroup objects. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 // E.g /groups?fields=dealerGroupName,dealerGroupName,dealers
-// @param - dealerid - (required) - unique identifier of the Dealer.
-// @param - fields - (optional) - list of comma separated fields you want in response instead of complete DealerGroup objects.
-// @returns - json array of DealerGroup objects.
+// header - dealerid - (required) - unique identifier of the Dealer.
+// query - fields - (optional) - list of comma separated fields you want in response instead of complete DealerGroup objects.
+// returns - json array of DealerGroup objects.
 func ReadGroups(w http.ResponseWriter, r *http.Request) {
-	dealerID := r.Header.Get("dealerid") // should be corrected to Dealer-ID
-	if len(dealerID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer id missing in request"))
-		return
-	}
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
 	var groups []DealerGroup
-	err := readDealerGroups(context.Get(r, "apiContext").(apiContext.APIContext).Tenant,
+	err := fetchDealerGroups(ctx,
 		bson.M{"dealers": dealerID},
 		fields,
 		&groups,

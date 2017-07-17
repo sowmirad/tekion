@@ -8,11 +8,11 @@ import (
 
 // Collection names used by dealer service
 const (
-	dealerCollectionName               = "DealerMaster"
-	dealerFixedOperationCollectionName = "FixedOperation"
-	dealerContactCollectionName        = "DealerContact"
-	dealerGoalCollectionName           = "DealerGoal"
-	dealerGroupCollectionName          = "DealerGroup"
+	dealerCollectionName         = "DealerMaster"
+	fixedOperationCollectionName = "FixedOperation"
+	dealerContactCollectionName  = "DealerContact"
+	dealerGoalCollectionName     = "DealerGoal"
+	dealerGroupCollectionName    = "DealerGroup"
 )
 
 // getDealerCollectionName returns dealer collection name
@@ -20,9 +20,9 @@ func getDealerCollectionName() string {
 	return dealerCollectionName
 }
 
-// getDealerFixedOperationCollectionName returns dealer fixed operation collection name
-func getDealerFixedOperationCollectionName() string {
-	return dealerFixedOperationCollectionName
+// getFixedOperationCollectionName returns dealer fixed operation collection name
+func getFixedOperationCollectionName() string {
+	return fixedOperationCollectionName
 }
 
 // getDealerContactCollectionName returns the dealer contact collection name
@@ -255,18 +255,18 @@ type appointmentHour struct {
 
 // appointmentCapacity struct contains details of the number of hours present for each skill, stored as slice of embedded objects in fixed operation struct
 type appointmentCapacity struct {
-	SkillCode               string    `bson:"skillCode" json:"skillCode,omitempty"`                             // maps to SkillMaster._id
-	SkillName               string    `bson:"skillName" json:"skillName,omitempty"`                             // maps to skillMaster.Name added // Name is rarely going to change, keeping a copy here to avoid extra call
-	NumberOfServiceAdvisors string    `bson:"numberOfServiceAdvisors" json:"numberOfServiceAdvisors,omitempty"` //
-	AppointmentsPerSlot     string    `bson:"appointmentsPerSlot" json:"appointmentsPerSlot,omitempty"`         //
-	AppointmentSlotDuration time.Time `bson:"appointmentSlotDuration" json:"appointmentSlotDuration,omitempty"` // check for data type ?
-	Sunday                  string    `bson:"sunday" json:"sunday,omitempty"`                                   //
-	Monday                  string    `bson:"monday" json:"monday,omitempty"`                                   //
-	Tuesday                 string    `bson:"tuesday" json:"tuesday,omitempty"`                                 //
-	Wednesday               string    `bson:"wednesday" json:"wednesday,omitempty"`                             //
-	Thursday                string    `bson:"thursday" json:"thursday,omitempty"`                               //
-	Friday                  string    `bson:"friday" json:"friday,omitempty"`                                   //
-	Saturday                string    `bson:"saturday" json:"saturday,omitempty"`                               //
+	SkillCode               string `bson:"skillCode" json:"skillCode,omitempty"`                             // maps to SkillMaster._id
+	SkillName               string `bson:"skillName" json:"skillName,omitempty"`                             // maps to skillMaster.Name added // Name is rarely going to change, keeping a copy here to avoid extra call
+	NumberOfServiceAdvisors int16  `bson:"numberOfServiceAdvisors" json:"numberOfServiceAdvisors,omitempty"` // data type changed to int16 on Prameet's input
+	AppointmentsPerSlot     int16  `bson:"appointmentsPerSlot" json:"appointmentsPerSlot,omitempty"`         // data type changed to int16 on Prameet's input
+	AppointmentSlotDuration int16  `bson:"appointmentSlotDuration" json:"appointmentSlotDuration,omitempty"` // data type changed to int16 on Prameet's input
+	Sunday                  string `bson:"sunday" json:"sunday,omitempty"`                                   //
+	Monday                  string `bson:"monday" json:"monday,omitempty"`                                   //
+	Tuesday                 string `bson:"tuesday" json:"tuesday,omitempty"`                                 //
+	Wednesday               string `bson:"wednesday" json:"wednesday,omitempty"`                             //
+	Thursday                string `bson:"thursday" json:"thursday,omitempty"`                               //
+	Friday                  string `bson:"friday" json:"friday,omitempty"`                                   //
+	Saturday                string `bson:"saturday" json:"saturday,omitempty"`                               //
 }
 
 // amenities struct contains list of dealer amenities, stored as slice of embedded objects in fixed operation struct
