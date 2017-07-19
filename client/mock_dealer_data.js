@@ -30,7 +30,7 @@ export const dealerInfo = {
       priority: 3,
     },
   ],
-  timeZone: 'US/Pacific',
+  timeZone: 'America/Los_Angeles',
   currency: 'USD',
   dealershipCode: 'ABC123_3',
   dealerGroup: ['1', '2', '3'],
