@@ -30,5 +30,8 @@
 	vendor/
     dealerService/cover.out
     tdealer
-    .idea/
+    .idea/*
     page.html
+
+
+node_modules
