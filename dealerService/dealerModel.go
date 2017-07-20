@@ -2,6 +2,8 @@ package dealerService
 
 // This file contains all the models related to dealer
 
+// TODO add swagger support
+
 import (
 	"time"
 )
