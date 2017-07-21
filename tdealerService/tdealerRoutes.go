@@ -14,7 +14,7 @@ func Start() {
 		"/dealerDetail",
 		GetDealerByID,
 		acl.ACLStruct{
-			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher", "SystemUser"},
 		},
 	)
 
