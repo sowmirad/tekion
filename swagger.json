@@ -1,0 +1,1389 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "dealerService implements dealer micro service.\n\nThe purpose of this application is to provides api's to perform CURD operations on dealer object.\nCurrently only get endpoints are available.\ndealerService is divided into 4 file.\n1. dealerRoutes.go  -\u003e contain routes.\n2. dealerHandler.go -\u003e containing handler functions.\n3. dealerModel.go   -\u003e containing models.\n4. dealerUtils.go   -\u003e containing util functions.",
+    "title": "dealer micro service",
+    "contact": {
+      "name": "Qasim Hasnain",
+      "email": "mqhasnain@tekion.com"
+    },
+    "version": "1.0.0"
+  },
+  "basePath": "/tdealer",
+  "paths": {
+    "/contact/{cid}": {
+      "get": {
+        "description": "By default /contact/{cid} returns complete dealer contact object. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "dealerContact"
+        ],
+        "summary": "Returns dealer contact identified by dealer contact id passed as part of url",
+        "operationId": "readDealerContact",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer contact",
+            "name": "cid",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer",
+            "name": "dealerid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "client type",
+            "name": "clientid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "current tenant name",
+            "name": "tenantname",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "auth token",
+            "name": "tekion-api-token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "list of comma separated fields you want in response e.g /contact/{cid}?fields=user,userDisplayName,userDisplayTitle",
+            "name": "fields",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "dealer contact object",
+            "schema": {
+              "$ref": "#/definitions/dealerContact"
+            }
+          },
+          "204": {
+            "description": "dealer contact not found in data base"
+          },
+          "400": {
+            "description": "error querying data base"
+          }
+        }
+      }
+    },
+    "/contacts": {
+      "get": {
+        "description": "By default /contacts returns list of complete dealer contacts objects. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "dealerContacts"
+        ],
+        "summary": "Returns list of dealer contacts identified by dealer id passed in header",
+        "operationId": "readDealerContacts",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer",
+            "name": "dealerid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "client type",
+            "name": "clientid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "current tenant name",
+            "name": "tenantname",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "auth token",
+            "name": "tekion-api-token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "list of comma separated fields you want in response e.g /contacts?fields=user,userDisplayName,userDisplayTitle",
+            "name": "fields",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "list of dealer contacts",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/dealerContact"
+              }
+            }
+          },
+          "204": {
+            "description": "dealer contacts not found in data base"
+          },
+          "400": {
+            "description": "error querying data base"
+          }
+        }
+      }
+    },
+    "/dealer": {
+      "get": {
+        "description": "By default /dealer returns complete dealer object. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "dealer"
+        ],
+        "summary": "Returns Dealer identified by the dealer id",
+        "operationId": "readDealer",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer",
+            "name": "dealerid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "client type",
+            "name": "clientid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "current tenant name",
+            "name": "tenantname",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "auth token",
+            "name": "tekion-api-token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "list of comma separated fields you want in response e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress",
+            "name": "fields",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "dealer object",
+            "schema": {
+              "$ref": "#/definitions/dealer"
+            }
+          },
+          "204": {
+            "description": "dealer not found in data base"
+          },
+          "400": {
+            "description": "error querying data base"
+          }
+        }
+      }
+    },
+    "/fixedoperation/{foid}": {
+      "get": {
+        "description": "By default /fixedoperation/{foid} returns complete fixed operation object. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "fixedOperation"
+        ],
+        "summary": "Returns fixed operation identified by fixed operation id passed as part of url",
+        "operationId": "readFixedOperation",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "unique identifier of the fixed operation",
+            "name": "foid",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer",
+            "name": "dealerid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "client type",
+            "name": "clientid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "current tenant name",
+            "name": "tenantname",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "auth token",
+            "name": "tekion-api-token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "list of comma separated fields you want in response e.g /fixedoperation/{foid}?fields=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity",
+            "name": "fields",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "fixed operation object",
+            "schema": {
+              "$ref": "#/definitions/fixedOperation"
+            }
+          },
+          "204": {
+            "description": "fixed operation not found in data base"
+          },
+          "400": {
+            "description": "error querying data base"
+          }
+        }
+      }
+    },
+    "/fixedoperations": {
+      "get": {
+        "description": "By default /fixedoperations returns list of complete fixed operation objects. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "fixedOperations"
+        ],
+        "summary": "Returns list of fixed operations identified by dealer id passed in header",
+        "operationId": "readFixedOperations",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer",
+            "name": "dealerid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "client type",
+            "name": "clientid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "current tenant name",
+            "name": "tenantname",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "auth token",
+            "name": "tekion-api-token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "list of comma separated fields you want in response e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity",
+            "name": "fields",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "list of fixed operations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/fixedOperation"
+              }
+            }
+          },
+          "204": {
+            "description": "fixed operations not found in data base"
+          },
+          "400": {
+            "description": "error querying data base"
+          }
+        }
+      }
+    },
+    "/goal/{gid}": {
+      "get": {
+        "description": "By default /goal/{gid} returns complete dealer goal object. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "dealerGoal"
+        ],
+        "summary": "Returns dealer goal identified by dealer goal id passed as part of url",
+        "operationId": "readDealerGoal",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer goal",
+            "name": "gid",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer",
+            "name": "dealerid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "client type",
+            "name": "clientid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "current tenant name",
+            "name": "tenantname",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "auth token",
+            "name": "tekion-api-token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "list of comma separated fields you want in response e.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal",
+            "name": "fields",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "dealer goal object",
+            "schema": {
+              "$ref": "#/definitions/dealerGoal"
+            }
+          },
+          "204": {
+            "description": "dealer goal not found in data base"
+          },
+          "400": {
+            "description": "error querying data base"
+          }
+        }
+      }
+    },
+    "/goals": {
+      "get": {
+        "description": "By default /goals returns list of complete dealer goals objects. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "dealerGoals"
+        ],
+        "summary": "Returns list of dealer goals identified by dealer id passed in header",
+        "operationId": "readDealerGoals",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer",
+            "name": "dealerid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "client type",
+            "name": "clientid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "current tenant name",
+            "name": "tenantname",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "auth token",
+            "name": "tekion-api-token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "list of comma separated fields you want in response e.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal",
+            "name": "fields",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "list of dealer goals",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/dealerGoal"
+              }
+            }
+          },
+          "204": {
+            "description": "dealer goals not found in data base"
+          },
+          "400": {
+            "description": "error querying data base"
+          }
+        }
+      }
+    },
+    "/groups": {
+      "get": {
+        "description": "By default /groups returns list of complete dealer groups objects. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "dealerGroups"
+        ],
+        "summary": "Returns list of dealer groups identified by dealer id passed in header",
+        "operationId": "readDealerGroups",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer",
+            "name": "dealerid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "client type",
+            "name": "clientid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "current tenant name",
+            "name": "tenantname",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "auth token",
+            "name": "tekion-api-token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "list of comma separated fields you want in response e.g /groups?fields=dealerGroupName,dealerGroupName,dealers",
+            "name": "fields",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "list of dealer groups",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/dealerGroup"
+              }
+            }
+          },
+          "204": {
+            "description": "dealer groups not found in data base"
+          },
+          "400": {
+            "description": "error querying data base"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "amenities": {
+      "description": "amenities struct contains list of dealer amenities, stored as slice of embedded objects in fixed operation struct",
+      "type": "object",
+      "properties": {
+        "amenityID": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "appointmentCapacity": {
+      "description": "appointmentCapacity struct contains details of the number of hours present for each skill, stored as slice of embedded objects in fixed operation struct",
+      "type": "object",
+      "properties": {
+        "appointmentSlotDuration": {
+          "type": "integer",
+          "format": "int16",
+          "x-go-name": "AppointmentSlotDuration"
+        },
+        "appointmentsPerSlot": {
+          "type": "integer",
+          "format": "int16",
+          "x-go-name": "AppointmentsPerSlot"
+        },
+        "friday": {
+          "type": "string",
+          "x-go-name": "Friday"
+        },
+        "monday": {
+          "type": "string",
+          "x-go-name": "Monday"
+        },
+        "numberOfServiceAdvisors": {
+          "type": "integer",
+          "format": "int16",
+          "x-go-name": "NumberOfServiceAdvisors"
+        },
+        "saturday": {
+          "type": "string",
+          "x-go-name": "Saturday"
+        },
+        "skillCode": {
+          "type": "string",
+          "x-go-name": "SkillCode"
+        },
+        "skillName": {
+          "type": "string",
+          "x-go-name": "SkillName"
+        },
+        "sunday": {
+          "type": "string",
+          "x-go-name": "Sunday"
+        },
+        "thursday": {
+          "type": "string",
+          "x-go-name": "Thursday"
+        },
+        "tuesday": {
+          "type": "string",
+          "x-go-name": "Tuesday"
+        },
+        "wednesday": {
+          "type": "string",
+          "x-go-name": "Wednesday"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "appointmentHour": {
+      "description": "appointmentHour struct contains details appointment hours, stored as embedded object in fixed operation struct",
+      "type": "object",
+      "properties": {
+        "fridayCloseHour": {
+          "type": "string",
+          "x-go-name": "FridayCloseHour"
+        },
+        "fridayOpenHour": {
+          "type": "string",
+          "x-go-name": "FridayOpenHour"
+        },
+        "mondayCloseHour": {
+          "type": "string",
+          "x-go-name": "MondayCloseHour"
+        },
+        "mondayOpenHour": {
+          "type": "string",
+          "x-go-name": "MondayOpenHour"
+        },
+        "saturdayCloseHour": {
+          "type": "string",
+          "x-go-name": "SaturdayCloseHour"
+        },
+        "saturdayOpenHour": {
+          "type": "string",
+          "x-go-name": "SaturdayOpenHour"
+        },
+        "sundayCloseHour": {
+          "type": "string",
+          "x-go-name": "SundayCloseHour"
+        },
+        "sundayOpenHour": {
+          "type": "string",
+          "x-go-name": "SundayOpenHour"
+        },
+        "thursdayCloseHour": {
+          "type": "string",
+          "x-go-name": "ThursdayCloseHour"
+        },
+        "thursdayOpenHour": {
+          "type": "string",
+          "x-go-name": "ThursdayOpenHour"
+        },
+        "tuesdayCloseHour": {
+          "type": "string",
+          "x-go-name": "TuesdayCloseHour"
+        },
+        "tuesdayOpenHour": {
+          "type": "string",
+          "x-go-name": "TuesdayOpenHour"
+        },
+        "wednesdayCloseHour": {
+          "type": "string",
+          "x-go-name": "WednesdayCloseHour"
+        },
+        "wednesdayOpenHour": {
+          "type": "string",
+          "x-go-name": "WednesdayOpenHour"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "dealer": {
+      "description": "dealer struct contains dealer details",
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "x-go-name": "Currency"
+        },
+        "dealerAddress": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dealerAddress"
+          },
+          "x-go-name": "Address"
+        },
+        "dealerContact": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Contact"
+        },
+        "dealerDocumentTemplates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dealerDocumentTemplate"
+          },
+          "x-go-name": "DocumentTemplates"
+        },
+        "dealerDoingBusinessAsName": {
+          "type": "string",
+          "x-go-name": "DoingBusinessAsName"
+        },
+        "dealerGroup": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Group"
+        },
+        "dealerID": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "dealerLogos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/image"
+          },
+          "x-go-name": "Logos"
+        },
+        "dealerName": {
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "dealerOperationSchedule": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dealerOperationSchedule"
+          },
+          "x-go-name": "OperationSchedule"
+        },
+        "dealershipCode": {
+          "type": "string",
+          "x-go-name": "DealershipCode"
+        },
+        "documentVersion": {
+          "type": "number",
+          "format": "float",
+          "x-go-name": "DocumentVersion"
+        },
+        "isActive": {
+          "type": "boolean",
+          "x-go-name": "IsActive"
+        },
+        "lastUpdatedByDisplayName": {
+          "type": "string",
+          "x-go-name": "LastUpdatedByDisplayName"
+        },
+        "lastUpdatedByUser": {
+          "type": "string",
+          "x-go-name": "LastUpdatedByUser"
+        },
+        "lastUpdatedDateTime": {
+          "description": "format: date-time",
+          "x-go-name": "LastUpdatedDateTime"
+        },
+        "makeCode": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "MakeCode"
+        },
+        "manufacturerIssuedNumber": {
+          "type": "string",
+          "x-go-name": "ManufacturerIssuedNumber"
+        },
+        "phone": {
+          "type": "string",
+          "x-go-name": "Phone"
+        },
+        "stateIssuedNumber": {
+          "type": "string",
+          "x-go-name": "StateIssuedNumber"
+        },
+        "tenantID": {
+          "type": "string",
+          "x-go-name": "TenantID"
+        },
+        "timezone": {
+          "type": "string",
+          "x-go-name": "Timezone"
+        },
+        "vehicleDamage": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/vehicleDamage"
+          },
+          "x-go-name": "VehicleDamage"
+        },
+        "website": {
+          "type": "string",
+          "x-go-name": "Website"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "dealerAddress": {
+      "description": "dealerAddress struct contains details of the dealer address, stored as embedded objects in dealer struct",
+      "type": "object",
+      "properties": {
+        "addressType": {
+          "type": "string",
+          "x-go-name": "AddressType"
+        },
+        "city": {
+          "type": "string",
+          "x-go-name": "City"
+        },
+        "country": {
+          "type": "string",
+          "x-go-name": "Country"
+        },
+        "county": {
+          "type": "string",
+          "x-go-name": "County"
+        },
+        "dealerAddressID": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "isActive": {
+          "type": "boolean",
+          "x-go-name": "IsActive"
+        },
+        "state": {
+          "type": "string",
+          "x-go-name": "State"
+        },
+        "streetAddress1": {
+          "type": "string",
+          "x-go-name": "StreetAddress1"
+        },
+        "streetAddress2": {
+          "type": "string",
+          "x-go-name": "StreetAddress2"
+        },
+        "zipCode": {
+          "type": "string",
+          "x-go-name": "ZipCode"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "dealerCommunication": {
+      "description": "dealerCommunication struct contains details of the dealer communication",
+      "type": "object",
+      "properties": {
+        "customerCommunicationSource": {
+          "type": "string",
+          "x-go-name": "CustomerCommunicationSource"
+        },
+        "dealerCommunicationID": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "dealerID": {
+          "type": "string",
+          "x-go-name": "DealerID"
+        },
+        "incomingEmail": {
+          "type": "string",
+          "x-go-name": "IncomingEmail"
+        },
+        "isActive": {
+          "type": "boolean",
+          "x-go-name": "IsActive"
+        },
+        "outGoingEmail": {
+          "type": "string",
+          "x-go-name": "OutGoingEmail"
+        },
+        "phone": {
+          "type": "string",
+          "x-go-name": "Phone"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "dealerContact": {
+      "description": "dealerContact",
+      "type": "object",
+      "properties": {
+        "dealerContactID": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "dealerID": {
+          "type": "string",
+          "x-go-name": "DealerID"
+        },
+        "dealerOperationType": {
+          "type": "string",
+          "x-go-name": "DealerOperationType"
+        },
+        "documentVersion": {
+          "type": "number",
+          "format": "float",
+          "x-go-name": "DocumentVersion"
+        },
+        "isActive": {
+          "type": "boolean",
+          "x-go-name": "IsActive"
+        },
+        "lastUpdatedByDisplayName": {
+          "type": "string",
+          "x-go-name": "LastUpdatedByDisplayName"
+        },
+        "lastUpdatedByUser": {
+          "type": "string",
+          "x-go-name": "LastUpdatedByUser"
+        },
+        "lastUpdatedDateTime": {
+          "description": "format: date-time",
+          "x-go-name": "LastUpdatedDateTime"
+        },
+        "user": {
+          "type": "string",
+          "x-go-name": "User"
+        },
+        "userDisplayName": {
+          "type": "string",
+          "x-go-name": "UserDisplayName"
+        },
+        "userDisplayTitle": {
+          "type": "string",
+          "x-go-name": "UserDisplayTitle"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "dealerDocumentTemplate": {
+      "description": "dealerDocumentTemplate struct contains details of the templates specific to the dealer, stored as slice of embedded objects in dealer struct",
+      "type": "object",
+      "properties": {
+        "dealerDocumentTemplateID": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "isActive": {
+          "type": "boolean",
+          "x-go-name": "IsActive"
+        },
+        "templateImageID": {
+          "type": "string",
+          "x-go-name": "TemplateImageID"
+        },
+        "templateName": {
+          "type": "string",
+          "x-go-name": "TemplateName"
+        },
+        "templateType": {
+          "type": "string",
+          "x-go-name": "TemplateType"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "dealerGoal": {
+      "description": "dealerGoal",
+      "type": "object",
+      "properties": {
+        "averageLaborRateAdvisorGoal": {
+          "description": "averageLaborRateAdvisorGoal",
+          "type": "string",
+          "x-go-name": "AverageLaborRateAdvisorGoal"
+        },
+        "dealerGoalID": {
+          "description": "dealerGoalID",
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "dealerID": {
+          "description": "dealerID",
+          "type": "string",
+          "x-go-name": "DealerID"
+        },
+        "documentVersion": {
+          "description": "Document version to keep track of the changes -- DEFAULT 1.0",
+          "type": "number",
+          "format": "float",
+          "x-go-name": "DocumentVersion"
+        },
+        "hoursPerRepairOrderAdvisorGoal": {
+          "description": "hoursPerRepairOrderAdvisorGoal",
+          "type": "string",
+          "x-go-name": "HoursPerRepairOrderAdvisorGoal"
+        },
+        "lastUpdatedByDisplayName": {
+          "description": "This is to Display the Name in the application",
+          "type": "string",
+          "x-go-name": "LastUpdatedByDisplayName"
+        },
+        "lastUpdatedByUser": {
+          "description": "Last Updated By User",
+          "type": "string",
+          "x-go-name": "LastUpdatedByUser"
+        },
+        "lastUpdatedDateTime": {
+          "description": "When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP\nformat: date-time",
+          "x-go-name": "LastUpdatedDateTime"
+        },
+        "totalHoursAdvisorGoal": {
+          "description": "totalHoursAdvisorGoal",
+          "type": "string",
+          "x-go-name": "TotalHoursAdvisorGoal"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "dealerGroup": {
+      "description": "dealerGroup",
+      "type": "object",
+      "properties": {
+        "dealerGroupID": {
+          "description": "dealerGroupID",
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "dealerGroupName": {
+          "description": "dealerGroupName",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "dealers": {
+          "description": "dealers",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Dealers"
+        },
+        "description": {
+          "description": "description",
+          "type": "string",
+          "x-go-name": "Desc"
+        },
+        "documentVersion": {
+          "description": "Document version to keep track of the changes -- DEFAULT 1.0",
+          "type": "number",
+          "format": "float",
+          "x-go-name": "DocumentVersion"
+        },
+        "lastUpdatedByDisplayName": {
+          "description": "This is to Display the Name in the application",
+          "type": "string",
+          "x-go-name": "LastUpdatedByDisplayName"
+        },
+        "lastUpdatedByUser": {
+          "description": "Last Updated By User",
+          "type": "string",
+          "x-go-name": "LastUpdatedByUser"
+        },
+        "lastUpdatedDateTime": {
+          "description": "When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP\nformat: date-time",
+          "x-go-name": "LastUpdatedDateTime"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "dealerOperationSchedule": {
+      "description": "dealerOperationSchedule struct contains details of the dealer operation schedule, stored as slice of embedded objects in dealer struct",
+      "type": "object",
+      "properties": {
+        "dealerOperationScheduleID": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "dealerOperationType": {
+          "type": "string",
+          "x-go-name": "DealerOperationType"
+        },
+        "fridayCloseHour": {
+          "type": "string",
+          "x-go-name": "FridayCloseHour"
+        },
+        "fridayOpenHour": {
+          "type": "string",
+          "x-go-name": "FridayOpenHour"
+        },
+        "mondayCloseHour": {
+          "type": "string",
+          "x-go-name": "MondayCloseHour"
+        },
+        "mondayOpenHour": {
+          "type": "string",
+          "x-go-name": "MondayOpenHour"
+        },
+        "saturdayCloseHour": {
+          "type": "string",
+          "x-go-name": "SaturdayCloseHour"
+        },
+        "saturdayOpenHour": {
+          "type": "string",
+          "x-go-name": "SaturdayOpenHour"
+        },
+        "sundayCloseHour": {
+          "type": "string",
+          "x-go-name": "SundayCloseHour"
+        },
+        "sundayOpenHour": {
+          "type": "string",
+          "x-go-name": "SundayOpenHour"
+        },
+        "thursdayCloseHour": {
+          "type": "string",
+          "x-go-name": "ThursdayCloseHour"
+        },
+        "thursdayOpenHour": {
+          "type": "string",
+          "x-go-name": "ThursdayOpenHour"
+        },
+        "tuesdayCloseHour": {
+          "type": "string",
+          "x-go-name": "TuesdayCloseHour"
+        },
+        "tuesdayOpenHour": {
+          "type": "string",
+          "x-go-name": "TuesdayOpenHour"
+        },
+        "wednesdayCloseHour": {
+          "type": "string",
+          "x-go-name": "WednesdayCloseHour"
+        },
+        "wednesdayOpenHour": {
+          "type": "string",
+          "x-go-name": "WednesdayOpenHour"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "fixedOperation": {
+      "description": "fixedOperation struct contains dealer fixed operation details",
+      "type": "object",
+      "properties": {
+        "BARNumber": {
+          "type": "string"
+        },
+        "EPANumber": {
+          "type": "string"
+        },
+        "amenities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/amenities"
+          },
+          "x-go-name": "Amenities"
+        },
+        "appointmentCapacity": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/appointmentCapacity"
+          },
+          "x-go-name": "AppointmentCapacity"
+        },
+        "appointmentHour": {
+          "$ref": "#/definitions/appointmentHour"
+        },
+        "dealerID": {
+          "type": "string",
+          "x-go-name": "DealerID"
+        },
+        "documentVersion": {
+          "type": "number",
+          "format": "float",
+          "x-go-name": "DocumentVersion"
+        },
+        "fixedOperationID": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "floorCapacity": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/floorCapacity"
+          },
+          "x-go-name": "FloorCapacity"
+        },
+        "holidays": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/holiday"
+          },
+          "x-go-name": "Holidays"
+        },
+        "isActive": {
+          "type": "boolean",
+          "x-go-name": "IsActive"
+        },
+        "lastUpdatedByDisplayName": {
+          "type": "string",
+          "x-go-name": "LastUpdatedByDisplayName"
+        },
+        "lastUpdatedByUser": {
+          "type": "string",
+          "x-go-name": "LastUpdatedByUser"
+        },
+        "lastUpdatedDateTime": {
+          "description": "format: date-time",
+          "x-go-name": "LastUpdatedDateTime"
+        },
+        "manufacturerLogos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/image"
+          },
+          "x-go-name": "ManufacturerLogos"
+        },
+        "serviceAdvisors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/users"
+          },
+          "x-go-name": "ServiceAdvisors"
+        }
+      },
+      "x-go-name": "FixedOperation",
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "floorCapacity": {
+      "description": "floorCapacity struct contains details of dealer floor capacities, , stored as slice of embedded objects in fixed operation struct",
+      "type": "object",
+      "properties": {
+        "fridayHour": {
+          "type": "string",
+          "x-go-name": "FridayHour"
+        },
+        "mondayHour": {
+          "type": "string",
+          "x-go-name": "MondayHour"
+        },
+        "saturdayHour": {
+          "type": "string",
+          "x-go-name": "SaturdayHour"
+        },
+        "skillCode": {
+          "type": "string",
+          "x-go-name": "SkillCode"
+        },
+        "skillName": {
+          "type": "string",
+          "x-go-name": "SkillName"
+        },
+        "sundayHours": {
+          "type": "string",
+          "x-go-name": "SundayHours"
+        },
+        "thursdayHour": {
+          "type": "string",
+          "x-go-name": "ThursdayHour"
+        },
+        "total": {
+          "type": "string",
+          "x-go-name": "Total"
+        },
+        "tuesdayHour": {
+          "type": "string",
+          "x-go-name": "TuesdayHour"
+        },
+        "wednesdayHour": {
+          "type": "string",
+          "x-go-name": "WednesdayHour"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "holiday": {
+      "description": "holiday struct contains details of holidays, stored as slice of embedded objects in fixed operation struct",
+      "type": "object",
+      "properties": {
+        "carryOver": {
+          "type": "boolean",
+          "x-go-name": "CarryOver"
+        },
+        "date": {
+          "type": "string",
+          "x-go-name": "Date"
+        },
+        "endOperationHour": {
+          "type": "string",
+          "x-go-name": "EndOperationHour"
+        },
+        "startOperationHour": {
+          "type": "string",
+          "x-go-name": "StartOperationHour"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "image": {
+      "description": "image struct contains details of the image stored in S3 bucket, stored as slice of embedded objects in dealer struct",
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "string",
+          "x-go-name": "Height"
+        },
+        "imageID": {
+          "type": "string",
+          "x-go-name": "ImageID"
+        },
+        "title": {
+          "type": "string",
+          "x-go-name": "Title"
+        },
+        "width": {
+          "type": "string",
+          "x-go-name": "Width"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "users": {
+      "description": "users struct contains details of the users detail specific to the dealer, stored as slice of embedded objects in fixed operation struct\nUsing generic user type instead of serviceAdvisor type",
+      "type": "object",
+      "properties": {
+        "dealerID": {
+          "type": "string",
+          "x-go-name": "DealerID"
+        },
+        "jobTitle": {
+          "type": "string",
+          "x-go-name": "JobTitle"
+        },
+        "userID": {
+          "type": "string",
+          "x-go-name": "UserID"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "vehicleDamage": {
+      "description": "vehicleDamage struct contains details of the dealer vehicle damage types, stored as slice of embedded objects in dealer struct",
+      "type": "object",
+      "properties": {
+        "damageType": {
+          "type": "string",
+          "x-go-name": "DamageType"
+        },
+        "description": {
+          "type": "string",
+          "x-go-name": "Description"
+        },
+        "imageURL": {
+          "type": "string",
+          "x-go-name": "ImageURL"
+        },
+        "priority": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Priority"
+        },
+        "vehicleDamageID": {
+          "type": "string",
+          "x-go-name": "ID"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    }
+  }
+}

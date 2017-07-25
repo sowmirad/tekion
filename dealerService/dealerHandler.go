@@ -1,23 +1,16 @@
-/*
-Package dealerService implements dealer micro service. It provides api's to perform
-CURD operations on dealer object. dealerService package is divided into 4 file.
-1. dealerRoutes.go -> contain routes.
-2. dealerHandler.go -> containing handler functions.
-3. dealerModel.go -> containing models.
-4. dealerUtils.go -> containing util functions.
-*/
 package dealerService
 
 // This file contains handler functions
 
 import (
 	//standard libraries
+	"errors"
 	"net/http"
 
 	//third party libraries
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
-	"github.com/pkg/errors"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
 	//tekion specific libraries
@@ -26,20 +19,58 @@ import (
 	"bitbucket.org/tekion/tbaas/tapi"
 )
 
-// ReadDealer - this handler function returns the Dealer Object. Reads the Dealer object from database identified by the Dealer.ID passed in header.
-// By default ReadDealer returns complete Dealer object. In case you need only certain fields, you can specify an optional query parameter "fields",
+// swagger:operation GET /dealer dealer readDealer
+//
+// Returns Dealer identified by the dealer id
+//
+// By default /dealer returns complete dealer object. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
-// E.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
-// header - dealerid - (required) - unique identifier of the Dealer.
-// query - fields - (optional) - list of comma separated fields you want in response instead of complete Dealer object.
-// returns - json of Dealer object.
-func ReadDealer(w http.ResponseWriter, r *http.Request) {
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: list of comma separated fields you want in response e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: dealer object
+//     schema:
+//         "$ref": "#/definitions/dealer"
+//   '204':
+//     description: dealer not found in data base
+//   '400':
+//     description: error querying data base
+func readDealer(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	//assuming logged in user has access to view all the dealers
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
-	var dealer Dealer
+	var dealer dealer
 
 	err := fetchOne(ctx,
 		getDealerCollectionName(),
@@ -47,7 +78,10 @@ func ReadDealer(w http.ResponseWriter, r *http.Request) {
 		fields,
 		&dealer,
 	)
-	if err != nil {
+	if err == mgo.ErrNotFound {
+		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		return
+	} else if err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
 		return
 	}
@@ -55,46 +89,132 @@ func ReadDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealer)
 }
 
-// ReadFixedOperation - this handler function returns the FixedOperation object. Reads the FixedOperation object from database identified by FixedOperation.ID passed as part of url.
-// By default ReadFixedOperation returns whole FixedOperation object. In case you need only certain fields, you can specify an optional query parameter "fields",
+// swagger:operation GET /fixedoperation/{foid} fixedOperation readFixedOperation
+//
+// Returns fixed operation identified by fixed operation id passed as part of url
+//
+// By default /fixedoperation/{foid} returns complete fixed operation object. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
-// E.g /fixedoperation/{id}?fields=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
-// url - {id} - (required) - unique identifier of the FixedOperation.
-// query - fields - (optional) - list of comma separated fields you want in response instead of complete FixedOperation object.
-// returns - json of  FixedOperation object.
-func ReadFixedOperation(w http.ResponseWriter, r *http.Request) {
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: foid
+//   in: path
+//   description: unique identifier of the fixed operation
+//   required: true
+//   type: string
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: list of comma separated fields you want in response e.g /fixedoperation/{foid}?fields=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: fixed operation object
+//     schema:
+//         "$ref": "#/definitions/fixedOperation"
+//   '204':
+//     description: fixed operation not found in data base
+//   '400':
+//     description: error querying data base
+func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	fixedOperationID := vars["id"]
+	fixedOperationID := vars["foid"]
 	if len(fixedOperationID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("fixed operation id missing in request"))
+		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer fixed operation id missing in request"))
 		return
 	}
 
-	var fixedOperation FixedOperation
+	var fo FixedOperation
 	fields := fetchFieldsFromRequest(r)
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	err := fetchOne(ctx,
 		getFixedOperationCollectionName(),
 		bson.M{"_id": fixedOperationID},
 		fields,
-		&fixedOperation,
+		&fo,
 	)
-	if err != nil {
+	if err == mgo.ErrNotFound {
+		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		return
+	} else if err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
 		return
 	}
 
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperation)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fo)
 }
 
-// ReadFixedOperations - this handler function returns json array of FixedOperation objects. Reads the FixedOperation object from database identified by Dealer.ID passed in header.
-// By default ReadFixedOperations returns complete FixedOperation objects. In case you need only certain fields, you can specify an optional query parameter "fields",
+// swagger:operation GET /fixedoperations fixedOperations readFixedOperations
+//
+// Returns list of fixed operations identified by dealer id passed in header
+//
+// By default /fixedoperations returns list of complete fixed operation objects. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
-// E.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
-// header - dealerid - (required) - unique identifier of the Dealer.
-// query - fields - (optional) - list of comma separated fields you want in response instead of complete FixedOperation object.
-// returns - json array of FixedOperation objects.
-func ReadFixedOperations(w http.ResponseWriter, r *http.Request) {
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: list of comma separated fields you want in response e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: list of fixed operations
+//     schema:
+//       type: array
+//       items:
+//         "$ref": "#/definitions/fixedOperation"
+//   '204':
+//     description: fixed operations not found in data base
+//   '400':
+//     description: error querying data base
+func readFixedOperations(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
@@ -110,30 +230,73 @@ func ReadFixedOperations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := "Document found"
 	if len(fixedOperations) == 0 {
-		msg = "No document found"
+		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		return
 	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, msg, fixedOperations)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperations)
 }
 
-// ReadContact - this handler function returns the DealerContact Object. Reads the DealerContact object from database identified by the DealerContact.ID passed as part of url.
-// By default ReadContact returns whole DealerContact object. In case you need only certain fields, you can specify an optional query parameter "fields",
+// swagger:operation GET /contact/{cid} dealerContact readDealerContact
+//
+// Returns dealer contact identified by dealer contact id passed as part of url
+//
+// By default /contact/{cid} returns complete dealer contact object. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
-// E.g /contact/{id}?fields=user,userDisplayName,userDisplayTitle
-// url - {id} - (required) - unique identifier of the DealerContact.
-// query - fields - (optional) - list of comma separated fields you want in response instead of complete DealerContact object.
-// returns - json of DealerContact object.
-func ReadContact(w http.ResponseWriter, r *http.Request) {
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: cid
+//   in: path
+//   description: unique identifier of the dealer contact
+//   required: true
+//   type: string
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: list of comma separated fields you want in response e.g /contact/{cid}?fields=user,userDisplayName,userDisplayTitle
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: dealer contact object
+//     schema:
+//         "$ref": "#/definitions/dealerContact"
+//   '204':
+//     description: dealer contact not found in data base
+//   '400':
+//     description: error querying data base
+func readDealerContact(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	contactID := vars["id"]
+	contactID := vars["cid"]
 	if len(contactID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("contact id missing in request"))
+		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer contact id missing in request"))
 		return
 	}
 
 	fields := fetchFieldsFromRequest(r)
-	var contact DealerContact
+	var contact dealerContact
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	err := fetchOne(ctx,
 		getDealerContactCollectionName(),
@@ -141,7 +304,10 @@ func ReadContact(w http.ResponseWriter, r *http.Request) {
 		fields,
 		&contact,
 	)
-	if err != nil {
+	if err == mgo.ErrNotFound {
+		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		return
+	} else if err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
 		return
 	}
@@ -149,19 +315,59 @@ func ReadContact(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", contact)
 }
 
-// ReadContacts - this handler function returns json array of DealerContact Objects. Reads the DealerContact object from database identified by the Dealer.ID passed as part of header.
-// By default ReadContacts returns complete DealerContact objects. In case you need only certain fields, you can specify an optional query parameter "fields",
+// swagger:operation GET /contacts dealerContacts readDealerContacts
+//
+// Returns list of dealer contacts identified by dealer id passed in header
+//
+// By default /contacts returns list of complete dealer contacts objects. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
-// E.g /contacts?fields=user,userDisplayName,userDisplayTitle
-// header - dealerid - (required) - unique identifier of the Dealer.
-// query - fields - (optional) - list of comma separated fields you want in response instead of complete DealerContact object.
-// returns - json array of DealerContact objects.
-func ReadContacts(w http.ResponseWriter, r *http.Request) {
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: list of comma separated fields you want in response e.g /contacts?fields=user,userDisplayName,userDisplayTitle
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: list of dealer contacts
+//     schema:
+//       type: array
+//       items:
+//         "$ref": "#/definitions/dealerContact"
+//   '204':
+//     description: dealer contacts not found in data base
+//   '400':
+//     description: error querying data base
+func readDealerContacts(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
-	var contacts []DealerContact
+	var contacts []dealerContact
 	err := fetchDealerContacts(ctx,
 		bson.M{"dealerID": dealerID},
 		fields,
@@ -172,58 +378,144 @@ func ReadContacts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := "Document found"
 	if len(contacts) == 0 {
-		msg = "No document found"
+		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		return
 	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, msg, contacts)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", contacts)
 }
 
-// ReadGoal - this handler function returns the DealerGoal Object. Reads the DealerGoal object from database identified by the DealerGoal.ID passed as part of url.
-// By default ReadGoal returns complete DealerGoal object. In case you need only certain fields, you can specify an optional query parameter "fields",
+// swagger:operation GET /goal/{gid} dealerGoal readDealerGoal
+//
+// Returns dealer goal identified by dealer goal id passed as part of url
+//
+// By default /goal/{gid} returns complete dealer goal object. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
-// E.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
-// url - {id} - (required) - unique identifier of the DealerGoal.
-// query - fields - (optional) - list of comma separated fields you want in response instead of complete DealerGoal object.
-// returns - json of DealerGoal object.
-func ReadGoal(w http.ResponseWriter, r *http.Request) {
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: gid
+//   in: path
+//   description: unique identifier of the dealer goal
+//   required: true
+//   type: string
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: list of comma separated fields you want in response e.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: dealer goal object
+//     schema:
+//         "$ref": "#/definitions/dealerGoal"
+//   '204':
+//     description: dealer goal not found in data base
+//   '400':
+//     description: error querying data base
+func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	goalID := vars["id"]
+	goalID := vars["gid"]
 	if len(goalID) == 0 {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer goal id missing in request"))
 		return
 	}
 
 	fields := fetchFieldsFromRequest(r)
-	var dealerGoal DealerGoal
+	var goal dealerGoal
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	err := fetchOne(ctx,
 		getDealerGoalCollectionName(),
 		bson.M{"_id": goalID},
 		fields,
-		&dealerGoal,
+		&goal,
 	)
-	if err != nil {
+	if err == mgo.ErrNotFound {
+		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		return
+	} else if err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
 		return
 	}
 
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealerGoal)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", goal)
 }
 
-// ReadGoals - this handler function returns json array of DealerGoal Objects. Reads the DealerGoal object from database identified by the dealer id passed in header.
-// By default ReadGoals returns complete DealerGoal objects. In case you need only certain fields, you can specify an optional query parameter "fields",
+// swagger:operation GET /goals dealerGoals readDealerGoals
+//
+// Returns list of dealer goals identified by dealer id passed in header
+//
+// By default /goals returns list of complete dealer goals objects. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
-// E.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
-// header - dealerid - (required) - unique identifier of the Dealer.
-// query - fields - (optional) - list of comma separated fields you want in response instead of complete DealerGoal objects.
-// returns - json array of DealerGoal objects.
-func ReadGoals(w http.ResponseWriter, r *http.Request) {
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: list of comma separated fields you want in response e.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: list of dealer goals
+//     schema:
+//       type: array
+//       items:
+//         "$ref": "#/definitions/dealerGoal"
+//   '204':
+//     description: dealer goals not found in data base
+//   '400':
+//     description: error querying data base
+func readDealerGoals(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
-	var goals []DealerGoal
+	var goals []dealerGoal
 	err := fetchDealerGoals(ctx,
 		bson.M{"dealerID": dealerID},
 		fields,
@@ -235,26 +527,66 @@ func ReadGoals(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := "Document found"
 	if len(goals) == 0 {
-		msg = "No document found"
+		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		return
 	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, msg, goals)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", goals)
 }
 
-// ReadGroups - this handler function returns json array of DealerGroup objects. Reads the list of DealerGroup object from database identified by the Dealer.ID passed in header.
-// By default ReadGroups returns complete DealerGroup objects. In case you need only certain fields, you can specify an optional query parameter "fields",
+// swagger:operation GET /groups dealerGroups readDealerGroups
+//
+// Returns list of dealer groups identified by dealer id passed in header
+//
+// By default /groups returns list of complete dealer groups objects. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
-// E.g /groups?fields=dealerGroupName,dealerGroupName,dealers
-// header - dealerid - (required) - unique identifier of the Dealer.
-// query - fields - (optional) - list of comma separated fields you want in response instead of complete DealerGroup objects.
-// returns - json array of DealerGroup objects.
-func ReadGroups(w http.ResponseWriter, r *http.Request) {
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: list of comma separated fields you want in response e.g /groups?fields=dealerGroupName,dealerGroupName,dealers
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: list of dealer groups
+//     schema:
+//       type: array
+//       items:
+//         "$ref": "#/definitions/dealerGroup"
+//   '204':
+//     description: dealer groups not found in data base
+//   '400':
+//     description: error querying data base
+func readDealerGroups(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
-	var groups []DealerGroup
+	var groups []dealerGroup
 	err := fetchDealerGroups(ctx,
 		bson.M{"dealers": dealerID},
 		fields,
@@ -266,9 +598,9 @@ func ReadGroups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := "Document found"
 	if len(groups) == 0 {
-		msg = "No document found"
+		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		return
 	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, msg, groups)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", groups)
 }

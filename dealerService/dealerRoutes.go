@@ -1,3 +1,30 @@
+// Package dealerService
+// title: dealer micro service
+//
+// dealerService implements dealer micro service.
+//
+// The purpose of this application is to provides api's to perform CURD operations on dealer object.
+// Currently only get endpoints are available.
+// dealerService is divided into 4 file.
+//  1. dealerRoutes.go  -> contain routes.
+//  2. dealerHandler.go -> containing handler functions.
+//  3. dealerModel.go   -> containing models.
+//  4. dealerUtils.go   -> containing util functions.
+//
+// Terms Of Service:
+//
+//     Schemes: https
+//     BasePath: /tdealer
+//     Version: 1.0.0
+//     Contact: Qasim Hasnain<mqhasnain@tekion.com>
+//
+//     Consumes:
+//     - application/json
+//
+//     Produces:
+//     - application/json
+//
+// swagger:meta
 package dealerService
 
 import (
@@ -11,64 +38,64 @@ import (
 // Start add routes and start the service at specified port
 func Start() {
 	tapi.AddRoutes(
-		"Read dealer info",
+		"Read dealer",
 		"GET",
 		"/dealer",
-		ReadDealer,
+		readDealer,
 		acl.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
-		"Reads fixedoperation",
+		"Reads dealer fixedoperation",
 		"GET",
-		"/fixedoperation/{id}",
-		ReadFixedOperation,
+		"/fixedoperation/{foid}",
+		readFixedOperation,
 		acl.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
-		"Reads fixedoperations",
+		"Reads dealer fixedoperations",
 		"GET",
 		"/fixedoperations",
-		ReadFixedOperations,
+		readFixedOperations,
 		acl.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
-		"Reads contact",
+		"Reads dealer contact",
 		"GET",
-		"/contact/{id}",
-		ReadContact,
+		"/contact/{cid}",
+		readDealerContact,
 		acl.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
-		"Reads contacts",
+		"Reads dealer contacts",
 		"GET",
 		"/contacts",
-		ReadContacts,
+		readDealerContacts,
 		acl.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
-		"Reads goal",
+		"Reads dealer goal",
 		"GET",
-		"/goal/{id}",
-		ReadGoal,
+		"/goal/{gid}",
+		readDealerGoal,
 		acl.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
-		"Reads goals",
+		"Reads dealer goals",
 		"GET",
 		"/goals",
-		ReadGoals,
+		readDealerGoals,
 		acl.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},
@@ -77,7 +104,7 @@ func Start() {
 		"Reads groups",
 		"GET",
 		"/groups",
-		ReadGroups,
+		readDealerGroups,
 		acl.ACLStruct{
 			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
 		},

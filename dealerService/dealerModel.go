@@ -59,8 +59,9 @@ Not sure about dealerShipCode mapping with dealerGroups
 Created a new collection for dealer group
 */
 
-// Dealer struct contains details of the dealer
-type Dealer struct {
+// dealer struct contains dealer details
+// swagger:model dealer
+type dealer struct {
 	ID                       string                    `bson:"_id" json:"dealerID,omitempty"`                                        //Dealer Identification  - Keep it Unique across the tenant
 	Name                     string                    `bson:"dealerName" json:"dealerName,omitempty"`                               //Dealer Name
 	MakeCode                 []string                  `bson:"makeCode" json:"makeCode,omitempty"`                                   //Make Code - Car manufacturer code // made slice of string on Prameet's recommendation
@@ -83,28 +84,32 @@ type Dealer struct {
 	IsActive                 bool                      `bson:"isActive" json:"isActive,omitempty"`                                   // Is Active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	LastUpdatedByUser        string                    `bson:"lastUpdatedByUser" json:"lastUpdatedByUser,omitempty"`                 // Last Updated By User
 	LastUpdatedByDisplayName string                    `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName,omitempty"`   // This is to Display the Name in the application
-	LastUpdatedDateTime      time.Time                 `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"`             // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
-	DocumentVersion          float32                   `bson:"documentVersion" json:"documentVersion,omitempty"`                     // Document version to keep track of the changes -- DEFAULT 1.0
+	// format: date-time
+	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"` // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
+	DocumentVersion     float32   `bson:"documentVersion" json:"documentVersion,omitempty"`         // Document version to keep track of the changes -- DEFAULT 1.0
 }
 
-// DealerContact struct contains details of the primary contacts to the dealer
-type DealerContact struct {
-	ID                       string    `bson:"_id" json:"dealerContactID,omitempty"`                               //
-	DealerID                 string    `bson:"dealerID" json:"dealerID,omitempty"`                                 // Dealer Identification Number
-	DealerOperationType      string    `bson:"dealerOperationType" json:"dealerOperationType,omitempty"`           // Dealer Operation Type - // Fixed Operations-Services, Sales, Parts, Management etc
-	User                     string    `bson:"user" json:"user,omitempty"`                                         // User Id or Login name ( ex: sig@tekion.com )
-	UserDisplayName          string    `bson:"userDisplayName" json:"userDisplayName,omitempty"`                   // Dealer Contact/User Display Name like "Scott Hertler "
-	UserDisplayTitle         string    `bson:"userDisplayTitle" json:"userDisplayTitle,omitempty"`                 // Dealer Contact or User Title like "General Manager" or "Parts Clerk"
-	IsActive                 bool      `bson:"isActive" json:"isActive,omitempty"`                                 // Is Active T or F (TRUE or FALSE) -- DEFAULT 'T'
-	LastUpdatedByUser        string    `bson:"lastUpdatedByUser" json:"lastUpdatedByUser,omitempty"`               // Last Updated By User
-	LastUpdatedByDisplayName string    `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName,omitempty"` // This is to Display the Name in the application
-	LastUpdatedDateTime      time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"`           // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
-	DocumentVersion          float32   `bson:"documentVersion" json:"documentVersion,omitempty"`                   // Document version to keep track of the changes -- DEFAULT 1.0
+// dealerContact
+// swagger:model dealerContact
+type dealerContact struct {
+	ID                       string `bson:"_id" json:"dealerContactID,omitempty"`                               //
+	DealerID                 string `bson:"dealerID" json:"dealerID,omitempty"`                                 // Dealer Identification Number
+	DealerOperationType      string `bson:"dealerOperationType" json:"dealerOperationType,omitempty"`           // Dealer Operation Type - // Fixed Operations-Services, Sales, Parts, Management etc
+	User                     string `bson:"user" json:"user,omitempty"`                                         // User Id or Login name ( ex: sig@tekion.com )
+	UserDisplayName          string `bson:"userDisplayName" json:"userDisplayName,omitempty"`                   // Dealer Contact/User Display Name like "Scott Hertler "
+	UserDisplayTitle         string `bson:"userDisplayTitle" json:"userDisplayTitle,omitempty"`                 // Dealer Contact or User Title like "General Manager" or "Parts Clerk"
+	IsActive                 bool   `bson:"isActive" json:"isActive,omitempty"`                                 // Is Active T or F (TRUE or FALSE) -- DEFAULT 'T'
+	LastUpdatedByUser        string `bson:"lastUpdatedByUser" json:"lastUpdatedByUser,omitempty"`               // Last Updated By User
+	LastUpdatedByDisplayName string `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName,omitempty"` // This is to Display the Name in the application
+	// format: date-time
+	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"` // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
+	DocumentVersion     float32   `bson:"documentVersion" json:"documentVersion,omitempty"`         // Document version to keep track of the changes -- DEFAULT 1.0
 }
 
-// Embedded objects in Dealer -- start
+// Embedded objects in dealer -- start
 
 // image struct contains details of the image stored in S3 bucket, stored as slice of embedded objects in dealer struct
+// swagger:model image
 type image struct {
 	Width   string `bson:"width" json:"width,omitempty"`     //required
 	Height  string `bson:"height" json:"height,omitempty"`   //required
@@ -113,6 +118,7 @@ type image struct {
 }
 
 // dealerAddress struct contains details of the dealer address, stored as embedded objects in dealer struct
+// swagger:model dealerAddress
 type dealerAddress struct {
 	ID             string `bson:"dealerAddressID" json:"dealerAddressID,omitempty"` // Dealer Identification
 	AddressType    string `bson:"addressType" json:"addressType,omitempty"`         // Dealer Address Type like Service, Sales, Parts etc
@@ -127,7 +133,9 @@ type dealerAddress struct {
 }
 
 // TODO : still unclear where and how to store it
+
 // dealerCommunication struct contains details of the dealer communication
+// swagger:model dealerCommunication
 type dealerCommunication struct {
 	ID                          string `bson:"dealerCommunicationID" json:"dealerCommunicationID,omitempty"`             //
 	DealerID                    string `bson:"dealerID" json:"dealerID,omitempty"`                                       // Dealer Identification  - Keep it Unique across the tenant
@@ -139,6 +147,7 @@ type dealerCommunication struct {
 }
 
 // dealerDocumentTemplate struct contains details of the templates specific to the dealer, stored as slice of embedded objects in dealer struct
+// swagger:model dealerDocumentTemplate
 type dealerDocumentTemplate struct {
 	ID              string `bson:"dealerDocumentTemplateID" json:"dealerDocumentTemplateID,omitempty"` //
 	TemplateName    string `bson:"templateName" json:"templateName,omitempty"`                         // Template Name ( What is the use of this templates)
@@ -148,6 +157,7 @@ type dealerDocumentTemplate struct {
 }
 
 // dealerOperationSchedule struct contains details of the dealer operation schedule, stored as slice of embedded objects in dealer struct
+// swagger:model dealerOperationSchedule
 type dealerOperationSchedule struct {
 	ID                  string `bson:"dealerOperationScheduleID" json:"dealerOperationScheduleID,omitempty"` //
 	DealerOperationType string `bson:"dealerOperationType" json:"dealerOperationType,omitempty"`             //Dealer Operation Type - // Fixed Operations-Services, Sales, Parts, Management etc
@@ -168,6 +178,7 @@ type dealerOperationSchedule struct {
 }
 
 // vehicleDamage struct contains details of the dealer vehicle damage types, stored as slice of embedded objects in dealer struct
+// swagger:model vehicleDamage
 type vehicleDamage struct {
 	ID          string `bson:"vehicleDamageID" json:"vehicleDamageID"` //
 	ImageURL    string `bson:"imageURL" json:"imageURL"`               //
@@ -182,7 +193,8 @@ type vehicleDamage struct {
 // date is stored in utc
 // date should be converted to dealer time zone
 
-// FixedOperation struct contains dealer fixed operation details
+// fixedOperation struct contains dealer fixed operation details
+// swagger:model fixedOperation
 type FixedOperation struct {
 	ID                       string                `bson:"_id" json:"fixedOperationID,omitempty"`                              //
 	DealerID                 string                `bson:"dealerID" json:"dealerID,omitempty"`                                 // Dealer Identification
@@ -198,8 +210,9 @@ type FixedOperation struct {
 	IsActive                 bool                  `bson:"isActive" json:"isActive,omitempty"`                                 // Is Active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	LastUpdatedByUser        string                `bson:"lastUpdatedByUser" json:"lastUpdatedByUser,omitempty"`               // Last Updated By User
 	LastUpdatedByDisplayName string                `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName,omitempty"` // This is to Display the Name in the application
-	LastUpdatedDateTime      time.Time             `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"`           // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
-	DocumentVersion          float32               `bson:"documentVersion" json:"documentVersion,omitempty"`                   // Document version to keep track of the changes -- DEFAULT 1.0
+	// format: date-time
+	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"` // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
+	DocumentVersion     float32   `bson:"documentVersion" json:"documentVersion,omitempty"`         // Document version to keep track of the changes -- DEFAULT 1.0
 	//Moved to DealerGoal hoursPerRepairOrderAdvisorGoal, totalHoursAdvisorGoal, averageLaborRateAdvisorGoal
 	//Moved AppointmentsPerSlot, AppointmentSlotDuration to appointmentCapacity
 }
@@ -207,7 +220,9 @@ type FixedOperation struct {
 // Embedded structures in fixed operations-- start
 
 // TODO : need inputs from Venkat on start end and carryover fields
+
 // holiday struct contains details of holidays, stored as slice of embedded objects in fixed operation struct
+// swagger:model holiday
 type holiday struct {
 	Date               string `bson:"date" json:"date,omitempty"`                             // ask for date format used in Tekion
 	StartOperationHour string `bson:"startOperationHour" json:"startOperationHour,omitempty"` // not sure about its use ??
@@ -217,6 +232,7 @@ type holiday struct {
 
 // users struct contains details of the users detail specific to the dealer, stored as slice of embedded objects in fixed operation struct
 // Using generic user type instead of serviceAdvisor type
+// swagger:model users
 type users struct {
 	DealerID string `bson:"dealerID" json:"dealerID,omitempty"` // maps to Dealer.ID
 	UserID   string `bson:"userID" json:"userID,omitempty"`     // maps to User.ID
@@ -224,6 +240,7 @@ type users struct {
 }
 
 // floorCapacity struct contains details of dealer floor capacities, , stored as slice of embedded objects in fixed operation struct
+// swagger:model floorCapacity
 type floorCapacity struct {
 	SkillCode     string `bson:"skillCode" json:"skillCode,omitempty"`         // maps to SkillMaster.ID
 	SkillName     string `bson:"skillName" json:"skillName,omitempty"`         // maps to skillMaster.Name added // Name is rarely going to change, keeping a copy here to avoid extra call to skillMaster
@@ -238,6 +255,7 @@ type floorCapacity struct {
 }
 
 // appointmentHour struct contains details appointment hours, stored as embedded object in fixed operation struct
+// swagger:model appointmentHour
 type appointmentHour struct {
 	SundayOpenHour     string `bson:"sundayOpenHour" json:"sundayOpenHour,omitempty"`         //
 	SundayCloseHour    string `bson:"sundayCloseHour" json:"sundayCloseHour,omitempty"`       //
@@ -256,6 +274,7 @@ type appointmentHour struct {
 }
 
 // appointmentCapacity struct contains details of the number of hours present for each skill, stored as slice of embedded objects in fixed operation struct
+// swagger:model appointmentCapacity
 type appointmentCapacity struct {
 	SkillCode               string `bson:"skillCode" json:"skillCode,omitempty"`                             // maps to SkillMaster._id
 	SkillName               string `bson:"skillName" json:"skillName,omitempty"`                             // maps to skillMaster.Name added // Name is rarely going to change, keeping a copy here to avoid extra call
@@ -272,6 +291,7 @@ type appointmentCapacity struct {
 }
 
 // amenities struct contains list of dealer amenities, stored as slice of embedded objects in fixed operation struct
+// swagger:model amenities
 type amenities struct {
 	ID   string `bson:"amenityID" json:"amenityID,omitempty"` //maps to AmenitiesMaster._id
 	Name string `bson:"name" json:"name,omitempty"`           // maps to AmenitiesMaster.name
@@ -279,29 +299,50 @@ type amenities struct {
 
 // Embedded structures in fixed operations-- end
 
-// DealerGoal struct contains dealer goals
-type DealerGoal struct {
-	ID                             string    `bson:"_id" json:"dealerGoalID,omitempty"`                                              //
-	DealerID                       string    `bson:"dealerID" json:"dealerID,omitempty"`                                             //
-	HoursPerRepairOrderAdvisorGoal string    `bson:"hoursPerRepairOrderAdvisorGoal" json:"hoursPerRepairOrderAdvisorGoal,omitempty"` //
-	TotalHoursAdvisorGoal          string    `bson:"totalHoursAdvisorGoal" json:"totalHoursAdvisorGoal,omitempty"`                   //
-	AverageLaborRateAdvisorGoal    string    `bson:"averageLaborRateAdvisorGoal" json:"averageLaborRateAdvisorGoal,omitempty"`       //
-	LastUpdatedByUser              string    `bson:"lastUpdatedByUser" json:"lastUpdatedByUser,omitempty"`                           // Last Updated By User
-	LastUpdatedByDisplayName       string    `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName,omitempty"`             // This is to Display the Name in the application
-	LastUpdatedDateTime            time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"`                       // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
-	DocumentVersion                float32   `bson:"documentVersion" json:"documentVersion,omitempty"`                               // Document version to keep track of the changes -- DEFAULT 1.0
+// dealerGoal
+// swagger:model dealerGoal
+type dealerGoal struct {
+	// dealerGoalID
+	ID string `bson:"_id" json:"dealerGoalID,omitempty"`
+	// dealerID
+	DealerID string `bson:"dealerID" json:"dealerID,omitempty"`
+	// hoursPerRepairOrderAdvisorGoal
+	HoursPerRepairOrderAdvisorGoal string `bson:"hoursPerRepairOrderAdvisorGoal" json:"hoursPerRepairOrderAdvisorGoal,omitempty"`
+	// totalHoursAdvisorGoal
+	TotalHoursAdvisorGoal string `bson:"totalHoursAdvisorGoal" json:"totalHoursAdvisorGoal,omitempty"`
+	// averageLaborRateAdvisorGoal
+	AverageLaborRateAdvisorGoal string `bson:"averageLaborRateAdvisorGoal" json:"averageLaborRateAdvisorGoal,omitempty"`
+	// Last Updated By User
+	LastUpdatedByUser string `bson:"lastUpdatedByUser" json:"lastUpdatedByUser,omitempty"`
+	// This is to Display the Name in the application
+	LastUpdatedByDisplayName string `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName,omitempty"`
+	// When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
+	// format: date-time
+	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"`
+	// Document version to keep track of the changes -- DEFAULT 1.0
+	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion,omitempty"`
 }
 
-// DealerGroup struct contains groups to which dealer belong
-type DealerGroup struct {
-	ID                       string    `bson:"_id" json:"dealerGroupID,omitempty"`                                 //
-	Name                     string    `bson:"dealerGroupName" json:"dealerGroupName,omitempty"`                   //
-	Dealers                  []string  `bson:"dealers" json:"dealers,omitempty"`                                   //
-	Desc                     string    `bson:"description" json:"description,omitempty"`                           //
-	LastUpdatedByUser        string    `bson:"lastUpdatedByUser" json:"lastUpdatedByUser,omitempty"`               // Last Updated By User
-	LastUpdatedByDisplayName string    `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName,omitempty"` // This is to Display the Name in the application
-	LastUpdatedDateTime      time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"`           // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
-	DocumentVersion          float32   `bson:"documentVersion" json:"documentVersion,omitempty"`                   // Document version to keep track of the changes -- DEFAULT 1.0
+// dealerGroup
+// swagger:model dealerGroup
+type dealerGroup struct {
+	//dealerGroupID
+	ID string `bson:"_id" json:"dealerGroupID,omitempty"`
+	// dealerGroupName
+	Name string `bson:"dealerGroupName" json:"dealerGroupName,omitempty"`
+	// dealers
+	Dealers []string `bson:"dealers" json:"dealers,omitempty"`
+	// description
+	Desc string `bson:"description" json:"description,omitempty"`
+	// Last Updated By User
+	LastUpdatedByUser string `bson:"lastUpdatedByUser" json:"lastUpdatedByUser,omitempty"`
+	// This is to Display the Name in the application
+	LastUpdatedByDisplayName string `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName,omitempty"`
+	// When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
+	// format: date-time
+	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime,omitempty"`
+	// Document version to keep track of the changes -- DEFAULT 1.0
+	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion,omitempty"`
 }
 
 //Missing collections in mongo -- start
@@ -319,5 +360,87 @@ type AmenitiesMaster struct {
 	LastUpdatedDateTime      time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`           // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
 	DocumentVersion          float32   `bson:"documentVersion" json:"documentVersion"`                   // Document version to keep track of the changes -- DEFAULT 1.0
 }
+
+// metaData of HTTP API response
+// swagger:model metaData
+type metaData struct {
+	// code
+	Code int `json:"code"`
+	// msg
+	Msg string `json:"msg"`
+}
+
+// dealerContactsRespObj
+// swagger:response dealerContactsRespObj
+type dealerContactsRespObj struct {
+	// in: body
+	Meta metaData `json:"meta"`
+	// in: body
+	Data []DealerContact `json:"data,omitempty"`
+}
+
+// dealerGoalRespObj
+// swagger:response dealerGoalRespObj
+type dealerGoalRespObj struct {
+	// in: body
+	Meta metaData `json:"meta"`
+	// in: body
+	Data DealerGoal `json:"data,omitempty"`
+}
+
+// dealerGoalsRespObj
+// swagger:response dealerGoalsRespObj
+type dealerGoalsRespObj struct {
+	// in: body
+	Meta metaData `json:"meta"`
+	// in: body
+	Data []DealerGoal `json:"data,omitempty"`
+}
+
+// fixedOperationRespObj
+// swagger:response fixedOperationRespObj
+type fixedOperationRespObj struct {
+	// in: body
+	Meta metaData `json:"meta"`
+	// in: body
+	Data FixedOperation `json:"data,omitempty"`
+}
+
+// fixedOperationsRespObj
+// swagger:response fixedOperationsRespObj
+type fixedOperationsRespObj struct {
+	// in: body
+	Meta metaData `json:"meta"`
+	// in: body
+	Data []FixedOperation `json:"data,omitempty"`
+}
+
+// dealerContactRespObj
+// swagger:response dealerContactRespObj
+type dealerContactRespObj struct {
+	// in: body
+	Meta metaData `json:"meta"`
+	// in: body
+	Data DealerContact `json:"data,omitempty"`
+}
+
+// dealerRespObj
+// swagger:response dealerRespObj
+type dealerRespObj struct {
+	// in: body
+	Meta metaData `json:"meta"`
+	// in: body
+	Data Dealer `json:"data,omitempty"`
+}
+
+// dealerGroupsRespObj
+// swagger:response dealerGroupsRespObj
+type dealerGroupsRespObj struct {
+	// in: body
+	Meta metaData `json:"meta"`
+	// in: body
+	Data []DealerGroup `json:"data,omitempty"`
+}
+
 */
 //Missing collections in mongo -- end

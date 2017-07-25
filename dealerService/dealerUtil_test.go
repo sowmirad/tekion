@@ -11,7 +11,7 @@ func TestFetchOne(t *testing.T) {
 	dealerDataSetup()
 	Convey("Testing readOne func", t, func() {
 		Convey("Testing for happy path flow", func() {
-			var data Dealer
+			var data dealer
 			err := fetchOne(validContext, getDealerCollectionName(), bson.M{"_id": validDealerID}, nil, &data)
 			Convey("Error returned by readOne should be nil", func() {
 				So(err, ShouldBeNil)
@@ -19,7 +19,7 @@ func TestFetchOne(t *testing.T) {
 			})
 		})
 		Convey("Testing for happy path flow with fields", func() {
-			var data Dealer
+			var data dealer
 			err := fetchOne(validContext, getDealerCollectionName(), bson.M{"_id": validDealerID}, dealerFieldsSlice, &data)
 			Convey("Error returned by readOne should be nil", func() {
 				So(err, ShouldBeNil)
@@ -88,7 +88,7 @@ func TestFetchDealerContacts(t *testing.T) {
 	contactDataSetup()
 	Convey("Testing readDealerContacts func", t, func() {
 		Convey("Testing for happy path flow", func() {
-			var data []DealerContact
+			var data []dealerContact
 			err := fetchDealerContacts(validContext, bson.M{"dealerID": validDealerID}, nil, &data)
 			Convey("Error returned by readDealerContacts should be nil", func() {
 				So(err, ShouldBeNil)
@@ -96,7 +96,7 @@ func TestFetchDealerContacts(t *testing.T) {
 			})
 		})
 		Convey("Testing for happy path flow with fields", func() {
-			var data []DealerContact
+			var data []dealerContact
 			err := fetchDealerContacts(validContext, bson.M{"dealerID": validDealerID}, contactFieldsSlice, &data)
 			Convey("Error returned by readDealerContacts should be nil", func() {
 				So(err, ShouldBeNil)
@@ -104,7 +104,7 @@ func TestFetchDealerContacts(t *testing.T) {
 			})
 		})
 		Convey("Testing for invalid tenant", func() {
-			var data []DealerContact
+			var data []dealerContact
 			err := fetchDealerContacts(invalidTenantContext, bson.M{"dealerID": validDealerID}, nil, &data)
 			Convey("Error returned by readDealerContacts should not be nil", func() {
 				So(err, ShouldNotBeNil)
@@ -112,7 +112,7 @@ func TestFetchDealerContacts(t *testing.T) {
 			})
 		})
 		Convey("Testing for invalid dealer id", func() {
-			var data []DealerContact
+			var data []dealerContact
 			err := fetchDealerContacts(validContext, bson.M{"dealerID": invalidDealerID}, nil, &data)
 			Convey("Error returned by readDealerContacts should not be nil", func() {
 				So(err, ShouldBeNil)
@@ -127,7 +127,7 @@ func TestFetchDealerGoals(t *testing.T) {
 	goalDataSetup()
 	Convey("Testing readDealerGoals func", t, func() {
 		Convey("Testing for happy path flow", func() {
-			var data []DealerGoal
+			var data []dealerGoal
 			err := fetchDealerGoals(validContext, bson.M{"dealerID": validDealerID}, nil, &data)
 			Convey("Error returned by readDealerGoals should be nil", func() {
 				So(err, ShouldBeNil)
@@ -135,7 +135,7 @@ func TestFetchDealerGoals(t *testing.T) {
 			})
 		})
 		Convey("Testing for happy path flow with fields", func() {
-			var data []DealerGoal
+			var data []dealerGoal
 			err := fetchDealerGoals(validContext, bson.M{"dealerID": validDealerID}, goalFieldsSlice, &data)
 			Convey("Error returned by readDealerGoals should be nil", func() {
 				So(err, ShouldBeNil)
@@ -143,7 +143,7 @@ func TestFetchDealerGoals(t *testing.T) {
 			})
 		})
 		Convey("Testing for invalid tenant", func() {
-			var data []DealerGoal
+			var data []dealerGoal
 			err := fetchDealerGoals(invalidTenantContext, bson.M{"dealerID": validDealerID}, nil, &data)
 			Convey("Error returned by readDealerGoals should not be nil", func() {
 				So(err, ShouldNotBeNil)
@@ -151,7 +151,7 @@ func TestFetchDealerGoals(t *testing.T) {
 			})
 		})
 		Convey("Testing for invalid dealer id", func() {
-			var data []DealerGoal
+			var data []dealerGoal
 			err := fetchDealerGoals(validContext, bson.M{"dealerID": invalidDealerID}, nil, &data)
 			Convey("Error returned by readDealerGoals should not be nil", func() {
 				So(err, ShouldBeNil)
@@ -166,7 +166,7 @@ func TestFetchDealerGroups(t *testing.T) {
 	groupDataSetup()
 	Convey("Testing readDealerGroups func", t, func() {
 		Convey("Testing for happy path flow", func() {
-			var data []DealerGroup
+			var data []dealerGroup
 			err := fetchDealerGroups(validContext, bson.M{"dealers": validDealerID}, nil, &data)
 			Convey("Error returned by readDealerGroups should be nil", func() {
 				So(err, ShouldBeNil)
@@ -174,7 +174,7 @@ func TestFetchDealerGroups(t *testing.T) {
 			})
 		})
 		Convey("Testing for happy path flow with fields", func() {
-			var data []DealerGroup
+			var data []dealerGroup
 			err := fetchDealerGroups(validContext, bson.M{"dealers": validDealerID}, groupFieldsSlice, &data)
 			Convey("Error returned by readDealerGroups should be nil", func() {
 				So(err, ShouldBeNil)
@@ -182,7 +182,7 @@ func TestFetchDealerGroups(t *testing.T) {
 			})
 		})
 		Convey("Testing for invalid tenant", func() {
-			var data []DealerGroup
+			var data []dealerGroup
 			err := fetchDealerGroups(invalidTenantContext, bson.M{"dealers": validDealerID}, nil, &data)
 			Convey("Error returned by readDealerGroups should not be nil", func() {
 				So(err, ShouldNotBeNil)
@@ -190,7 +190,7 @@ func TestFetchDealerGroups(t *testing.T) {
 			})
 		})
 		Convey("Testing for invalid dealer id", func() {
-			var data []DealerGroup
+			var data []dealerGroup
 			err := fetchDealerGroups(validContext, bson.M{"dealers": invalidDealerID}, nil, &data)
 			Convey("Error returned by readDealerGroups should not be nil", func() {
 				So(err, ShouldBeNil)

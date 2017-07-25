@@ -232,7 +232,7 @@ var (
 
 //Dealer objects
 var (
-	validDealer = Dealer{
+	validDealer = dealer{
 		ID:                       validDealerID,
 		Name:                     validDealerName,
 		MakeCode:                 validDealerMakeCode,
@@ -259,7 +259,7 @@ var (
 		DocumentVersion: validDealerDocumentVersion,
 	}
 
-	validDealerWithFields = Dealer{
+	validDealerWithFields = dealer{
 		ID:                       validDealerID,
 		Name:                     validDealerName,
 		MakeCode:                 validDealerMakeCode,
@@ -540,7 +540,7 @@ var (
 
 //DealerContact objects
 var (
-	validContact = DealerContact{
+	validContact = dealerContact{
 		ID:                       validContactID,
 		DealerID:                 validContactDealerID,
 		DealerOperationType:      validContactDealerOperationType,
@@ -552,9 +552,9 @@ var (
 		DocumentVersion:          validContactDocumentVersion,
 	}
 
-	validContacts = []DealerContact{validContact}
+	validContacts = []dealerContact{validContact}
 
-	validContactWithFields = DealerContact{
+	validContactWithFields = dealerContact{
 		ID:                  validContactID,
 		DealerID:            validContactDealerID,
 		DealerOperationType: validContactDealerOperationType,
@@ -563,7 +563,7 @@ var (
 		UserDisplayTitle:    validContactUserDisplayTitle,
 	}
 
-	validContactsWithFields = []DealerContact{validContactWithFields}
+	validContactsWithFields = []dealerContact{validContactWithFields}
 )
 
 func contactDataSetup() {
@@ -607,7 +607,7 @@ var (
 
 // DealerGoal objects
 var (
-	validGoal = DealerGoal{
+	validGoal = dealerGoal{
 		ID:                             validGoalID,
 		DealerID:                       validGoalDealerID,
 		HoursPerRepairOrderAdvisorGoal: validGoalHoursPerRepairOrderAdvisorGoal,
@@ -618,9 +618,9 @@ var (
 		DocumentVersion:                validGoalDocumentVersion,
 	}
 
-	validGoals = []DealerGoal{validGoal}
+	validGoals = []dealerGoal{validGoal}
 
-	validGoalWithFields = DealerGoal{
+	validGoalWithFields = dealerGoal{
 		ID:                             validGoalID,
 		DealerID:                       validGoalDealerID,
 		HoursPerRepairOrderAdvisorGoal: validGoalHoursPerRepairOrderAdvisorGoal,
@@ -628,7 +628,7 @@ var (
 		AverageLaborRateAdvisorGoal:    validGoalAverageLaborRateAdvisorGoal,
 	}
 
-	validGoalsWithFields = []DealerGoal{validGoalWithFields}
+	validGoalsWithFields = []dealerGoal{validGoalWithFields}
 )
 
 func goalDataSetup() {
@@ -671,7 +671,7 @@ var (
 
 // DealerGroup objects
 var (
-	validGroup = DealerGroup{
+	validGroup = dealerGroup{
 		ID:                       validGroupID,
 		Name:                     validGroupName,
 		Dealers:                  validGroupDealers,
@@ -681,16 +681,16 @@ var (
 		DocumentVersion:          validGroupDocumentVersion,
 	}
 
-	validGroups = []DealerGroup{validGroup}
+	validGroups = []dealerGroup{validGroup}
 
-	validGroupWithFields = DealerGroup{
+	validGroupWithFields = dealerGroup{
 		ID:      validGroupID,
 		Name:    validGroupName,
 		Dealers: validGroupDealers,
 		Desc:    validGroupDesc,
 	}
 
-	validGroupsWithFields = []DealerGroup{validGroupWithFields}
+	validGroupsWithFields = []dealerGroup{validGroupWithFields}
 )
 
 func groupDataSetup() {

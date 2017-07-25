@@ -56,7 +56,7 @@ func fetchOne(ctx apiContext.APIContext, collectionName string, selector bson.M,
 
 // fetchDealerGroups reads list of dealer groups from mongo based on the selector passed.
 // Populates it in data parameter passed to the function.
-func fetchDealerGroups(ctx apiContext.APIContext, selector bson.M, fields []string, data *[]DealerGroup) error {
+func fetchDealerGroups(ctx apiContext.APIContext, selector bson.M, fields []string, data *[]dealerGroup) error {
 	mongo, err := mMgr.GetS(ctx.Tenant)
 	if err != nil {
 		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
@@ -75,7 +75,7 @@ func fetchDealerGroups(ctx apiContext.APIContext, selector bson.M, fields []stri
 
 // fetchDealerContacts reads list of dealer contacts from mongo based on the selector passed.
 // Populates it in data parameter passed to the function.
-func fetchDealerContacts(ctx apiContext.APIContext, selector bson.M, fields []string, data *[]DealerContact) error {
+func fetchDealerContacts(ctx apiContext.APIContext, selector bson.M, fields []string, data *[]dealerContact) error {
 	mongo, err := mMgr.GetS(ctx.Tenant)
 	if err != nil {
 		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
@@ -113,7 +113,7 @@ func fetchFixedOperations(ctx apiContext.APIContext, selector bson.M, fields []s
 
 // fetchDealerGoals reads list of dealer goals from mongo based on the selector passed.
 // Populates it in data parameter passed to the function.
-func fetchDealerGoals(ctx apiContext.APIContext, selector bson.M, fields []string, data *[]DealerGoal) error {
+func fetchDealerGoals(ctx apiContext.APIContext, selector bson.M, fields []string, data *[]dealerGoal) error {
 	mongo, err := mMgr.GetS(ctx.Tenant)
 	if err != nil {
 		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)

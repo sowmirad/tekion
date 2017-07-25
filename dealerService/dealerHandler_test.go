@@ -20,7 +20,7 @@ func TestReadDealer(t *testing.T) {
 				t.Error(err)
 			}
 			setHeadersAndContext(req)
-			ReadDealer(res, req)
+			readDealer(res, req)
 			Convey("Response code should be 200", func() {
 				So(res.Code, ShouldEqual, http.StatusOK)
 				apiRes := apiResponse{}
@@ -28,7 +28,7 @@ func TestReadDealer(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := Dealer{}
+				data := dealer{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validDealer)
 			})
@@ -40,7 +40,7 @@ func TestReadDealer(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadDealer(res, req)
+			readDealer(res, req)
 			Convey("Response code should be 200", func() {
 				So(res.Code, ShouldEqual, http.StatusOK)
 				apiRes := apiResponse{}
@@ -48,27 +48,27 @@ func TestReadDealer(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := Dealer{}
+				data := dealer{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validDealerWithFields)
 			})
 		})
-		Convey("ReadDealer should return status code 400, invalid dealer id", func() {
+		Convey("ReadDealer should return status code 204, invalid dealer id", func() {
 			res := httptest.NewRecorder()
 			req, err := http.NewRequest("GET", "/tdealer/dealer", nil)
 			setHeadersAndInvalidDealerIDContext(req)
 			if err != nil {
 				t.Error(err)
 			}
-			ReadDealer(res, req)
-			Convey("Response code should be 400", func() {
+			readDealer(res, req)
+			Convey("Response code should be 204", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
 				if err != nil {
 					t.Error(err)
 				}
-				So(apiRes.Meta.Code, ShouldEqual, http.StatusBadRequest)
-				So(apiRes.Meta.Msg, ShouldEqual, "Um.... document not found")
+				So(apiRes.Meta.Code, ShouldEqual, http.StatusNoContent)
+				So(apiRes.Meta.Msg, ShouldEqual, "No document found")
 			})
 		})
 		Convey("ReadDealer should return status code 400, invalid tenant name", func() {
@@ -78,7 +78,7 @@ func TestReadDealer(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadDealer(res, req)
+			readDealer(res, req)
 			Convey("Response code should be 400", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
@@ -103,7 +103,7 @@ func TestReadFixedOperations(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadFixedOperations(res, req)
+			readFixedOperations(res, req)
 			Convey("Response code should be 200", func() {
 				So(res.Code, ShouldEqual, http.StatusOK)
 				apiRes := apiResponse{}
@@ -123,7 +123,7 @@ func TestReadFixedOperations(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadFixedOperations(res, req)
+			readFixedOperations(res, req)
 			Convey("Response code should be 200", func() {
 				So(res.Code, ShouldEqual, http.StatusOK)
 				apiRes := apiResponse{}
@@ -143,14 +143,14 @@ func TestReadFixedOperations(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadFixedOperations(res, req)
-			Convey("Response code should be 200", func() {
+			readFixedOperations(res, req)
+			Convey("Response code should be 204", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
 				if err != nil {
 					t.Error(err)
 				}
-				So(apiRes.Meta.Code, ShouldEqual, http.StatusOK)
+				So(apiRes.Meta.Code, ShouldEqual, http.StatusNoContent)
 				So(apiRes.Meta.Msg, ShouldEqual, "No document found")
 			})
 		})
@@ -161,7 +161,7 @@ func TestReadFixedOperations(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadFixedOperations(res, req)
+			readFixedOperations(res, req)
 			Convey("Response code should be 400", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
@@ -186,7 +186,7 @@ func TestReadContacts(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadContacts(res, req)
+			readDealerContacts(res, req)
 			Convey("Response code should be 200", func() {
 				So(res.Code, ShouldEqual, http.StatusOK)
 				apiRes := apiResponse{}
@@ -194,7 +194,7 @@ func TestReadContacts(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := []DealerContact{}
+				data := []dealerContact{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validContacts)
 			})
@@ -206,7 +206,7 @@ func TestReadContacts(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadContacts(res, req)
+			readDealerContacts(res, req)
 			Convey("Response code should be 200", func() {
 				So(res.Code, ShouldEqual, http.StatusOK)
 				apiRes := apiResponse{}
@@ -214,7 +214,7 @@ func TestReadContacts(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := []DealerContact{}
+				data := []dealerContact{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validContactsWithFields)
 			})
@@ -226,14 +226,14 @@ func TestReadContacts(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadContacts(res, req)
-			Convey("response code should be 200", func() {
+			readDealerContacts(res, req)
+			Convey("response code should be 204", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
 				if err != nil {
 					t.Error(err)
 				}
-				So(apiRes.Meta.Code, ShouldEqual, http.StatusOK)
+				So(apiRes.Meta.Code, ShouldEqual, http.StatusNoContent)
 				So(apiRes.Meta.Msg, ShouldEqual, "No document found")
 			})
 		})
@@ -244,7 +244,7 @@ func TestReadContacts(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadContacts(res, req)
+			readDealerContacts(res, req)
 			Convey("Response code should be 400", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
@@ -269,7 +269,7 @@ func TestReadGoals(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadGoals(res, req)
+			readDealerGoals(res, req)
 			Convey("Response code should be 200", func() {
 				So(res.Code, ShouldEqual, http.StatusOK)
 				apiRes := apiResponse{}
@@ -277,7 +277,7 @@ func TestReadGoals(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := []DealerGoal{}
+				data := []dealerGoal{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validGoals)
 			})
@@ -289,7 +289,7 @@ func TestReadGoals(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadGoals(res, req)
+			readDealerGoals(res, req)
 			Convey("Response code should be 200", func() {
 				So(res.Code, ShouldEqual, http.StatusOK)
 				apiRes := apiResponse{}
@@ -297,7 +297,7 @@ func TestReadGoals(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := []DealerGoal{}
+				data := []dealerGoal{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validGoalsWithFields)
 			})
@@ -309,14 +309,14 @@ func TestReadGoals(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadGoals(res, req)
-			Convey("Response code should be 200", func() {
+			readDealerGoals(res, req)
+			Convey("Response code should be 204", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
 				if err != nil {
 					t.Error(err)
 				}
-				So(apiRes.Meta.Code, ShouldEqual, http.StatusOK)
+				So(apiRes.Meta.Code, ShouldEqual, http.StatusNoContent)
 				So(apiRes.Meta.Msg, ShouldEqual, "No document found")
 			})
 		})
@@ -327,7 +327,7 @@ func TestReadGoals(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadGoals(res, req)
+			readDealerGoals(res, req)
 			Convey("Response code should be 400", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
@@ -352,7 +352,7 @@ func TestReadGroups(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadGroups(res, req)
+			readDealerGroups(res, req)
 			Convey("Response code should be 200", func() {
 				So(res.Code, ShouldEqual, http.StatusOK)
 				apiRes := apiResponse{}
@@ -360,7 +360,7 @@ func TestReadGroups(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := []DealerGroup{}
+				data := []dealerGroup{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validGroups)
 			})
@@ -372,7 +372,7 @@ func TestReadGroups(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadGroups(res, req)
+			readDealerGroups(res, req)
 			Convey("Response code should be 200", func() {
 				So(res.Code, ShouldEqual, http.StatusOK)
 				apiRes := apiResponse{}
@@ -380,7 +380,7 @@ func TestReadGroups(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := []DealerGroup{}
+				data := []dealerGroup{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validGroupsWithFields)
 			})
@@ -392,14 +392,14 @@ func TestReadGroups(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadGroups(res, req)
-			Convey("Response code should be 200", func() {
+			readDealerGroups(res, req)
+			Convey("Response code should be 204", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
 				if err != nil {
 					t.Error(err)
 				}
-				So(apiRes.Meta.Code, ShouldEqual, http.StatusOK)
+				So(apiRes.Meta.Code, ShouldEqual, http.StatusNoContent)
 				So(apiRes.Meta.Msg, ShouldEqual, "No document found")
 			})
 		})
@@ -410,7 +410,7 @@ func TestReadGroups(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			ReadGroups(res, req)
+			readDealerGroups(res, req)
 			Convey("Response code should be 400", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
@@ -430,9 +430,9 @@ func TestReadFixedOperation(t *testing.T) {
 	Convey("Testing ReadFixedOperation", t, func() {
 		Convey("ReadFixedOperation should return fixed operation object", func() {
 			router := mux.NewRouter()
-			router.HandleFunc("/tdealer/fixedoperation/{id}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			router.HandleFunc("/tdealer/fixedoperation/{foid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				setHeadersAndContext(req)
-				ReadFixedOperation(res, req)
+				readFixedOperation(res, req)
 			}))
 			server := httptest.NewServer(router)
 			defer server.Close()
@@ -455,9 +455,9 @@ func TestReadFixedOperation(t *testing.T) {
 		})
 		Convey("ReadFixedOperation should return dealer fixed operation object with specified fields", func() {
 			router := mux.NewRouter()
-			router.HandleFunc("/tdealer/fixedoperation/{id}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			router.HandleFunc("/tdealer/fixedoperation/{foid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				setHeadersAndContext(req)
-				ReadFixedOperation(res, req)
+				readFixedOperation(res, req)
 			}))
 			server := httptest.NewServer(router)
 			defer server.Close()
@@ -485,7 +485,7 @@ func TestReadFixedOperation(t *testing.T) {
 				t.Error(err)
 			}
 			setHeadersAndContext(req)
-			ReadFixedOperation(res, req)
+			readFixedOperation(res, req)
 			Convey("Response code should be 400", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
@@ -496,11 +496,35 @@ func TestReadFixedOperation(t *testing.T) {
 				So(apiRes.Meta.Msg, ShouldEqual, "Um.... document not found")
 			})
 		})
-		Convey("ReadFixedOperation should return 400, invalid fixed operation id", func() {
+		Convey("ReadFixedOperation should return 400, incorrect tenant", func() {
 			router := mux.NewRouter()
-			router.HandleFunc("/tdealer/fixedoperation/{id}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			router.HandleFunc("/tdealer/fixedoperation/{foid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				setHeadersAndInvalidTenantContext(req)
+				readFixedOperation(res, req)
+			}))
+			server := httptest.NewServer(router)
+			defer server.Close()
+			reqURL := server.URL + "/tdealer/fixedoperation/" + validFixedOperationID
+			res, err := http.Get(reqURL)
+			if err != nil {
+				t.Error(err)
+			}
+			Convey("Response code should be 400", func() {
+				So(res.StatusCode, ShouldEqual, http.StatusBadRequest)
+				apiRes := apiResponse{}
+				err := json.NewDecoder(res.Body).Decode(&apiRes)
+				if err != nil {
+					t.Error(err)
+				}
+				So(apiRes.Meta.Code, ShouldEqual, http.StatusBadRequest)
+				So(apiRes.Meta.Msg, ShouldEqual, "Um.... document not found")
+			})
+		})
+		Convey("ReadFixedOperation should return 204, invalid fixed operation id", func() {
+			router := mux.NewRouter()
+			router.HandleFunc("/tdealer/fixedoperation/{foid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				setHeadersAndContext(req)
-				ReadFixedOperation(res, req)
+				readFixedOperation(res, req)
 			}))
 			server := httptest.NewServer(router)
 			defer server.Close()
@@ -510,13 +534,7 @@ func TestReadFixedOperation(t *testing.T) {
 				t.Log(err)
 			}
 			Convey("Response code should be 400", func() {
-				apiRes := apiResponse{}
-				err := json.NewDecoder(res.Body).Decode(&apiRes)
-				if err != nil {
-					t.Error(err)
-				}
-				So(apiRes.Meta.Code, ShouldEqual, http.StatusBadRequest)
-				So(apiRes.Meta.Msg, ShouldEqual, "Um.... document not found")
+				So(res.StatusCode, ShouldEqual, http.StatusNoContent)
 			})
 		})
 	})
@@ -528,9 +546,9 @@ func TestReadContact(t *testing.T) {
 	Convey("Testing ReadContact", t, func() {
 		Convey("ReadContact should return dealer contact object", func() {
 			router := mux.NewRouter()
-			router.HandleFunc("/tdealer/contact/{id}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			router.HandleFunc("/tdealer/contact/{cid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				setHeadersAndContext(req)
-				ReadContact(res, req)
+				readDealerContact(res, req)
 			}))
 			server := httptest.NewServer(router)
 			defer server.Close()
@@ -546,16 +564,16 @@ func TestReadContact(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := DealerContact{}
+				data := dealerContact{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validContact)
 			})
 		})
 		Convey("ReadContact should return dealer contact object with specified fields", func() {
 			router := mux.NewRouter()
-			router.HandleFunc("/tdealer/contact/{id}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			router.HandleFunc("/tdealer/contact/{cid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				setHeadersAndContext(req)
-				ReadContact(res, req)
+				readDealerContact(res, req)
 			}))
 			server := httptest.NewServer(router)
 			defer server.Close()
@@ -571,7 +589,7 @@ func TestReadContact(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := DealerContact{}
+				data := dealerContact{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validContactWithFields)
 			})
@@ -583,7 +601,7 @@ func TestReadContact(t *testing.T) {
 				t.Error(err)
 			}
 			setHeadersAndContext(req)
-			ReadContact(res, req)
+			readDealerContact(res, req)
 			Convey("Response code should be 400", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
@@ -594,11 +612,35 @@ func TestReadContact(t *testing.T) {
 				So(apiRes.Meta.Msg, ShouldEqual, "Um.... document not found")
 			})
 		})
-		Convey("ReadContact should return 400, invalid dealer contact id", func() {
+		Convey("ReadContact should return 400, incorrect tenant", func() {
 			router := mux.NewRouter()
-			router.HandleFunc("/tdealer/contact/{id}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			router.HandleFunc("/tdealer/contact/{cid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				setHeadersAndInvalidTenantContext(req)
+				readDealerContact(res, req)
+			}))
+			server := httptest.NewServer(router)
+			defer server.Close()
+			reqURL := server.URL + "/tdealer/contact/" + validContactID
+			res, err := http.Get(reqURL)
+			if err != nil {
+				t.Log(err)
+			}
+			Convey("Response code should be 400", func() {
+				So(res.StatusCode, ShouldEqual, http.StatusBadRequest)
+				apiRes := apiResponse{}
+				err := json.NewDecoder(res.Body).Decode(&apiRes)
+				if err != nil {
+					t.Error(err)
+				}
+				So(apiRes.Meta.Code, ShouldEqual, http.StatusBadRequest)
+				So(apiRes.Meta.Msg, ShouldEqual, "Um.... document not found")
+			})
+		})
+		Convey("ReadContact should return 204, invalid dealer contact id", func() {
+			router := mux.NewRouter()
+			router.HandleFunc("/tdealer/contact/{cid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				setHeadersAndContext(req)
-				ReadContact(res, req)
+				readDealerContact(res, req)
 			}))
 			server := httptest.NewServer(router)
 			defer server.Close()
@@ -607,28 +649,22 @@ func TestReadContact(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			Convey("Response code should be 400", func() {
-				apiRes := apiResponse{}
-				err := json.NewDecoder(res.Body).Decode(&apiRes)
-				if err != nil {
-					t.Error(err)
-				}
-				So(apiRes.Meta.Code, ShouldEqual, http.StatusBadRequest)
-				So(apiRes.Meta.Msg, ShouldEqual, "Um.... document not found")
+			Convey("Response code should be 204", func() {
+				So(res.StatusCode, ShouldEqual, http.StatusNoContent)
 			})
 		})
 	})
 	clearContactDataSetup()
 }
 
-func TestReadGoal(t *testing.T) {
+func TestReadDealerGoal(t *testing.T) {
 	goalDataSetup()
 	Convey("Testing ReadGoal", t, func() {
 		Convey("ReadGoal should return dealer goal object", func() {
 			router := mux.NewRouter()
-			router.HandleFunc("/tdealer/goal/{id}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			router.HandleFunc("/tdealer/goal/{gid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				setHeadersAndContext(req)
-				ReadGoal(res, req)
+				readDealerGoal(res, req)
 			}))
 			server := httptest.NewServer(router)
 			defer server.Close()
@@ -644,16 +680,16 @@ func TestReadGoal(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := DealerGoal{}
+				data := dealerGoal{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validGoal)
 			})
 		})
 		Convey("ReadGoal should return dealer goal object with specified fields", func() {
 			router := mux.NewRouter()
-			router.HandleFunc("/tdealer/goal/{id}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			router.HandleFunc("/tdealer/goal/{gid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				setHeadersAndContext(req)
-				ReadGoal(res, req)
+				readDealerGoal(res, req)
 			}))
 			server := httptest.NewServer(router)
 			defer server.Close()
@@ -669,7 +705,7 @@ func TestReadGoal(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := DealerGoal{}
+				data := dealerGoal{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validGoalWithFields)
 			})
@@ -681,7 +717,7 @@ func TestReadGoal(t *testing.T) {
 				t.Error(err)
 			}
 			setHeadersAndContext(req)
-			ReadGoal(res, req)
+			readDealerGoal(res, req)
 			Convey("Response code should be 400", func() {
 				apiRes := apiResponse{}
 				err := json.NewDecoder(res.Body).Decode(&apiRes)
@@ -692,11 +728,35 @@ func TestReadGoal(t *testing.T) {
 				So(apiRes.Meta.Msg, ShouldEqual, "Um.... document not found")
 			})
 		})
-		Convey("ReadGoal should return 400, invalid dealer goal id", func() {
+		Convey("ReadGoal should return 400, incorrect tenant", func() {
 			router := mux.NewRouter()
-			router.HandleFunc("/tdealer/goal/{id}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+			router.HandleFunc("/tdealer/goal/{gid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+				setHeadersAndInvalidTenantContext(req)
+				readDealerGoal(res, req)
+			}))
+			server := httptest.NewServer(router)
+			defer server.Close()
+			reqURL := server.URL + "/tdealer/goal/" + validGoalID
+			res, err := http.Get(reqURL)
+			if err != nil {
+				t.Log(err)
+			}
+			Convey("Response code should be 400", func() {
+				So(res.StatusCode, ShouldEqual, http.StatusBadRequest)
+				apiRes := apiResponse{}
+				err := json.NewDecoder(res.Body).Decode(&apiRes)
+				if err != nil {
+					t.Error(err)
+				}
+				So(apiRes.Meta.Code, ShouldEqual, http.StatusBadRequest)
+				So(apiRes.Meta.Msg, ShouldEqual, "Um.... document not found")
+			})
+		})
+		Convey("ReadGoal should return 204, invalid dealer goal id", func() {
+			router := mux.NewRouter()
+			router.HandleFunc("/tdealer/goal/{gid}", http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 				setHeadersAndContext(req)
-				ReadGoal(res, req)
+				readDealerGoal(res, req)
 			}))
 			server := httptest.NewServer(router)
 			defer server.Close()
@@ -705,14 +765,8 @@ func TestReadGoal(t *testing.T) {
 			if err != nil {
 				t.Error(err)
 			}
-			Convey("Response code should be 400", func() {
-				apiRes := apiResponse{}
-				err := json.NewDecoder(res.Body).Decode(&apiRes)
-				if err != nil {
-					t.Error(err)
-				}
-				So(apiRes.Meta.Code, ShouldEqual, http.StatusBadRequest)
-				So(apiRes.Meta.Msg, ShouldEqual, "Um.... document not found")
+			Convey("Response code should be 204", func() {
+				So(res.StatusCode, ShouldEqual, http.StatusNoContent)
 			})
 		})
 	})
