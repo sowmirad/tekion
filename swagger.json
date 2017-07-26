@@ -700,6 +700,7 @@
       "type": "object",
       "properties": {
         "currency": {
+          "description": "Dealer Currency --  DEFAULT 'USD'",
           "type": "string",
           "x-go-name": "Currency"
         },
@@ -725,6 +726,7 @@
           "x-go-name": "DocumentTemplates"
         },
         "dealerDoingBusinessAsName": {
+          "description": "Dealer Doing Business As Name. This may or may not be government registered Name for the business",
           "type": "string",
           "x-go-name": "DoingBusinessAsName"
         },
@@ -736,10 +738,12 @@
           "x-go-name": "Group"
         },
         "dealerID": {
+          "description": "Dealer Identification  - Keep it Unique across the tenant",
           "type": "string",
           "x-go-name": "ID"
         },
         "dealerLogos": {
+          "description": "Dealer logos",
           "type": "array",
           "items": {
             "$ref": "#/definitions/image"
@@ -747,6 +751,7 @@
           "x-go-name": "Logos"
         },
         "dealerName": {
+          "description": "Dealer Name",
           "type": "string",
           "x-go-name": "Name"
         },
@@ -758,31 +763,37 @@
           "x-go-name": "OperationSchedule"
         },
         "dealershipCode": {
+          "description": "Dealership Code.  A dealership can have one or more dealers in it.( Requested to change to dealerCode. But this is not one to one as dealerID, thats the reason we put it as dealershipCode, This is kind of dealerGroupCode)",
           "type": "string",
           "x-go-name": "DealershipCode"
         },
         "documentVersion": {
+          "description": "Document version to keep track of the changes -- DEFAULT 1.0",
           "type": "number",
           "format": "float",
           "x-go-name": "DocumentVersion"
         },
         "isActive": {
+          "description": "Is Active T or F (TRUE or FALSE) -- DEFAULT 'T'",
           "type": "boolean",
           "x-go-name": "IsActive"
         },
         "lastUpdatedByDisplayName": {
+          "description": "This is to Display the Name in the application",
           "type": "string",
           "x-go-name": "LastUpdatedByDisplayName"
         },
         "lastUpdatedByUser": {
+          "description": "Last Updated By User",
           "type": "string",
           "x-go-name": "LastUpdatedByUser"
         },
         "lastUpdatedDateTime": {
-          "description": "format: date-time",
+          "description": "When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP\ntype: date\nformat: any",
           "x-go-name": "LastUpdatedDateTime"
         },
         "makeCode": {
+          "description": "Make Code - Car manufacturer code // made slice of string on Prameet's recommendation",
           "type": "array",
           "items": {
             "type": "string"
@@ -790,26 +801,32 @@
           "x-go-name": "MakeCode"
         },
         "manufacturerIssuedNumber": {
+          "description": "Manufacturer (OEM) registered-issued Number",
           "type": "string",
           "x-go-name": "ManufacturerIssuedNumber"
         },
         "phone": {
+          "description": "Dealership phone Contact",
           "type": "string",
           "x-go-name": "Phone"
         },
         "stateIssuedNumber": {
+          "description": "State Government registered or issued Number",
           "type": "string",
           "x-go-name": "StateIssuedNumber"
         },
         "tenantID": {
+          "description": "Tenant Identification Number",
           "type": "string",
           "x-go-name": "TenantID"
         },
         "timezone": {
+          "description": "Dealer's timezone like PST ( Pacific standard Time)",
           "type": "string",
           "x-go-name": "Timezone"
         },
         "vehicleDamage": {
+          "description": "Dealer vehicle damage types",
           "type": "array",
           "items": {
             "$ref": "#/definitions/vehicleDamage"
@@ -817,6 +834,7 @@
           "x-go-name": "VehicleDamage"
         },
         "website": {
+          "description": "Dealer website URL",
           "type": "string",
           "x-go-name": "Website"
         }
