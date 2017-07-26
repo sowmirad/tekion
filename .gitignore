@@ -2,7 +2,6 @@
 	*.o
 	*.a
 	*.so
-    .idea/
 	# Folders
 	_obj
 	_test
@@ -28,5 +27,10 @@
 
 	# External packages folder
 	vendor/
+    dealerService/cover.out
+    tdealer
+    .idea/*
+    page.html
+
 
 node_modules
