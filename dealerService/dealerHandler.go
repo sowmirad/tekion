@@ -147,7 +147,7 @@ func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var fo FixedOperation
+	var fo fixedOperation
 	fields := fetchFieldsFromRequest(r)
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	err := fetchOne(ctx,
@@ -218,7 +218,7 @@ func readFixedOperations(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
-	var fixedOperations []FixedOperation
+	var fixedOperations []fixedOperation
 	fields := fetchFieldsFromRequest(r)
 	err := fetchFixedOperations(ctx,
 		bson.M{"dealerID": dealerID},

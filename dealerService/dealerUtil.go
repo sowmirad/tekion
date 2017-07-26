@@ -94,7 +94,7 @@ func fetchDealerContacts(ctx apiContext.APIContext, selector bson.M, fields []st
 
 // fetchFixedOperations reads list of dealer fixed operations from mongo based on the selector passed.
 // Populates it in data parameter passed to the function.
-func fetchFixedOperations(ctx apiContext.APIContext, selector bson.M, fields []string, data *[]FixedOperation) error {
+func fetchFixedOperations(ctx apiContext.APIContext, selector bson.M, fields []string, data *[]fixedOperation) error {
 	mongo, err := mMgr.GetS(ctx.Tenant)
 	if err != nil {
 		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)

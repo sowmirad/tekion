@@ -111,7 +111,7 @@ func TestReadFixedOperations(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := []FixedOperation{}
+				data := []fixedOperation{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validFixedOperations)
 			})
@@ -131,7 +131,7 @@ func TestReadFixedOperations(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := []FixedOperation{}
+				data := []fixedOperation{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validFixedOperationsWithFields)
 			})
@@ -448,7 +448,7 @@ func TestReadFixedOperation(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := FixedOperation{}
+				data := fixedOperation{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validFixedOperation)
 			})
@@ -473,7 +473,7 @@ func TestReadFixedOperation(t *testing.T) {
 				if err != nil {
 					t.Error(err)
 				}
-				data := FixedOperation{}
+				data := fixedOperation{}
 				json.Unmarshal([]byte(apiRes.Data), &data)
 				So(data, ShouldResemble, validFixedOperationWithFields)
 			})

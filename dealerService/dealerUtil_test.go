@@ -49,7 +49,7 @@ func TestFetchFixedOperations(t *testing.T) {
 	fixedOperationDataSetup()
 	Convey("Testing readFixedOperations func", t, func() {
 		Convey("Testing for happy path flow", func() {
-			var data []FixedOperation
+			var data []fixedOperation
 			err := fetchFixedOperations(validContext, bson.M{"dealerID": validDealerID}, nil, &data)
 			Convey("Error returned by readFixedOperations should be nil", func() {
 				So(err, ShouldBeNil)
@@ -57,7 +57,7 @@ func TestFetchFixedOperations(t *testing.T) {
 			})
 		})
 		Convey("Testing for happy path flow with fields", func() {
-			var data []FixedOperation
+			var data []fixedOperation
 			err := fetchFixedOperations(validContext, bson.M{"dealerID": validDealerID}, fixedOperationFieldsSlice, &data)
 			Convey("Error returned by readFixedOperations should be nil", func() {
 				So(err, ShouldBeNil)
@@ -65,7 +65,7 @@ func TestFetchFixedOperations(t *testing.T) {
 			})
 		})
 		Convey("Testing for invalid tenant", func() {
-			var data []FixedOperation
+			var data []fixedOperation
 			err := fetchFixedOperations(invalidTenantContext, bson.M{"dealerID": validDealerID}, nil, &data)
 			Convey("Error returned by readFixedOperations should not be nil", func() {
 				So(err, ShouldNotBeNil)
@@ -73,7 +73,7 @@ func TestFetchFixedOperations(t *testing.T) {
 			})
 		})
 		Convey("Testing for invalid dealer id", func() {
-			var data []FixedOperation
+			var data []fixedOperation
 			err := fetchFixedOperations(validContext, bson.M{"dealerID": invalidDealerID}, nil, &data)
 			Convey("Error returned by readFixedOperations should not be nil", func() {
 				So(err, ShouldBeNil)

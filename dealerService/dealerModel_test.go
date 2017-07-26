@@ -90,20 +90,20 @@ var (
 	validDealerPhone                    = "+123456789"
 	validDealerLogos                    = []image{
 		{
-			"16",
-			"16",
+			16,
+			16,
 			"Icon",
 			"S3UUIDIcon_1_3",
 		},
 		{
-			"48",
-			"48",
+			48,
+			48,
 			"Thumb",
 			"S3UUIDThumb_1_3",
 		},
 		{
-			"256",
-			"256",
+			256,
+			256,
 			"Original",
 			"S3UUIDOriginal_1_3",
 		},
@@ -226,8 +226,8 @@ var (
 	//validDealerLastUpdatedDateTime    = testTime
 	validDealerDocumentVersion = float32(1.0)
 
-	dealerFieldsSlice = []string{"dealerName", "makeCode", "dealerDoingBusinessAsName", "stateIssuedNumber", "manufacturerIssuedNumber", "website", "timezone", "currency", "tenantID", "phone", "dealerLogos", "vehicleDamage", "dealershipCode", "dealerGroup", "dealerAddress", "dealerDocumentTemplates", "dealerOperationSchedule", "dealerContact"}
-	dealerFields      = "dealerName,makeCode,dealerDoingBusinessAsName,stateIssuedNumber,manufacturerIssuedNumber,website,timezone,currency,tenantID,phone,dealerLogos,vehicleDamage,dealershipCode,dealerGroup,dealerAddress,dealerDocumentTemplates,dealerOperationSchedule,dealerContact"
+	dealerFieldsSlice = []string{"dealerName", "makeCode", "dealerDoingBusinessAsName", "stateIssuedNumber", "manufacturerIssuedNumber", "website", "timeZone", "currency", "tenantID", "phone", "dealerLogos", "vehicleDamage", "dealershipCode", "dealerGroup", "dealerAddress", "dealerDocumentTemplates", "dealerOperationSchedule", "dealerContact"}
+	dealerFields      = "dealerName,makeCode,dealerDoingBusinessAsName,stateIssuedNumber,manufacturerIssuedNumber,website,timeZone,currency,tenantID,phone,dealerLogos,vehicleDamage,dealershipCode,dealerGroup,dealerAddress,dealerDocumentTemplates,dealerOperationSchedule,dealerContact"
 )
 
 //Dealer objects
@@ -240,7 +240,7 @@ var (
 		StateIssuedNumber:        validDealerStateIssuedNumber,
 		ManufacturerIssuedNumber: validDealerManufacturerIssuedNumber,
 		Website:                  validDealerWebsite,
-		Timezone:                 validDealerTimezone,
+		TimeZone:                 validDealerTimezone,
 		Currency:                 validDealerCurrency,
 		TenantID:                 validDealerTenantID,
 		Phone:                    validDealerPhone,
@@ -267,7 +267,7 @@ var (
 		StateIssuedNumber:        validDealerStateIssuedNumber,
 		ManufacturerIssuedNumber: validDealerManufacturerIssuedNumber,
 		Website:                  validDealerWebsite,
-		Timezone:                 validDealerTimezone,
+		TimeZone:                 validDealerTimezone,
 		Currency:                 validDealerCurrency,
 		TenantID:                 validDealerTenantID,
 		Phone:                    validDealerPhone,
@@ -318,20 +318,20 @@ var (
 	validFixedOperationBARNumber         = "12345"
 	validFixedOperationManufacturerLogos = []image{
 		{
-			"16",
-			"16",
+			16,
+			16,
 			"Icon",
 			"S3UUIDIcon_1",
 		},
 		{
-			"48",
-			"48",
+			48,
+			48,
 			"Thumb",
 			"S3UUIDThumb_1",
 		},
 		{
-			"256",
-			"256",
+			256,
+			256,
 			"Original",
 			"S3UUIDOriginal_1",
 		},
@@ -461,7 +461,7 @@ var (
 
 //FixedOperation objects
 var (
-	validFixedOperation = FixedOperation{
+	validFixedOperation = fixedOperation{
 		ID:                       validFixedOperationID,
 		DealerID:                 validFixedOperationDealerID,
 		EPANumber:                validFixedOperationEPANumber,
@@ -480,9 +480,9 @@ var (
 		DocumentVersion: validFixedOperationDocumentVersion,
 	}
 
-	validFixedOperations = []FixedOperation{validFixedOperation}
+	validFixedOperations = []fixedOperation{validFixedOperation}
 
-	validFixedOperationWithFields = FixedOperation{
+	validFixedOperationWithFields = fixedOperation{
 		ID:                  validFixedOperationID,
 		DealerID:            validFixedOperationDealerID,
 		EPANumber:           validFixedOperationEPANumber,
@@ -496,7 +496,7 @@ var (
 		Amenities:           validFixedOperationAmenities,
 	}
 
-	validFixedOperationsWithFields = []FixedOperation{validFixedOperationWithFields}
+	validFixedOperationsWithFields = []fixedOperation{validFixedOperationWithFields}
 )
 
 func fixedOperationDataSetup() {
