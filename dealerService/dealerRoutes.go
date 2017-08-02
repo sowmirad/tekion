@@ -43,7 +43,7 @@ func Start() {
 		"/dealer",
 		readDealer,
 		acl.ACLStruct{
-			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -52,7 +52,7 @@ func Start() {
 		"/fixedoperation/{foid}",
 		readFixedOperation,
 		acl.ACLStruct{
-			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -61,7 +61,7 @@ func Start() {
 		"/fixedoperations",
 		readFixedOperations,
 		acl.ACLStruct{
-			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -70,7 +70,7 @@ func Start() {
 		"/contact/{cid}",
 		readDealerContact,
 		acl.ACLStruct{
-			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -79,7 +79,7 @@ func Start() {
 		"/contacts",
 		readDealerContacts,
 		acl.ACLStruct{
-			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -88,7 +88,7 @@ func Start() {
 		"/goal/{gid}",
 		readDealerGoal,
 		acl.ACLStruct{
-			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -97,7 +97,7 @@ func Start() {
 		"/goals",
 		readDealerGoals,
 		acl.ACLStruct{
-			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -106,7 +106,7 @@ func Start() {
 		"/groups",
 		readDealerGroups,
 		acl.ACLStruct{
-			PermittedRoles: []string{"ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	//log service start info
