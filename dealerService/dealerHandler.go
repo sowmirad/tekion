@@ -133,9 +133,9 @@ func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
-	var fixedOperations fixedOperation
+	var fixedOperation fixedOperation
 	fields := fetchFieldsFromRequest(r)
-	err := mongoManager.ReadOne(ctx.Tenant, getFixedOperationCollectionName(), bson.M{"dealerID": dealerID}, selectedFields(fields), &fixedOperations)
+	err := mongoManager.ReadOne(ctx.Tenant, getFixedOperationCollectionName(), bson.M{"dealerID": dealerID}, selectedFields(fields), &fixedOperation)
 	if err == mgo.ErrNotFound {
 		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
 		return
@@ -144,7 +144,7 @@ func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperations)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperation)
 }
 
 // swagger:operation GET /contact/{cid} dealerContact readDealerContact

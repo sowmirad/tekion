@@ -414,8 +414,7 @@ type appointmentCapacity struct {
 // amenities struct contains list of dealer amenities, stored as slice of embedded objects in fixed operation struct
 // swagger:model amenities
 type amenities struct {
-	// Am
-	ID   string `bson:"amenityID" json:"amenityID"` //maps to AmenitiesMaster._id
+	ID   string `bson:"amenityID" json:"amenityID"` // maps to AmenitiesMaster._id
 	Name string `bson:"name" json:"name"`           // maps to AmenitiesMaster.name
 }
 
