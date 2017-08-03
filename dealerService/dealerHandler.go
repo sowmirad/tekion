@@ -4,7 +4,6 @@ package dealerService
 
 import (
 	//standard libraries
-	"errors"
 	"net/http"
 
 	//third party libraries
@@ -138,10 +137,6 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	fixedOperationID := vars["foid"]
-	if len(fixedOperationID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer fixed operation id missing in request"))
-		return
-	}
 
 	var fixedOperation fixedOperation
 	fields := fetchFieldsFromRequest(r)
@@ -277,10 +272,6 @@ func readFixedOperations(w http.ResponseWriter, r *http.Request) {
 func readDealerContact(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	contactID := vars["cid"]
-	if len(contactID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer contact id missing in request"))
-		return
-	}
 
 	fields := fetchFieldsFromRequest(r)
 	var contact dealerContact
@@ -416,10 +407,6 @@ func readDealerContacts(w http.ResponseWriter, r *http.Request) {
 func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	goalID := vars["gid"]
-	if len(goalID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer goal id missing in request"))
-		return
-	}
 
 	fields := fetchFieldsFromRequest(r)
 	var goal dealerGoal
