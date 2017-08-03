@@ -3,6 +3,7 @@ package dealerService
 // This file contains all the models related to dealer
 
 import (
+	"bitbucket.org/tekion/tenums/constants"
 	"time"
 )
 
@@ -118,7 +119,7 @@ type dealerContact struct {
 	// Dealer identification number
 	DealerID string `bson:"dealerID" json:"dealerID"`
 	// Dealer operation type - Fixed Operations-Services, Sales, Parts, Management etc
-	DealerOperationType string `bson:"dealerOperationType" json:"dealerOperationType"`
+	DealerOperationType constants.DealerOperationType `bson:"dealerOperationType" json:"dealerOperationType"`
 	// User id or login name ( ex: sig@tekion.com )
 	User string `bson:"user" json:"user"`
 	// Dealer contact/user display name like "Scott Hertler"
@@ -158,7 +159,7 @@ type dealerAddress struct {
 	// Dealer address unique identifier
 	ID string `bson:"dealerAddressID" json:"dealerAddressID"`
 	// Dealer address type like Service, Sales, Parts etc
-	AddressType string `bson:"addressType" json:"addressType"`
+	AddressType constants.DealerOperationType `bson:"addressType" json:"addressType"`
 	// Dealer address
 	StreetAddress1 string `bson:"streetAddress1" json:"streetAddress1"`
 	// Dealer street address - additional address field
@@ -206,7 +207,7 @@ type dealerDocumentTemplate struct {
 	// Template name
 	TemplateName string `bson:"templateName" json:"templateName"` // Template Name ( What is the use of this templates)
 	// Template type like Appointment, Estimate, Repair Order, Invoice etc
-	TemplateType string `bson:"templateType" json:"templateType"`
+	TemplateType constants.DealerDocumentTemplateType `bson:"templateType" json:"templateType"`
 	// Unique identifier of template image stored in S3 bucket
 	TemplateImageID string `bson:"templateImageID" json:"templateImageID"`
 	// Is active T or F (TRUE or FALSE) -- DEFAULT 'T'
@@ -219,7 +220,7 @@ type dealerOperationSchedule struct {
 	// Dealer operation schedule unique identifier
 	ID string `bson:"dealerOperationScheduleID" json:"dealerOperationScheduleID"` //
 	// Dealer operation type - Fixed Operations-Services, Sales, Parts, Management etc
-	DealerOperationType string `bson:"dealerOperationType" json:"dealerOperationType"`
+	DealerOperationType constants.DealerOperationType `bson:"dealerOperationType" json:"dealerOperationType"`
 	// Business open hour or office start time today : 7:00 AM
 	SundayOpenHour string `bson:"sundayOpenHour" json:"sundayOpenHour"`
 	// Business close hour or office end time today: 5:00 PM
@@ -479,87 +480,5 @@ type AmenitiesMaster struct {
 	LastUpdatedDateTime      time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`           // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
 	DocumentVersion          float32   `bson:"documentVersion" json:"documentVersion"`                   // Document version to keep track of the changes -- DEFAULT 1.0
 }
-
-// metaData of HTTP API response
-// swagger:model metaData
-type metaData struct {
-	// code
-	Code int `json:"code"`
-	// msg
-	Msg string `json:"msg"`
-}
-
-// dealerContactsRespObj
-// swagger:response dealerContactsRespObj
-type dealerContactsRespObj struct {
-	// in: body
-	Meta metaData `json:"meta"`
-	// in: body
-	Data []DealerContact `json:"data"`
-}
-
-// dealerGoalRespObj
-// swagger:response dealerGoalRespObj
-type dealerGoalRespObj struct {
-	// in: body
-	Meta metaData `json:"meta"`
-	// in: body
-	Data DealerGoal `json:"data"`
-}
-
-// dealerGoalsRespObj
-// swagger:response dealerGoalsRespObj
-type dealerGoalsRespObj struct {
-	// in: body
-	Meta metaData `json:"meta"`
-	// in: body
-	Data []DealerGoal `json:"data"`
-}
-
-// fixedOperationRespObj
-// swagger:response fixedOperationRespObj
-type fixedOperationRespObj struct {
-	// in: body
-	Meta metaData `json:"meta"`
-	// in: body
-	Data FixedOperation `json:"data"`
-}
-
-// fixedOperationsRespObj
-// swagger:response fixedOperationsRespObj
-type fixedOperationsRespObj struct {
-	// in: body
-	Meta metaData `json:"meta"`
-	// in: body
-	Data []FixedOperation `json:"data"`
-}
-
-// dealerContactRespObj
-// swagger:response dealerContactRespObj
-type dealerContactRespObj struct {
-	// in: body
-	Meta metaData `json:"meta"`
-	// in: body
-	Data DealerContact `json:"data"`
-}
-
-// dealerRespObj
-// swagger:response dealerRespObj
-type dealerRespObj struct {
-	// in: body
-	Meta metaData `json:"meta"`
-	// in: body
-	Data Dealer `json:"data"`
-}
-
-// dealerGroupsRespObj
-// swagger:response dealerGroupsRespObj
-type dealerGroupsRespObj struct {
-	// in: body
-	Meta metaData `json:"meta"`
-	// in: body
-	Data []DealerGroup `json:"data"`
-}
-
 */
 //Missing collections in mongo -- end
