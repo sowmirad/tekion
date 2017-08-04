@@ -102,7 +102,7 @@ type dealer struct {
 	// Dealer banner image
 	BannerImages []image `bson:"bannerImages" json:"bannerImages"`
 	// Dealer video url
-	VideoURl string `bson:"videoURl" json:"videoURl"`
+	VideoURl string `bson:"videoURL" json:"videoURL"`
 	// Is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// Data updated by who
