@@ -301,6 +301,8 @@ type fixedOperation struct {
 	AppointmentCapacity []appointmentCapacity `bson:"appointmentCapacity" json:"appointmentCapacity"`
 	// List of amenities provided by dealer
 	Amenities []amenities `bson:"amenities" json:"amenities"`
+	// dealer disclaimer message
+	Disclaimer string `bson:"disclaimer" json:"disclaimer"`
 	// Is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// Data updated by who
