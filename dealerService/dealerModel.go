@@ -99,6 +99,10 @@ type dealer struct {
 	OperationSchedule []dealerOperationSchedule `bson:"dealerOperationSchedule" json:"dealerOperationSchedule"`
 	// Dealer contacts
 	Contact []string `bson:"dealerContact" json:"dealerContact"`
+	// Dealer banner image
+	BannerImages []image `bson:"bannerImages" json:"bannerImages"`
+	// Dealer video url
+	VideoURl string `bson:"videoURl" json:"videoURl"`
 	// Is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// Data updated by who
