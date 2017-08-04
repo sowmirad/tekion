@@ -204,7 +204,7 @@ func readDealerContact(w http.ResponseWriter, r *http.Request) {
 	fields := fetchFieldsFromRequest(r)
 	var contact dealerContact
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
-	err := mongoManager.ReadOne(ctx.Tenant, getDealerContactCollectionName(), bson.M{"_id": contactID}, selectedFields(fields), &contact)
+	err := mongoManager.ReadOne(ctx.Tenant, getDealerContactCollectionName(), bson.M{"_id": contactID, "dealerID": ctx.DealerID}, selectedFields(fields), &contact)
 	if err == mgo.ErrNotFound {
 		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
 		return
@@ -339,7 +339,7 @@ func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 	fields := fetchFieldsFromRequest(r)
 	var goal dealerGoal
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
-	err := mongoManager.ReadOne(ctx.Tenant, getDealerGoalCollectionName(), bson.M{"_id": goalID}, selectedFields(fields), &goal)
+	err := mongoManager.ReadOne(ctx.Tenant, getDealerGoalCollectionName(), bson.M{"_id": goalID, "dealerID": ctx.DealerID}, selectedFields(fields), &goal)
 
 	if err == mgo.ErrNotFound {
 		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
