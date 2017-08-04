@@ -219,87 +219,17 @@
         }
       }
     },
-    "/fixedoperation/{foid}": {
+    "/fixedoperation": {
       "get": {
-        "description": "By default /fixedoperation/{foid} returns complete fixed operation object. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "description": "By default /fixedoperation returns list of complete fixed operation objects. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
         "produces": [
           "application/json"
         ],
         "tags": [
           "fixedOperation"
         ],
-        "summary": "Returns fixed operation identified by fixed operation id passed as part of url",
-        "operationId": "readFixedOperation",
-        "parameters": [
-          {
-            "type": "string",
-            "description": "unique identifier of the fixed operation",
-            "name": "foid",
-            "in": "path",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "unique identifier of the dealer",
-            "name": "dealerid",
-            "in": "header",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "client type",
-            "name": "clientid",
-            "in": "header",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "current tenant name",
-            "name": "tenantname",
-            "in": "header",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "auth token",
-            "name": "tekion-api-token",
-            "in": "header",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "list of comma separated fields you want in response e.g /fixedoperation/{foid}?fields=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity",
-            "name": "fields",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "fixed operation object",
-            "schema": {
-              "$ref": "#/definitions/fixedOperation"
-            }
-          },
-          "204": {
-            "description": "fixed operation not found in data base"
-          },
-          "400": {
-            "description": "error querying data base"
-          }
-        }
-      }
-    },
-    "/fixedoperations": {
-      "get": {
-        "description": "By default /fixedoperations returns list of complete fixed operation objects. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
-        "produces": [
-          "application/json"
-        ],
-        "tags": [
-          "fixedOperations"
-        ],
         "summary": "Returns list of fixed operations identified by dealer id passed in header",
-        "operationId": "readFixedOperations",
+        "operationId": "readFixedOperation",
         "parameters": [
           {
             "type": "string",
@@ -340,10 +270,7 @@
           "200": {
             "description": "list of fixed operations",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/fixedOperation"
-              }
+              "$ref": "#/definitions/fixedOperation"
             }
           },
           "204": {
@@ -559,6 +486,19 @@
     }
   },
   "definitions": {
+    "DealerDocumentTemplateType": {
+      "type": "integer",
+      "format": "int8",
+      "title": "DealerContactType : Contact type for dealerContact.",
+      "x-go-package": "bitbucket.org/tekion/tenums/constants"
+    },
+    "DealerOperationType": {
+      "description": "dealerContact.DealerOperationType, dealerAddress.AddressType, dealerOperationSchedule.DealerOperationType\ntdealer/dealerService/dealerModels.go",
+      "type": "integer",
+      "format": "int8",
+      "title": "DealerOperationType : valid for 3 collections as of now.",
+      "x-go-package": "bitbucket.org/tekion/tenums/constants"
+    },
     "amenities": {
       "description": "amenities struct contains list of dealer amenities, stored as slice of embedded objects in fixed operation struct",
       "type": "object",
@@ -864,9 +804,7 @@
       "type": "object",
       "properties": {
         "addressType": {
-          "description": "Dealer address type like Service, Sales, Parts etc",
-          "type": "string",
-          "x-go-name": "AddressType"
+          "$ref": "#/definitions/DealerOperationType"
         },
         "city": {
           "description": "Dealer location city",
@@ -973,9 +911,7 @@
           "x-go-name": "DealerID"
         },
         "dealerOperationType": {
-          "description": "Dealer operation type - Fixed Operations-Services, Sales, Parts, Management etc",
-          "type": "string",
-          "x-go-name": "DealerOperationType"
+          "$ref": "#/definitions/DealerOperationType"
         },
         "documentVersion": {
           "description": "Document version to keep track of the changes - DEFAULT 1.0",
@@ -1045,9 +981,7 @@
           "x-go-name": "TemplateName"
         },
         "templateType": {
-          "description": "Template type like Appointment, Estimate, Repair Order, Invoice etc",
-          "type": "string",
-          "x-go-name": "TemplateType"
+          "$ref": "#/definitions/DealerDocumentTemplateType"
         }
       },
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
@@ -1164,9 +1098,7 @@
           "x-go-name": "ID"
         },
         "dealerOperationType": {
-          "description": "Dealer operation type - Fixed Operations-Services, Sales, Parts, Management etc",
-          "type": "string",
-          "x-go-name": "DealerOperationType"
+          "$ref": "#/definitions/DealerOperationType"
         },
         "fridayCloseHour": {
           "description": "Business close hour or office end time today: 5:00 PM",

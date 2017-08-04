@@ -480,8 +480,6 @@ var (
 		DocumentVersion: validFixedOperationDocumentVersion,
 	}
 
-	validFixedOperations = []fixedOperation{validFixedOperation}
-
 	validFixedOperationWithFields = fixedOperation{
 		ID:                  validFixedOperationID,
 		DealerID:            validFixedOperationDealerID,
@@ -495,8 +493,6 @@ var (
 		AppointmentCapacity: validFixedOperationAppointmentCapacity,
 		Amenities:           validFixedOperationAmenities,
 	}
-
-	validFixedOperationsWithFields = []fixedOperation{validFixedOperationWithFields}
 )
 
 func fixedOperationDataSetup() {

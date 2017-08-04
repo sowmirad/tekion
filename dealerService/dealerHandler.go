@@ -4,7 +4,6 @@ package dealerService
 
 import (
 	//standard libraries
-	"errors"
 	"net/http"
 
 	//third party libraries
@@ -85,84 +84,11 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealer)
 }
 
-// swagger:operation GET /fixedoperation/{foid} fixedOperation readFixedOperation
-//
-// Returns fixed operation identified by fixed operation id passed as part of url
-//
-// By default /fixedoperation/{foid} returns complete fixed operation object. In case you need only certain fields, you can specify an optional query parameter "fields",
-// passing a list of comma separated fields you want in response.
-//
-// ---
-// produces:
-// - application/json
-// parameters:
-// - name: foid
-//   in: path
-//   description: unique identifier of the fixed operation
-//   required: true
-//   type: string
-// - name: dealerid
-//   in: header
-//   description: unique identifier of the dealer
-//   required: true
-//   type: string
-// - name: clientid
-//   in: header
-//   description: client type
-//   required: true
-//   type: string
-// - name: tenantname
-//   in: header
-//   description: current tenant name
-//   required: true
-//   type: string
-// - name: tekion-api-token
-//   in: header
-//   description: auth token
-//   required: true
-//   type: string
-// - name: fields
-//   in: query
-//   description: list of comma separated fields you want in response e.g /fixedoperation/{foid}?fields=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
-//   required: false
-//   type: string
-// responses:
-//   '200':
-//     description: fixed operation object
-//     schema:
-//         "$ref": "#/definitions/fixedOperation"
-//   '204':
-//     description: fixed operation not found in data base
-//   '400':
-//     description: error querying data base
-func readFixedOperation(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	fixedOperationID := vars["foid"]
-	if len(fixedOperationID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer fixed operation id missing in request"))
-		return
-	}
-
-	var fixedOperation fixedOperation
-	fields := fetchFieldsFromRequest(r)
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
-	err := mongoManager.ReadOne(ctx.Tenant, getFixedOperationCollectionName(), bson.M{"_id": fixedOperationID}, selectedFields(fields), &fixedOperation)
-	if err == mgo.ErrNotFound {
-		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
-		return
-	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
-		return
-	}
-
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperation)
-}
-
-// swagger:operation GET /fixedoperations fixedOperations readFixedOperations
+// swagger:operation GET /fixedoperation fixedOperation readFixedOperation
 //
 // Returns list of fixed operations identified by dealer id passed in header
 //
-// By default /fixedoperations returns list of complete fixed operation objects. In case you need only certain fields, you can specify an optional query parameter "fields",
+// By default /fixedoperation returns list of complete fixed operation objects. In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 //
 // ---
@@ -198,30 +124,27 @@ func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 //   '200':
 //     description: list of fixed operations
 //     schema:
-//       type: array
-//       items:
 //         "$ref": "#/definitions/fixedOperation"
 //   '204':
 //     description: fixed operations not found in data base
 //   '400':
 //     description: error querying data base
-func readFixedOperations(w http.ResponseWriter, r *http.Request) {
+func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
-	var fixedOperations []fixedOperation
+	var fixedOperation fixedOperation
 	fields := fetchFieldsFromRequest(r)
-	err := mongoManager.ReadAll(ctx.Tenant, getFixedOperationCollectionName(), bson.M{"dealerID": dealerID}, selectedFields(fields), &fixedOperations)
-	if err != nil {
+	err := mongoManager.ReadOne(ctx.Tenant, getFixedOperationCollectionName(), bson.M{"dealerID": dealerID}, selectedFields(fields), &fixedOperation)
+	if err == mgo.ErrNotFound {
+		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		return
+	} else if err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
 		return
 	}
 
-	if len(fixedOperations) == 0 {
-		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
-		return
-	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperations)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperation)
 }
 
 // swagger:operation GET /contact/{cid} dealerContact readDealerContact
@@ -277,10 +200,6 @@ func readFixedOperations(w http.ResponseWriter, r *http.Request) {
 func readDealerContact(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	contactID := vars["cid"]
-	if len(contactID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer contact id missing in request"))
-		return
-	}
 
 	fields := fetchFieldsFromRequest(r)
 	var contact dealerContact
@@ -416,10 +335,6 @@ func readDealerContacts(w http.ResponseWriter, r *http.Request) {
 func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	goalID := vars["gid"]
-	if len(goalID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, errors.New("dealer goal id missing in request"))
-		return
-	}
 
 	fields := fetchFieldsFromRequest(r)
 	var goal dealerGoal

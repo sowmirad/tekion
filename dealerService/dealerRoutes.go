@@ -38,7 +38,7 @@ import (
 // Start add routes and start the service at specified port
 func Start() {
 	tapi.AddRoutes(
-		"Read dealer",
+		"readDealer",
 		"GET",
 		"/dealer",
 		readDealer,
@@ -47,25 +47,16 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
-		"Reads dealer fixedoperation",
+		"readFixedOperation",
 		"GET",
-		"/fixedoperation/{foid}",
+		"/fixedoperation",
 		readFixedOperation,
 		acl.ACLStruct{
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
-		"Reads dealer fixedoperations",
-		"GET",
-		"/fixedoperations",
-		readFixedOperations,
-		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
-		},
-	)
-	tapi.AddRoutes(
-		"Reads dealer contact",
+		"readDealerContact",
 		"GET",
 		"/contact/{cid}",
 		readDealerContact,
@@ -74,7 +65,7 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
-		"Reads dealer contacts",
+		"readDealerContacts",
 		"GET",
 		"/contacts",
 		readDealerContacts,
@@ -83,7 +74,7 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
-		"Reads dealer goal",
+		"readDealerGoal",
 		"GET",
 		"/goal/{gid}",
 		readDealerGoal,
@@ -92,7 +83,7 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
-		"Reads dealer goals",
+		"readDealerGoals",
 		"GET",
 		"/goals",
 		readDealerGoals,
@@ -101,7 +92,7 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
-		"Reads groups",
+		"readDealerGroups",
 		"GET",
 		"/groups",
 		readDealerGroups,
