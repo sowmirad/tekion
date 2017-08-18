@@ -113,6 +113,8 @@ type dealer struct {
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// Document version to keep track of the changes - DEFAULT 1.0
 	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+	//Application code of dealer
+	ApplicationCode string `bson:"applicationCode" json:"applicationCode"`
 }
 
 // dealerContact
