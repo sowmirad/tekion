@@ -115,6 +115,14 @@ type dealer struct {
 	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
 	//Application code of dealer
 	ApplicationCode string `bson:"applicationCode" json:"applicationCode"`
+	//extension ISD code according to dealer location
+	ISDCode string `bson:"isdCode" json:"isdCode"`
+	//google maps url of the dealer location
+	LocationURL string `bson:"locationUrl" json:"locationUrl"`
+	//QuickBookingSlotsCount is the number of next available slots
+	QuickBookingSlotsCount string `bson:"quickBookingSlotsCount" json:"quickBookingSlotsCount"`
+	//BlockSlotExpiryTime is the time interval for which scheduling time slot for a customer will be blocked
+	BlockSlotExpiryTime time.Duration `bson:"blockSlotExpiryTime" json:"blockSlotExpiryTime"`
 }
 
 // dealerContact
