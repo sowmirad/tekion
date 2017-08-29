@@ -115,14 +115,6 @@ type dealer struct {
 	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
 	//Application code of dealer
 	ApplicationCode string `bson:"applicationCode" json:"applicationCode"`
-	//extension ISD code according to dealer location
-	ISDCode string `bson:"isdCode" json:"isdCode"`
-	//google maps url of the dealer location
-	LocationURL string `bson:"locationUrl" json:"locationUrl"`
-	//QuickBookingSlotsCount is the number of next available slots
-	QuickBookingSlotsCount int `bson:"quickBookingSlotsCount" json:"quickBookingSlotsCount"`
-	//BlockSlotExpiryTime is the time interval for which scheduling time slot for a customer will be blocked
-	BlockSlotExpiryTime time.Duration `bson:"blockSlotExpiryTime" json:"blockSlotExpiryTime"`
 }
 
 // dealerContact
@@ -190,6 +182,10 @@ type dealerAddress struct {
 	County string `bson:"county" json:"county"`
 	// Is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
+	//extension ISD code according to dealer location
+	ISDCode string `bson:"isdCode" json:"isdCode"`
+	//google maps url of the dealer location
+	LocationURL string `bson:"locationUrl" json:"locationUrl"`
 }
 
 // TODO : still unclear where and how to store it

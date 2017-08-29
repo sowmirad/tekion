@@ -1,4 +1,4 @@
-// Package dealerService
+// Package dealerService ...
 // title: dealer micro service
 //
 // dealerService implements dealer micro service.
