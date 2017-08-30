@@ -113,7 +113,7 @@ type dealer struct {
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// Document version to keep track of the changes - DEFAULT 1.0
 	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
-	//Application code of dealer
+	// Application code of dealer
 	ApplicationCode string `bson:"applicationCode" json:"applicationCode"`
 }
 
@@ -180,12 +180,12 @@ type dealerAddress struct {
 	Country string `bson:"country" json:"country"`
 	// Dealer location county
 	County string `bson:"county" json:"county"`
+	// ISD code extension according to dealer location
+	ISDCode string `bson:"isdCode" json:"isdCode"`
+	// Google maps url of the dealer location
+	LocationURL string `bson:"locationUrl" json:"locationUrl"`
 	// Is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
-	//extension ISD code according to dealer location
-	ISDCode string `bson:"isdCode" json:"isdCode"`
-	//google maps url of the dealer location
-	LocationURL string `bson:"locationUrl" json:"locationUrl"`
 }
 
 // TODO : still unclear where and how to store it
