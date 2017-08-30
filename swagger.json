@@ -10,8 +10,8 @@
   ],
   "swagger": "2.0",
   "info": {
-    "description": "dealerService implements dealer micro service.\n\nThe purpose of this application is to provides api's to perform CURD operations on dealer object.\nCurrently only get endpoints are available.\ndealerService is divided into 4 file.\n1. dealerRoutes.go  -\u003e contain routes.\n2. dealerHandler.go -\u003e containing handler functions.\n3. dealerModel.go   -\u003e containing models.\n4. dealerUtils.go   -\u003e containing util functions.",
-    "title": "dealer micro service",
+    "description": "dealerService implements dealer micro service\n\nThe purpose of this application is to provides api's to perform CURD operations on dealer object.\nCurrently only get endpoints are available.\ndealerService is divided into 4 file.\n1. dealerRoutes.go  -\u003e contain routes.\n2. dealerHandler.go -\u003e containing handler functions.\n3. dealerModel.go   -\u003e containing models.\n4. dealerUtils.go   -\u003e containing util functions.",
+    "title": "implements dealer micro service\ntitle: Dealer micro service",
     "contact": {
       "name": "Qasim Hasnain",
       "email": "mqhasnain@tekion.com"
@@ -270,7 +270,10 @@
           "200": {
             "description": "list of fixed operations",
             "schema": {
-              "$ref": "#/definitions/fixedOperation"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/fixedOperation"
+              }
             }
           },
           "204": {
@@ -504,7 +507,6 @@
       "type": "object",
       "properties": {
         "amenityID": {
-          "description": "Am",
           "type": "string",
           "x-go-name": "ID"
         },
@@ -652,6 +654,19 @@
       "description": "dealer struct contains dealer details",
       "type": "object",
       "properties": {
+        "applicationCode": {
+          "description": "Application code of dealer",
+          "type": "string",
+          "x-go-name": "ApplicationCode"
+        },
+        "bannerImages": {
+          "description": "Dealer banner image",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/image"
+          },
+          "x-go-name": "BannerImages"
+        },
         "currency": {
           "description": "Dealer Currency -  DEFAULT 'USD'",
           "type": "string",
@@ -791,6 +806,11 @@
           },
           "x-go-name": "VehicleDamage"
         },
+        "videoURL": {
+          "description": "Dealer video url",
+          "type": "string",
+          "x-go-name": "VideoURL"
+        },
         "website": {
           "description": "Dealer website URL",
           "type": "string",
@@ -830,6 +850,16 @@
           "description": "Is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
           "type": "boolean",
           "x-go-name": "IsActive"
+        },
+        "isdCode": {
+          "description": "extension ISD code according to dealer location",
+          "type": "string",
+          "x-go-name": "ISDCode"
+        },
+        "locationUrl": {
+          "description": "google maps url of the dealer location",
+          "type": "string",
+          "x-go-name": "LocationURL"
         },
         "state": {
           "description": "Dealer Location state",
@@ -1208,6 +1238,11 @@
           "description": "Dealer unique identifier",
           "type": "string",
           "x-go-name": "DealerID"
+        },
+        "disclaimer": {
+          "description": "dealer disclaimer message",
+          "type": "string",
+          "x-go-name": "Disclaimer"
         },
         "documentVersion": {
           "description": "Document version to keep track of the changes - DEFAULT 1.0",

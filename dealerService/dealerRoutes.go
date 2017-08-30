@@ -1,7 +1,7 @@
-// Package dealerService ...
-// title: dealer micro service
+// Package dealerService implements dealer micro service
+// title: Dealer micro service
 //
-// dealerService implements dealer micro service.
+// dealerService implements dealer micro service
 //
 // The purpose of this application is to provides api's to perform CURD operations on dealer object.
 // Currently only get endpoints are available.

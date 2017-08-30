@@ -124,6 +124,8 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 //   '200':
 //     description: list of fixed operations
 //     schema:
+//       type: array
+//       items:
 //         "$ref": "#/definitions/fixedOperation"
 //   '204':
 //     description: fixed operations not found in data base
