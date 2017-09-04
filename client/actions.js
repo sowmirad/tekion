@@ -48,3 +48,9 @@ export function getFixedOperationForDealer(config) {
     }
   };
 }
+
+export function setDealerInfo(dealerInfo) {
+  return async (dispatch) => {
+      dispatch(getDealerInfoSuccess({ dealerInfo }));
+    }
+}
