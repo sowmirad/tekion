@@ -437,9 +437,9 @@ type amenities struct {
 type doorRate struct {
 	StartDate   *time.Time `bson:"startDate" json:"startDate"`
 	EndDate     *time.Time `bson:"endDate" json:"endDate"`
-	CustomerPay *int       `bson:"customerPay" json:"customerPay"`
-	Warranty    *int       `bson:"warranty" json:"warranty"`
-	Internal    *int       `bson:"internal" json:"internal"`
+	CustomerPay *float64   `bson:"customerPay" json:"customerPay"`
+	Warranty    *float64   `bson:"warranty" json:"warranty"`
+	Internal    *float64   `bson:"internal" json:"internal"`
 }
 
 // Embedded structures in fixed operations-- end
