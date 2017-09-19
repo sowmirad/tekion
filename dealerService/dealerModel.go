@@ -331,7 +331,7 @@ type fixedOperation struct {
 // swagger:model holiday
 type holiday struct {
 	// Holiday date like 25th Dec
-	Date string `bson:"date" json:"date"` // ask for date format used in Tekion
+	Date *time.Time `bson:"date" json:"date"` // ask for date format used in Tekion
 	// Operation hrs start - "7:00"
 	StartOperationHour string `bson:"startOperationHour" json:"startOperationHour"` // not sure about its use ??
 	// Operation hrs end - "5:00"
