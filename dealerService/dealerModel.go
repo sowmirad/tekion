@@ -308,6 +308,7 @@ type fixedOperation struct {
 	// List of amenities provided by dealer
 	Amenities     []amenities `bson:"amenities" json:"amenities"`
 	TaxPercentage float64     `bson:"taxPercentage" json:"taxPercentage"`
+	DoorRates     []doorRate  `bson:"doorRates" json:"doorRates"`
 	// dealer disclaimer message
 	Disclaimer string `bson:"disclaimer" json:"disclaimer"`
 	// Is active T or F (TRUE or FALSE) -- DEFAULT 'T'
@@ -330,7 +331,7 @@ type fixedOperation struct {
 // swagger:model holiday
 type holiday struct {
 	// Holiday date like 25th Dec
-	Date string `bson:"date" json:"date"` // ask for date format used in Tekion
+	Date *time.Time `bson:"date" json:"date"` // ask for date format used in Tekion
 	// Operation hrs start - "7:00"
 	StartOperationHour string `bson:"startOperationHour" json:"startOperationHour"` // not sure about its use ??
 	// Operation hrs end - "5:00"
@@ -429,6 +430,16 @@ type appointmentCapacity struct {
 type amenities struct {
 	ID   string `bson:"amenityID" json:"amenityID"` // maps to AmenitiesMaster._id
 	Name string `bson:"name" json:"name"`           // maps to AmenitiesMaster.name
+}
+
+// doorRate struct
+// swagger:model doorRate
+type doorRate struct {
+	StartDate   *time.Time `bson:"startDate" json:"startDate"`
+	EndDate     *time.Time `bson:"endDate" json:"endDate"`
+	CustomerPay *float64   `bson:"customerPay" json:"customerPay"`
+	Warranty    *float64   `bson:"warranty" json:"warranty"`
+	Internal    *float64   `bson:"internal" json:"internal"`
 }
 
 // Embedded structures in fixed operations-- end
