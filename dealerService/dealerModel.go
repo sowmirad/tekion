@@ -308,6 +308,7 @@ type fixedOperation struct {
 	// List of amenities provided by dealer
 	Amenities     []amenities `bson:"amenities" json:"amenities"`
 	TaxPercentage float64     `bson:"taxPercentage" json:"taxPercentage"`
+	DoorRates     []doorRate  `bson:"doorRates" json:"doorRates"`
 	// dealer disclaimer message
 	Disclaimer string `bson:"disclaimer" json:"disclaimer"`
 	// Is active T or F (TRUE or FALSE) -- DEFAULT 'T'
@@ -429,6 +430,16 @@ type appointmentCapacity struct {
 type amenities struct {
 	ID   string `bson:"amenityID" json:"amenityID"` // maps to AmenitiesMaster._id
 	Name string `bson:"name" json:"name"`           // maps to AmenitiesMaster.name
+}
+
+// doorRate struct
+// swagger:model doorRate
+type doorRate struct {
+	StartDate   *time.Time `bson:"startDate" json:"startDate"`
+	EndDate     *time.Time `bson:"endDate" json:"endDate"`
+	CustomerPay *int       `bson:"customerPay" json:"customerPay"`
+	Warranty    *int       `bson:"warranty" json:"warranty"`
+	Internal    *int       `bson:"warranty" json:"warranty"`
 }
 
 // Embedded structures in fixed operations-- end
