@@ -439,7 +439,7 @@ type doorRate struct {
 	EndDate     *time.Time `bson:"endDate" json:"endDate"`
 	CustomerPay *int       `bson:"customerPay" json:"customerPay"`
 	Warranty    *int       `bson:"warranty" json:"warranty"`
-	Internal    *int       `bson:"warranty" json:"warranty"`
+	Internal    *int       `bson:"internal" json:"internal"`
 }
 
 // Embedded structures in fixed operations-- end
