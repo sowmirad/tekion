@@ -505,3 +505,9 @@ type AmenitiesMaster struct {
 }
 */
 //Missing collections in mongo -- end
+
+
+type listdealersReq struct {
+	IDs            []string `json:"dealerIDs"`
+	SelectedFields []string `json:"selectedFields"`
+}

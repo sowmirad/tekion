@@ -5,7 +5,7 @@ package dealerService
 import (
 	//standard libraries
 	"net/http"
-
+     "errors"
 	//third party libraries
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
@@ -16,9 +16,15 @@ import (
 	"bitbucket.org/tekion/erratum"
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"bitbucket.org/tekion/tbaas/mongoManager"
+	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
 	"bitbucket.org/tekion/tbaas/tapi"
+	"encoding/json"
+	"fmt"
 )
 
+var(
+errDealerID       = errors.New("empty user id")
+)
 // swagger:operation GET /dealer dealer readDealer
 //
 // Returns Dealer identified by the dealer id
@@ -82,6 +88,64 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 	}
 	// No need to check if some thing was found or not. readOne returns "not found".
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealer)
+}
+
+
+//dealerList is to query list of dealers from Dealermaster
+func dealerList(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+
+	var lstdealer listdealersReq
+	err := json.NewDecoder(r.Body).Decode(&lstdealer)
+	if err != nil {
+		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload, err)
+		return
+	}
+	findQuery := bson.M{}
+	selectQuery := lstdealer.prepareSelectQuery()
+	var dealerLst [] dealer
+
+	if err := mMgr.ReadAll(ctx.Tenant, getDealerCollectionName(), findQuery, selectQuery, &dealerLst); err != nil {
+		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
+		return
+	}
+	if len(dealerLst) == 0 {
+		tapi.WriteHTTPResponse(w, http.StatusOK, "No document found, returning empty list", dealerLst)
+		return
+	}
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer list", dealerLst)
+	return
+
+}
+
+//update is to query list of dealers from Dealermaster
+func updateDealer(w http.ResponseWriter, r*http.Request)  {
+	ctx := context.Get(r,"apiContext").(apiContext.APIContext)
+	var dealerdtls dealer
+	if err := json.NewDecoder(r.Body).Decode(&dealerdtls); err != nil {
+		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload,
+			fmt.Errorf("error encountered while decoding userDetails payload: %v", err))
+		return
+	}
+	if len(dealerdtls.ID) == 0 {
+		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload, errDealerID)
+		return
+	}
+	findQ := bson.M{"_id": dealerdtls.ID}
+	updateQ, err := dealerdtls.prepareUpdateQuery(ctx, r)
+	if err != nil {
+		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.DefaultErrorCode,
+			fmt.Errorf("error encountered while creating update query for db: %v", err))
+		return
+	}
+	if err = mMgr.Update(ctx.Tenant, getDealerCollectionName(), findQ, updateQ); err != nil {
+		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorUpdatingMongoDoc,
+			fmt.Errorf("error encountered while updating dealer details in db: %v", err))
+		return
+	}
+
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", nil)
+
 }
 
 // swagger:operation GET /fixedoperation fixedOperation readFixedOperation
