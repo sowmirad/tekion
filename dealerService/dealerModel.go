@@ -306,9 +306,11 @@ type fixedOperation struct {
 	// List of fixed operation appointment capacities
 	AppointmentCapacity []appointmentCapacity `bson:"appointmentCapacity" json:"appointmentCapacity"`
 	// List of amenities provided by dealer
-	Amenities     []amenities `bson:"amenities" json:"amenities"`
-	TaxPercentage float64     `bson:"taxPercentage" json:"taxPercentage"`
-	DoorRates     []doorRate  `bson:"doorRates" json:"doorRates"`
+	DefaultOperationCodes     []string    `bson:"defaultOperationCodes" json:"defaultOperationCodes"`
+	RecommendedOperationCodes []string    `bson:"recommendedOperationCodes" json:"recommendedOperationCodes"`
+	Amenities                 []amenities `bson:"amenities" json:"amenities"`
+	TaxPercentage             float64     `bson:"taxPercentage" json:"taxPercentage"`
+	DoorRates                 []doorRate  `bson:"doorRates" json:"doorRates"`
 	// dealer disclaimer message
 	Disclaimer string `bson:"disclaimer" json:"disclaimer"`
 	// Is active T or F (TRUE or FALSE) -- DEFAULT 'T'
