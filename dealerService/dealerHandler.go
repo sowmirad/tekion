@@ -19,6 +19,9 @@ import (
 	"bitbucket.org/tekion/tbaas/tapi"
 )
 
+const(
+	apiCtxKey      = "apiContext"
+)
 // swagger:operation GET /dealer dealer readDealer
 //
 // Returns Dealer identified by the dealer id
@@ -66,7 +69,7 @@ import (
 //   '400':
 //     description: error querying data base
 func readDealer(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	//assuming logged in user has access to view all the dealers
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
@@ -134,7 +137,7 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 //   '400':
 //     description: error querying data base
 func readFixedOperation(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	var fixedOperation fixedOperation
@@ -209,7 +212,7 @@ func readDealerContact(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var contact dealerContact
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	err := mongoManager.ReadOne(ctx.Tenant, dealerContactCollectionName,
 		bson.M{"_id": contactID, "dealerID": ctx.DealerID}, selectedFields(fields), &contact)
 	if err == mgo.ErrNotFound {
@@ -272,7 +275,7 @@ func readDealerContact(w http.ResponseWriter, r *http.Request) {
 //   '400':
 //     description: error querying data base
 func readDealerContacts(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
@@ -348,7 +351,7 @@ func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var goal dealerGoal
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	err := mongoManager.ReadOne(ctx.Tenant, dealerGoalCollectionName,
 		bson.M{"_id": goalID, "dealerID": ctx.DealerID}, selectedFields(fields), &goal)
 
@@ -412,7 +415,7 @@ func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 //   '400':
 //     description: error querying data base
 func readDealerGoals(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
@@ -481,7 +484,7 @@ func readDealerGoals(w http.ResponseWriter, r *http.Request) {
 //   '400':
 //     description: error querying data base
 func readDealerGroups(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
