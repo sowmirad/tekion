@@ -53,8 +53,7 @@ import (
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response
-//   e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
+//   description: e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
 //   required: false
 //   type: string
 // responses:
@@ -120,8 +119,7 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response
-//   e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
+//   description: e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
 //   required: false
 //   type: string
 // responses:
@@ -193,8 +191,7 @@ func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response
-//   e.g /contact/{cid}?fields=user,userDisplayName,userDisplayTitle
+//   description: e.g /contact/{cid}?fields=user,userDisplayName,userDisplayTitle
 //   required: false
 //   type: string
 // responses:
@@ -260,8 +257,7 @@ func readDealerContact(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response
-//   e.g /contacts?fields=user,userDisplayName,userDisplayTitle
+//   description: e.g /contacts?fields=user,userDisplayName,userDisplayTitle
 //   required: false
 //   type: string
 // responses:
@@ -334,8 +330,7 @@ func readDealerContacts(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response
-//   e.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
+//   description: e.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
 //   required: false
 //   type: string
 // responses:
@@ -402,8 +397,7 @@ func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response
-//   e.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
+//   description: e.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
 //   required: false
 //   type: string
 // responses:
@@ -472,8 +466,7 @@ func readDealerGoals(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response
-//   e.g /groups?fields=dealerGroupName,dealerGroupName,dealers
+//   description: e.g /groups?fields=dealerGroupName,dealerGroupName,dealers
 //   required: false
 //   type: string
 // responses:
