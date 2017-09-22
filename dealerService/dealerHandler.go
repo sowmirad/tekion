@@ -19,9 +19,10 @@ import (
 	"bitbucket.org/tekion/tbaas/tapi"
 )
 
-const(
-	apiCtxKey      = "apiContext"
+const (
+	apiCtxKey = "apiContext"
 )
+
 // swagger:operation GET /dealer dealer readDealer
 //
 // Returns Dealer identified by the dealer id
