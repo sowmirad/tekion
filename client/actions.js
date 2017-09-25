@@ -6,6 +6,9 @@ import {
   TEKION_GET_FIXED_OPERATION_REQUEST,
   TEKION_GET_FIXED_OPERATION_SUCCESS,
   TEKION_GET_FIXED_OPERATION_FAILURE,
+  TEKION_DEALER_LIST_REQUEST,
+  TEKION_DEALER_LIST_SUCCESS,
+  TEKION_DEALER_LIST_FAILURE,
 } from './constants';
 import Services from './services';
 
@@ -22,6 +25,10 @@ const getFixedOperationsSuccess = createAction(
 const getFixedOperationsFailure = createAction(
   TEKION_GET_FIXED_OPERATION_FAILURE,
 );
+
+const getDealerListRequest = createAction(TEKION_DEALER_LIST_REQUEST);
+const getDealerListSuccess = createAction(TEKION_DEALER_LIST_SUCCESS);
+const getDealerListFailure = createAction(TEKION_DEALER_LIST_FAILURE);
 
 export function getDealerInfo(config) {
   return async (dispatch) => {
@@ -53,4 +60,17 @@ export function setDealerInfo(dealerInfo) {
   return async (dispatch) => {
       dispatch(getDealerInfoSuccess({ dealerInfo }));
     }
+}
+
+export function getDealerList(config) {
+  return async (dispatch) => {
+    dispatch(getDealerListRequest);
+    const { error, response } = await Services.getDealerList(config);
+    if (response) {
+      dispatch(getDealerListSuccess({ dealerInfo: response.data }));
+    }
+    if (error) {
+      dispatch(getDealerListFailure(error));
+    }
+  };
 }
