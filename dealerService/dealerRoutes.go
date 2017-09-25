@@ -105,25 +105,17 @@ func Start() {
 		"dealerList",
 		"Post",
 		"/dealer",
-		dealerList,
+		 dealerList,
 		acl.ACLStruct{
-			// TODO PremittedRoles (SuperAdmin)
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
 		},
 	)
 	tapi.AddRoutes(
 		"updateDealer",
-<<<<<<< HEAD
 		"Patch",
 		"/dealer",
 		 patchDealer,
-=======
-		"Post",
-		"/updateDealer",
-		updateDealer,
->>>>>>> 8dc5389d1d12d4a9243a3a8e48156f6b12ae0980
 		acl.ACLStruct{
-			// TODO PremittedRoles (SuperAdmin)
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
 		},
 	)
