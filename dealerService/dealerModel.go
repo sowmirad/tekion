@@ -3,6 +3,7 @@ package dealerService
 // This file contains all the models related to dealer
 
 import (
+	"bitbucket.org/tekion/tbaas/tapi"
 	"bitbucket.org/tekion/tenums/constants"
 	"time"
 )
@@ -499,4 +500,15 @@ type dealerGroup struct {
 type listDealersReq struct {
 	IDs            []string `json:"dealerIDs"`
 	SelectedFields []string `json:"selectedFields"`
+}
+
+type userDtlsRes struct {
+	Meta tapi.MetaData `json:"meta"`
+	Data userData      `json:"data"`
+}
+
+// this is the response we get from signup user endpoint
+// only account id
+type userData struct {
+	DisplayName string `json:"displayName"`
 }

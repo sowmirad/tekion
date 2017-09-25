@@ -107,6 +107,7 @@ func Start() {
 		"/dealer",
 		dealerList,
 		acl.ACLStruct{
+			// TODO PremittedRoles (SuperAdmin)
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
 		},
 	)
@@ -116,6 +117,7 @@ func Start() {
 		"/dealer",
 		patchDealer,
 		acl.ACLStruct{
+			// TODO PremittedRoles (SuperAdmin)
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
 		},
 	)
