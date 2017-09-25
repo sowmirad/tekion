@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	"gopkg.in/mgo.v2/bson"
 	"bitbucket.org/tekion/tbaas/apiContext"
+	"gopkg.in/mgo.v2/bson"
 	"time"
 )
 
@@ -32,7 +32,7 @@ func selectedFields(fields []string) bson.M {
 }
 
 // prepareSelectQuery is to select query form listdealersReq.SelectedFields
-func (lstdealer *listdealersReq) prepareSelectQuery() bson.M {
+func (lstdealer *listDealersReq) prepareSelectQuery() bson.M {
 	if len(lstdealer.SelectedFields) != 0 {
 		selectQ := make(bson.M)
 		for _, v := range lstdealer.SelectedFields {
@@ -42,6 +42,7 @@ func (lstdealer *listdealersReq) prepareSelectQuery() bson.M {
 	}
 	return nil
 }
+
 //prepareUpdateQuery is use to update the Dealermaster
 func (dealerdtls *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) (bson.M, error) {
 
