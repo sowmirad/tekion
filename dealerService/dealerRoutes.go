@@ -31,6 +31,7 @@ import (
 	"bitbucket.org/tekion/tacl/acl"
 	"bitbucket.org/tekion/tbaas/log"
 	"bitbucket.org/tekion/tbaas/tapi"
+	"net/http"
 )
 
 //TODO : Need new admin scope
@@ -111,13 +112,24 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"updateDealer",
-		"MethodPatch",
+		"Patch",
 		"/dealer",
-		 updateDealer,
+		 patchDealer,
 		acl.ACLStruct{
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
 		},
 	)
+	tapi.AddRoutes(
+		"updateallDealer",
+		http.MethodPut,
+		"/dealer",
+		updateDealer,
+		acl.ACLStruct{
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)
+
+
 	//log service start info
 	log.GenericInfo("", "", "", "Started Tekion tdealer on port:8079")
 	tapi.Start("8079", "/tdealer")
