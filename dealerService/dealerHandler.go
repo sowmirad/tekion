@@ -128,23 +128,23 @@ func patchDealer(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	var dealerdtls dealer
 	if err := json.NewDecoder(r.Body).Decode(&dealerdtls); err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload,
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
 			fmt.Errorf("error encountered while decoding userDetails payload: %v", err))
 		return
 	}
 	if len(dealerdtls.ID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload, errDealerID)
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errDealerID)
 		return
 	}
 	findQ := bson.M{"_id": dealerdtls.ID}
 	updateQ, err := dealerdtls.prepareUpdateQuery(ctx, r)
 	if err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.DefaultErrorCode,
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.DefaultErrorCode,
 			fmt.Errorf("error encountered while creating update query for db: %v", err))
 		return
 	}
-	if err = mMgr.Update(ctx.Tenant, getDealerCollectionName(), findQ, updateQ); err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorUpdatingMongoDoc,
+	if err = mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, updateQ); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
 			fmt.Errorf("error encountered while updating dealer details in db: %v", err))
 		return
 	}

@@ -6,7 +6,6 @@ import (
 
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"gopkg.in/mgo.v2/bson"
-	"time"
 )
 
 // TODO : should be moved to some common library
@@ -43,49 +42,47 @@ func (lstdealer *listDealersReq) prepareSelectQuery() bson.M {
 	return nil
 }
 
-//prepareUpdateQuery is use to update the Dealermaster
-func (dealerdtls *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) (bson.M, error) {
+// prepareUpdateQuery is use to update the DealerMaster
+func (d *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) (bson.M, error) {
 
 	updateQuery := make(bson.M)
-	if len(dealerdtls.Name) != 0 {
-		updateQuery["dealerName"] = dealerdtls.Name
+	if len(d.Name) != 0 {
+		updateQuery["dealerName"] = d.Name
 	}
-	if len(dealerdtls.DoingBusinessAsName) != 0 {
-		updateQuery["dealerDisplayName"] = dealerdtls.DoingBusinessAsName
+	if len(d.MakeCode) != 0 {
+		updateQuery["makeCode"] = d.MakeCode
 	}
-	if len(dealerdtls.StateIssuedNumber) != 0 {
-		updateQuery["stateIssuedNumber"] = dealerdtls.StateIssuedNumber
+	if len(d.DoingBusinessAsName) != 0 {
+		updateQuery["dealerDisplayName"] = d.DoingBusinessAsName
 	}
-	if len(dealerdtls.ManufacturerIssuedNumber) != 0 {
-		updateQuery["manufacturerIssuedNumber"] = dealerdtls.ManufacturerIssuedNumber
+	if len(d.StateIssuedNumber) != 0 {
+		updateQuery["stateIssuedNumber"] = d.StateIssuedNumber
 	}
-	if len(dealerdtls.Website) != 0 {
-		updateQuery["website"] = dealerdtls.Website
+	if len(d.ManufacturerIssuedNumber) != 0 {
+		updateQuery["manufacturerIssuedNumber"] = d.ManufacturerIssuedNumber
 	}
-	if len(dealerdtls.TimeZone) != 0 {
-		updateQuery["timeZone"] = dealerdtls.TimeZone
+	if len(d.Website) != 0 {
+		updateQuery["website"] = d.Website
 	}
-	if len(dealerdtls.Currency) != 0 {
-		updateQuery["currency"] = dealerdtls.Currency
+	if len(d.TimeZone) != 0 {
+		updateQuery["timeZone"] = d.TimeZone
 	}
-	if len(dealerdtls.TenantID) != 0 {
-		updateQuery["tenantID"] = dealerdtls.TenantID
+	if len(d.Currency) != 0 {
+		updateQuery["currency"] = d.Currency
 	}
-	if len(dealerdtls.Phone) != 0 {
-		updateQuery["phone"] = dealerdtls.Phone
+	if len(d.TenantID) != 0 {
+		updateQuery["tenantID"] = d.TenantID
 	}
-	if len(dealerdtls.DealershipCode) != 0 {
-		updateQuery["dealershipCode"] = dealerdtls.DealershipCode
+	if len(d.Phone) != 0 {
+		updateQuery["phone"] = d.Phone
 	}
-	if len(dealerdtls.VideoURL) != 0 {
-		updateQuery["videoURL"] = dealerdtls.VideoURL
+	if len(d.VideoURL) != 0 {
+		updateQuery["videoURL"] = d.VideoURL
 	}
-	if len(dealerdtls.ApplicationCode) != 0 {
-		updateQuery["applicationCode"] = dealerdtls.ApplicationCode
-	}
-	updateQuery["lastUpdatedByUser"] = dealerdtls.LastUpdatedByUser
-	updateQuery["lastUpdatedByDisplayName"] = dealerdtls.LastUpdatedByDisplayName
-	updateQuery["lastUpdatedDateTime"] = dealerdtls.LastUpdatedByDisplayName
-	updateQuery["documentVersion"] = dealerdtls.DocumentVersion
+
+	updateQuery["lastUpdatedByUser"] = d.LastUpdatedByUser
+	updateQuery["lastUpdatedByDisplayName"] = d.LastUpdatedByDisplayName
+	updateQuery["lastUpdatedDateTime"] = d.LastUpdatedByDisplayName
+	updateQuery["documentVersion"] = d.DocumentVersion
 	return bson.M{"$set": updateQuery}, nil
 }
