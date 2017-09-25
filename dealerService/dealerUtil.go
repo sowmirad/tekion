@@ -1,11 +1,28 @@
 package dealerService
 
 import (
+	"bitbucket.org/tekion/tbaas/apiContext"
+	"bitbucket.org/tekion/tbaas/consulhelper"
+	"bitbucket.org/tekion/tbaas/hwrap"
+	"bitbucket.org/tekion/tbaas/log"
+	"encoding/json"
+	"fmt"
+	"gopkg.in/mgo.v2/bson"
+	"io/ioutil"
 	"net/http"
 	"strings"
+<<<<<<< HEAD
 	"gopkg.in/mgo.v2/bson"
 	"bitbucket.org/tekion/tbaas/apiContext"
+=======
+>>>>>>> 8dc5389d1d12d4a9243a3a8e48156f6b12ae0980
 	"time"
+)
+
+const (
+	loginServiceID = "tuser"
+	signupEndPoint = "/tuser/username/"
+	appJSON        = "application/json"
 )
 
 // TODO : should be moved to some common library
@@ -31,7 +48,7 @@ func selectedFields(fields []string) bson.M {
 }
 
 // prepareSelectQuery is to select query form listdealersReq.SelectedFields
-func (lstdealer *listdealersReq) prepareSelectQuery() bson.M {
+func (lstdealer *listDealerReq) prepareSelectQuery() bson.M {
 	if len(lstdealer.SelectedFields) != 0 {
 		selectQ := make(bson.M)
 		for _, v := range lstdealer.SelectedFields {
@@ -41,8 +58,33 @@ func (lstdealer *listdealersReq) prepareSelectQuery() bson.M {
 	}
 	return nil
 }
+
+func getUserdls(ctx apiContext.APIContext, r *http.Request, userdtlsRes *userdtlsRes) error {
+	url := consulhelper.GetServiceNodes(loginServiceID) + signupEndPoint + ctx.UserName
+	resp, err := hwrap.MakeHTTPRequestWithCustomHeader(http.MethodGet, url, appJSON, r.Header, nil)
+	if err != nil {
+		err = fmt.Errorf("call to %s failed, error: %v", url, err)
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
+		return err
+	}
+	if resp.StatusCode != http.StatusOK {
+		respBody, _ := ioutil.ReadAll(resp.Body)
+		err := fmt.Errorf("call to %s returned error, response body: %s, code: %d", url, string(respBody), resp.StatusCode)
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
+		return err
+	}
+	//Decode
+	if err = json.NewDecoder(resp.Body).Decode(&userdtlsRes); err != nil {
+		err = fmt.Errorf("error encountered while decoding %s reponse, error: %v", url, err)
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
+		return err
+	}
+
+	return nil
+}
+
 //prepareUpdateQuery is use to update the Dealermaster
-func (dealerdtls *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) (bson.M, error) {
+func (dealerdtls *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) bson.M {
 
 	updateQuery := make(bson.M)
 	if len(dealerdtls.Name) != 0 {
@@ -81,9 +123,9 @@ func (dealerdtls *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.
 	if len(dealerdtls.ApplicationCode) != 0 {
 		updateQuery["applicationCode"] = dealerdtls.ApplicationCode
 	}
-	updateQuery["lastUpdatedByUser"] = dealerdtls.LastUpdatedByUser
+	updateQuery["lastUpdatedByUser"] = ctx.UserName
 	updateQuery["lastUpdatedByDisplayName"] = dealerdtls.LastUpdatedByDisplayName
-	updateQuery["lastUpdatedDateTime"] = dealerdtls.LastUpdatedByDisplayName
+	updateQuery["lastUpdatedDateTime"] = time.Now().UTC()
 	updateQuery["documentVersion"] = dealerdtls.DocumentVersion
-	return bson.M{"$set": updateQuery}, nil
+	return bson.M{"$set": updateQuery}
 }

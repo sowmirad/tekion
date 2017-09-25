@@ -3,6 +3,7 @@ package dealerService
 // This file contains all the models related to dealer
 
 import (
+	"bitbucket.org/tekion/tbaas/tapi"
 	"bitbucket.org/tekion/tenums/constants"
 	"time"
 )
@@ -306,9 +307,11 @@ type fixedOperation struct {
 	// List of fixed operation appointment capacities
 	AppointmentCapacity []appointmentCapacity `bson:"appointmentCapacity" json:"appointmentCapacity"`
 	// List of amenities provided by dealer
-	Amenities     []amenities `bson:"amenities" json:"amenities"`
-	TaxPercentage float64     `bson:"taxPercentage" json:"taxPercentage"`
-	DoorRates     []doorRate  `bson:"doorRates" json:"doorRates"`
+	DefaultOperationCodes     []string    `bson:"defaultOperationCodes" json:"defaultOperationCodes"`
+	RecommendedOperationCodes []string    `bson:"recommendedOperationCodes" json:"recommendedOperationCodes"`
+	Amenities                 []amenities `bson:"amenities" json:"amenities"`
+	TaxPercentage             float64     `bson:"taxPercentage" json:"taxPercentage"`
+	DoorRates                 []doorRate  `bson:"doorRates" json:"doorRates"`
 	// dealer disclaimer message
 	Disclaimer string `bson:"disclaimer" json:"disclaimer"`
 	// Is active T or F (TRUE or FALSE) -- DEFAULT 'T'
@@ -506,8 +509,18 @@ type AmenitiesMaster struct {
 */
 //Missing collections in mongo -- end
 
-
-type listdealersReq struct {
+type listDealerReq struct {
 	IDs            []string `json:"dealerIDs"`
 	SelectedFields []string `json:"selectedFields"`
+}
+
+type userdtlsRes struct {
+	Meta tapi.MetaData `json:"meta"`
+	Data userdata      `json:"data"`
+}
+
+// this is the response we get from signup user endpoint
+// only account id
+type userdata struct {
+	DisplayName string `json:"DisplayName"`
 }
