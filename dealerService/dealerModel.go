@@ -3,6 +3,7 @@ package dealerService
 // This file contains all the models related to dealer
 
 import (
+	"bitbucket.org/tekion/tbaas/tapi"
 	"bitbucket.org/tekion/tenums/constants"
 	"time"
 )
@@ -506,8 +507,18 @@ type AmenitiesMaster struct {
 */
 //Missing collections in mongo -- end
 
-
-type listdealersReq struct {
+type listDealerReq struct {
 	IDs            []string `json:"dealerIDs"`
 	SelectedFields []string `json:"selectedFields"`
+}
+
+type userdtlsRes struct {
+	Meta tapi.MetaData `json:"meta"`
+	Data userdata      `json:"data"`
+}
+
+// this is the response we get from signup user endpoint
+// only account id
+type userdata struct {
+	DisplayName string `json:"DisplayName"`
 }

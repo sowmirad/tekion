@@ -4,8 +4,8 @@ package dealerService
 
 import (
 	//standard libraries
+	"errors"
 	"net/http"
-     "errors"
 	//third party libraries
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
@@ -22,9 +22,10 @@ import (
 	"fmt"
 )
 
-var(
-errDealerID       = errors.New("empty user id")
+var (
+	errDealerID = errors.New("empty user id")
 )
+
 // swagger:operation GET /dealer dealer readDealer
 //
 // Returns Dealer identified by the dealer id
@@ -90,12 +91,11 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealer)
 }
 
-
 //dealerList is to query list of dealers from Dealermaster
 func dealerList(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 
-	var lstdealer listdealersReq
+	var lstdealer listDealerReq
 	err := json.NewDecoder(r.Body).Decode(&lstdealer)
 	if err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload, err)
@@ -103,7 +103,7 @@ func dealerList(w http.ResponseWriter, r *http.Request) {
 	}
 	findQuery := bson.M{}
 	selectQuery := lstdealer.prepareSelectQuery()
-	var dealerLst [] dealer
+	var dealerLst []dealer
 
 	if err := mMgr.ReadAll(ctx.Tenant, getDealerCollectionName(), findQuery, selectQuery, &dealerLst); err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
@@ -119,8 +119,8 @@ func dealerList(w http.ResponseWriter, r *http.Request) {
 }
 
 //update is to query list of dealers from Dealermaster
-func updateDealer(w http.ResponseWriter, r*http.Request)  {
-	ctx := context.Get(r,"apiContext").(apiContext.APIContext)
+func updateDealer(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	var dealerdtls dealer
 	if err := json.NewDecoder(r.Body).Decode(&dealerdtls); err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload,
@@ -131,14 +131,17 @@ func updateDealer(w http.ResponseWriter, r*http.Request)  {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload, errDealerID)
 		return
 	}
-	findQ := bson.M{"_id": dealerdtls.ID}
-	updateQ, err := dealerdtls.prepareUpdateQuery(ctx, r)
-	if err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.DefaultErrorCode,
-			fmt.Errorf("error encountered while creating update query for db: %v", err))
+	var userdtlsRes userdtlsRes
+	if err := getUserdls(ctx, r, &userdtlsRes); err != nil {
+		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDocumentNotFound,
+			fmt.Errorf("failed to get user id in db: %v", err))
 		return
 	}
-	if err = mMgr.Update(ctx.Tenant, getDealerCollectionName(), findQ, updateQ); err != nil {
+	findQ := bson.M{"_id": dealerdtls.ID}
+	dealerdtls.LastUpdatedByDisplayName = userdtlsRes.Data.DisplayName
+	fmt.Println("mmmmmmmmmmmmm", dealerdtls.LastUpdatedByDisplayName)
+	updateQ := dealerdtls.prepareUpdateQuery(ctx, r)
+	if err := mMgr.Update(ctx.Tenant, getDealerCollectionName(), findQ, updateQ); err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorUpdatingMongoDoc,
 			fmt.Errorf("error encountered while updating dealer details in db: %v", err))
 		return
