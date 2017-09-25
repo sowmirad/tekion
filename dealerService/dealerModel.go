@@ -496,36 +496,20 @@ type dealerGroup struct {
 	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
 }
 
-//Missing collections in mongo -- start
-/*
-type SkillMaster struct {
-	LastUpdatedByUser        string    `bson:"lastUpdatedByUser" json:"lastUpdatedByUser"`               // Last Updated By User
-	LastUpdatedByDisplayName string    `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName"` // This is to Display the Name in the application
-	LastUpdatedDateTime      time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`           // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
-	DocumentVersion          float32   `bson:"documentVersion" json:"documentVersion"`                   // Document version to keep track of the changes -- DEFAULT 1.0
-}
-
-type AmenitiesMaster struct {
-	LastUpdatedByUser        string    `bson:"lastUpdatedByUser" json:"lastUpdatedByUser"`               // Last Updated By User
-	LastUpdatedByDisplayName string    `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName"` // This is to Display the Name in the application
-	LastUpdatedDateTime      time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`           // When was this last updated Date and Time -- DEFAULT CURRENT_TIMESTAMP
-	DocumentVersion          float32   `bson:"documentVersion" json:"documentVersion"`                   // Document version to keep track of the changes -- DEFAULT 1.0
-}
-*/
-//Missing collections in mongo -- end
-
-type listDealerReq struct {
+// swagger:model listDealersReq
+type listDealersReq struct {
 	IDs            []string `json:"dealerIDs"`
 	SelectedFields []string `json:"selectedFields"`
 }
 
-type userdtlsRes struct {
+type userDtlsRes struct {
 	Meta tapi.MetaData `json:"meta"`
-	Data userdata      `json:"data"`
+	Data userData      `json:"data"`
 }
 
 // this is the response we get from signup user endpoint
-// only account id
-type userdata struct {
-	DisplayName string `json:"DisplayName"`
+// only account idp[
+type userData struct {
+	DisplayName string `json:"displayName"`
 }
+

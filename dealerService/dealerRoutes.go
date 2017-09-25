@@ -31,6 +31,7 @@ import (
 	"bitbucket.org/tekion/tacl/acl"
 	"bitbucket.org/tekion/tbaas/log"
 	"bitbucket.org/tekion/tbaas/tapi"
+	"net/http"
 )
 
 //TODO : Need new admin scope
@@ -39,7 +40,7 @@ import (
 func Start() {
 	tapi.AddRoutes(
 		"readDealer",
-		"GET",
+		http.MethodGet,
 		"/dealer",
 		readDealer,
 		acl.ACLStruct{
@@ -48,7 +49,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readFixedOperation",
-		"GET",
+		http.MethodGet,
 		"/fixedoperation",
 		readFixedOperation,
 		acl.ACLStruct{
@@ -57,7 +58,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerContact",
-		"GET",
+		http.MethodGet,
 		"/contact/{cid}",
 		readDealerContact,
 		acl.ACLStruct{
@@ -66,7 +67,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerContacts",
-		"GET",
+		http.MethodGet,
 		"/contacts",
 		readDealerContacts,
 		acl.ACLStruct{
@@ -75,7 +76,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerGoal",
-		"GET",
+		http.MethodGet,
 		"/goal/{gid}",
 		readDealerGoal,
 		acl.ACLStruct{
@@ -84,7 +85,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerGoals",
-		"GET",
+		http.MethodGet,
 		"/goals",
 		readDealerGoals,
 		acl.ACLStruct{
@@ -93,7 +94,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerGroups",
-		"GET",
+		http.MethodGet,
 		"/groups",
 		readDealerGroups,
 		acl.ACLStruct{
@@ -102,7 +103,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"dealerList",
-		"Post",
+		http.MethodPost,
 		"/dealer",
 		dealerList,
 		acl.ACLStruct{
@@ -111,10 +112,10 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
-		"updateDealer",
-		"Post",
-		"/updateDealer",
-		updateDealer,
+		"patchDealer",
+		http.MethodPatch,
+		"/dealer",
+		patchDealer,
 		acl.ACLStruct{
 			// TODO PremittedRoles (SuperAdmin)
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},

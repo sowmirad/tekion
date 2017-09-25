@@ -1,17 +1,18 @@
 package dealerService
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"strings"
+
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"bitbucket.org/tekion/tbaas/consulhelper"
 	"bitbucket.org/tekion/tbaas/hwrap"
 	"bitbucket.org/tekion/tbaas/log"
-	"encoding/json"
-	"fmt"
+
 	"gopkg.in/mgo.v2/bson"
-	"io/ioutil"
-	"net/http"
-	"strings"
-	"time"
 )
 
 const (
@@ -43,18 +44,17 @@ func selectedFields(fields []string) bson.M {
 }
 
 // prepareSelectQuery is to select query form listdealersReq.SelectedFields
-func (lstdealer *listDealerReq) prepareSelectQuery() bson.M {
-	if len(lstdealer.SelectedFields) != 0 {
+func (lstDealer *listDealersReq) prepareSelectQuery() bson.M {
+	if len(lstDealer.SelectedFields) != 0 {
 		selectQ := make(bson.M)
-		for _, v := range lstdealer.SelectedFields {
+		for _, v := range lstDealer.SelectedFields {
 			selectQ[v] = 1
 		}
 		return selectQ
 	}
 	return nil
 }
-
-func getUserdls(ctx apiContext.APIContext, r *http.Request, userdtlsRes *userdtlsRes) error {
+func getUserDtls(ctx apiContext.APIContext, r *http.Request, userDtlsRes *userDtlsRes) error {
 	url := consulhelper.GetServiceNodes(loginServiceID) + signupEndPoint + ctx.UserName
 	resp, err := hwrap.MakeHTTPRequestWithCustomHeader(http.MethodGet, url, appJSON, r.Header, nil)
 	if err != nil {
@@ -69,7 +69,7 @@ func getUserdls(ctx apiContext.APIContext, r *http.Request, userdtlsRes *userdtl
 		return err
 	}
 	//Decode
-	if err = json.NewDecoder(resp.Body).Decode(&userdtlsRes); err != nil {
+	if err = json.NewDecoder(resp.Body).Decode(&userDtlsRes); err != nil {
 		err = fmt.Errorf("error encountered while decoding %s reponse, error: %v", url, err)
 		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
 		return err
@@ -78,49 +78,47 @@ func getUserdls(ctx apiContext.APIContext, r *http.Request, userdtlsRes *userdtl
 	return nil
 }
 
-//prepareUpdateQuery is use to update the Dealermaster
-func (dealerdtls *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) bson.M {
+//prepareUpdateQuery is use to update the DealerMaster
+func (d *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) bson.M {
 
 	updateQuery := make(bson.M)
-	if len(dealerdtls.Name) != 0 {
-		updateQuery["dealerName"] = dealerdtls.Name
+	if len(d.Name) != 0 {
+		updateQuery["dealerName"] = d.Name
 	}
-	if len(dealerdtls.DoingBusinessAsName) != 0 {
-		updateQuery["dealerDisplayName"] = dealerdtls.DoingBusinessAsName
+	if len(d.MakeCode) != 0 {
+		updateQuery["makeCode"] = d.MakeCode
 	}
-	if len(dealerdtls.StateIssuedNumber) != 0 {
-		updateQuery["stateIssuedNumber"] = dealerdtls.StateIssuedNumber
+	if len(d.DoingBusinessAsName) != 0 {
+		updateQuery["dealerDisplayName"] = d.DoingBusinessAsName
 	}
-	if len(dealerdtls.ManufacturerIssuedNumber) != 0 {
-		updateQuery["manufacturerIssuedNumber"] = dealerdtls.ManufacturerIssuedNumber
+	if len(d.StateIssuedNumber) != 0 {
+		updateQuery["stateIssuedNumber"] = d.StateIssuedNumber
 	}
-	if len(dealerdtls.Website) != 0 {
-		updateQuery["website"] = dealerdtls.Website
+	if len(d.ManufacturerIssuedNumber) != 0 {
+		updateQuery["manufacturerIssuedNumber"] = d.ManufacturerIssuedNumber
 	}
-	if len(dealerdtls.TimeZone) != 0 {
-		updateQuery["timeZone"] = dealerdtls.TimeZone
+	if len(d.Website) != 0 {
+		updateQuery["website"] = d.Website
 	}
-	if len(dealerdtls.Currency) != 0 {
-		updateQuery["currency"] = dealerdtls.Currency
+	if len(d.TimeZone) != 0 {
+		updateQuery["timeZone"] = d.TimeZone
 	}
-	if len(dealerdtls.TenantID) != 0 {
-		updateQuery["tenantID"] = dealerdtls.TenantID
+	if len(d.Currency) != 0 {
+		updateQuery["currency"] = d.Currency
 	}
-	if len(dealerdtls.Phone) != 0 {
-		updateQuery["phone"] = dealerdtls.Phone
+	if len(d.TenantID) != 0 {
+		updateQuery["tenantID"] = d.TenantID
 	}
-	if len(dealerdtls.DealershipCode) != 0 {
-		updateQuery["dealershipCode"] = dealerdtls.DealershipCode
+	if len(d.Phone) != 0 {
+		updateQuery["phone"] = d.Phone
 	}
-	if len(dealerdtls.VideoURL) != 0 {
-		updateQuery["videoURL"] = dealerdtls.VideoURL
+	if len(d.VideoURL) != 0 {
+		updateQuery["videoURL"] = d.VideoURL
 	}
-	if len(dealerdtls.ApplicationCode) != 0 {
-		updateQuery["applicationCode"] = dealerdtls.ApplicationCode
-	}
-	updateQuery["lastUpdatedByUser"] = ctx.UserName
-	updateQuery["lastUpdatedByDisplayName"] = dealerdtls.LastUpdatedByDisplayName
-	updateQuery["lastUpdatedDateTime"] = time.Now().UTC()
-	updateQuery["documentVersion"] = dealerdtls.DocumentVersion
+
+	updateQuery["lastUpdatedByUser"] = d.LastUpdatedByUser
+	updateQuery["lastUpdatedByDisplayName"] = d.LastUpdatedByDisplayName
+	updateQuery["lastUpdatedDateTime"] = d.LastUpdatedByDisplayName
+	updateQuery["documentVersion"] = d.DocumentVersion
 	return bson.M{"$set": updateQuery}
 }
