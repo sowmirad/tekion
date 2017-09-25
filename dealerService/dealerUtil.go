@@ -6,14 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-<<<<<<< HEAD
-<<<<<<< HEAD
-	"gopkg.in/mgo.v2/bson"
-	"bitbucket.org/tekion/tbaas/apiContext"
-=======
->>>>>>> 8dc5389d1d12d4a9243a3a8e48156f6b12ae0980
-	"time"
-=======
 
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"bitbucket.org/tekion/tbaas/consulhelper"
@@ -21,7 +13,6 @@ import (
 	"bitbucket.org/tekion/tbaas/log"
 
 	"gopkg.in/mgo.v2/bson"
->>>>>>> 87ef7bdf98d3322b481d20b55231fbe9b0d8201d
 )
 
 const (

@@ -40,7 +40,7 @@ import (
 func Start() {
 	tapi.AddRoutes(
 		"readDealer",
-		"GET",
+		http.MethodGet,
 		"/dealer",
 		readDealer,
 		acl.ACLStruct{
@@ -49,7 +49,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readFixedOperation",
-		"GET",
+		http.MethodGet,
 		"/fixedoperation",
 		readFixedOperation,
 		acl.ACLStruct{
@@ -58,7 +58,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerContact",
-		"GET",
+		http.MethodGet,
 		"/contact/{cid}",
 		readDealerContact,
 		acl.ACLStruct{
@@ -67,7 +67,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerContacts",
-		"GET",
+		http.MethodGet,
 		"/contacts",
 		readDealerContacts,
 		acl.ACLStruct{
@@ -76,7 +76,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerGoal",
-		"GET",
+		http.MethodGet,
 		"/goal/{gid}",
 		readDealerGoal,
 		acl.ACLStruct{
@@ -85,7 +85,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerGoals",
-		"GET",
+		http.MethodGet,
 		"/goals",
 		readDealerGoals,
 		acl.ACLStruct{
@@ -94,7 +94,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerGroups",
-		"GET",
+		http.MethodGet,
 		"/groups",
 		readDealerGroups,
 		acl.ACLStruct{
@@ -103,7 +103,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"dealerList",
-		"Post",
+		http.MethodPost,
 		"/dealer",
 		 dealerList,
 		acl.ACLStruct{
@@ -111,19 +111,10 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
-		"updateDealer",
-		"Patch",
+		"patchDealer",
+		http.MethodPatch,
 		"/dealer",
-		 patchDealer,
-		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
-		},
-	)
-	tapi.AddRoutes(
-		"updateallDealer",
-		http.MethodPut,
-		"/dealer",
-		updateDealer,
+		patchDealer,
 		acl.ACLStruct{
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
 		},
