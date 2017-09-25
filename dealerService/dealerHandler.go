@@ -4,8 +4,8 @@ package dealerService
 
 import (
 	//standard libraries
+	"errors"
 	"net/http"
-     "errors"
 	//third party libraries
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
@@ -22,9 +22,10 @@ import (
 	"fmt"
 )
 
-var(
-errDealerID       = errors.New("empty user id")
+var (
+	errDealerID = errors.New("empty user id")
 )
+
 // swagger:operation GET /dealer dealer readDealer
 //
 // Returns Dealer identified by the dealer id
@@ -90,7 +91,6 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealer)
 }
 
-
 //dealerList is to query list of dealers from Dealermaster
 func dealerList(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
@@ -103,7 +103,7 @@ func dealerList(w http.ResponseWriter, r *http.Request) {
 	}
 	findQuery := bson.M{}
 	selectQuery := lstdealer.prepareSelectQuery()
-	var dealerLst [] dealer
+	var dealerLst []dealer
 
 	if err := mMgr.ReadAll(ctx.Tenant, getDealerCollectionName(), findQuery, selectQuery, &dealerLst); err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
@@ -118,9 +118,9 @@ func dealerList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//update is to query list of dealers from Dealermaster
-func updateDealer(w http.ResponseWriter, r*http.Request)  {
-	ctx := context.Get(r,"apiContext").(apiContext.APIContext)
+// patchDealer is to query list of dealers from Dealermaster
+func patchDealer(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	var dealerdtls dealer
 	if err := json.NewDecoder(r.Body).Decode(&dealerdtls); err != nil {
 		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload,
