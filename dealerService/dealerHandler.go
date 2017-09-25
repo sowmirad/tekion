@@ -19,11 +19,16 @@ import (
 	"bitbucket.org/tekion/tbaas/tapi"
 )
 
+const (
+	apiCtxKey = "apiContext"
+)
+
 // swagger:operation GET /dealer dealer readDealer
 //
 // Returns Dealer identified by the dealer id
 //
-// By default /dealer returns complete dealer object. In case you need only certain fields, you can specify an optional query parameter "fields",
+// By default /dealer returns complete dealer object.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 //
 // ---
@@ -52,7 +57,7 @@ import (
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
+//   description: e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
 //   required: false
 //   type: string
 // responses:
@@ -65,19 +70,19 @@ import (
 //   '400':
 //     description: error querying data base
 func readDealer(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	//assuming logged in user has access to view all the dealers
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
 	var dealer dealer
 
-	err := mongoManager.ReadOne(ctx.Tenant, getDealerCollectionName(), bson.M{"_id": dealerID}, selectedFields(fields), &dealer)
+	err := mongoManager.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, selectedFields(fields), &dealer)
 	if err == mgo.ErrNotFound {
 		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
 		return
 	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 	// No need to check if some thing was found or not. readOne returns "not found".
@@ -88,7 +93,8 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 //
 // Returns list of fixed operations identified by dealer id passed in header
 //
-// By default /fixedoperation returns list of complete fixed operation objects. In case you need only certain fields, you can specify an optional query parameter "fields",
+// By default /fixedoperation returns list of complete fixed operation objects.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 //
 // ---
@@ -117,7 +123,7 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
+//   description: e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
 //   required: false
 //   type: string
 // responses:
@@ -132,17 +138,18 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 //   '400':
 //     description: error querying data base
 func readFixedOperation(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	var fixedOperation fixedOperation
 	fields := fetchFieldsFromRequest(r)
-	err := mongoManager.ReadOne(ctx.Tenant, getFixedOperationCollectionName(), bson.M{"dealerID": dealerID}, selectedFields(fields), &fixedOperation)
+	err := mongoManager.ReadOne(ctx.Tenant, fixedOperationCollectionName,
+		bson.M{"dealerID": dealerID}, selectedFields(fields), &fixedOperation)
 	if err == mgo.ErrNotFound {
 		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
 		return
 	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
@@ -153,7 +160,8 @@ func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 //
 // Returns dealer contact identified by dealer contact id passed as part of url
 //
-// By default /contact/{cid} returns complete dealer contact object. In case you need only certain fields, you can specify an optional query parameter "fields",
+// By default /contact/{cid} returns complete dealer contact object.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 //
 // ---
@@ -187,7 +195,7 @@ func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response e.g /contact/{cid}?fields=user,userDisplayName,userDisplayTitle
+//   description: e.g /contact/{cid}?fields=user,userDisplayName,userDisplayTitle
 //   required: false
 //   type: string
 // responses:
@@ -205,13 +213,14 @@ func readDealerContact(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var contact dealerContact
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
-	err := mongoManager.ReadOne(ctx.Tenant, getDealerContactCollectionName(), bson.M{"_id": contactID, "dealerID": ctx.DealerID}, selectedFields(fields), &contact)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+	err := mongoManager.ReadOne(ctx.Tenant, dealerContactCollectionName,
+		bson.M{"_id": contactID, "dealerID": ctx.DealerID}, selectedFields(fields), &contact)
 	if err == mgo.ErrNotFound {
 		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
 		return
 	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
@@ -222,7 +231,8 @@ func readDealerContact(w http.ResponseWriter, r *http.Request) {
 //
 // Returns list of dealer contacts identified by dealer id passed in header
 //
-// By default /contacts returns list of complete dealer contacts objects. In case you need only certain fields, you can specify an optional query parameter "fields",
+// By default /contacts returns list of complete dealer contacts objects.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 //
 // ---
@@ -251,7 +261,7 @@ func readDealerContact(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response e.g /contacts?fields=user,userDisplayName,userDisplayTitle
+//   description: e.g /contacts?fields=user,userDisplayName,userDisplayTitle
 //   required: false
 //   type: string
 // responses:
@@ -266,14 +276,15 @@ func readDealerContact(w http.ResponseWriter, r *http.Request) {
 //   '400':
 //     description: error querying data base
 func readDealerContacts(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
 	var contacts []dealerContact
-	err := mongoManager.ReadAll(ctx.Tenant, getDealerContactCollectionName(), bson.M{"dealerID": dealerID}, selectedFields(fields), &contacts)
+	err := mongoManager.ReadAll(ctx.Tenant, dealerContactCollectionName,
+		bson.M{"dealerID": dealerID}, selectedFields(fields), &contacts)
 	if err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
@@ -288,7 +299,8 @@ func readDealerContacts(w http.ResponseWriter, r *http.Request) {
 //
 // Returns dealer goal identified by dealer goal id passed as part of url
 //
-// By default /goal/{gid} returns complete dealer goal object. In case you need only certain fields, you can specify an optional query parameter "fields",
+// By default /goal/{gid} returns complete dealer goal object.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 //
 // ---
@@ -322,7 +334,7 @@ func readDealerContacts(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response e.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
+//   description: e.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
 //   required: false
 //   type: string
 // responses:
@@ -340,14 +352,15 @@ func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var goal dealerGoal
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
-	err := mongoManager.ReadOne(ctx.Tenant, getDealerGoalCollectionName(), bson.M{"_id": goalID, "dealerID": ctx.DealerID}, selectedFields(fields), &goal)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+	err := mongoManager.ReadOne(ctx.Tenant, dealerGoalCollectionName,
+		bson.M{"_id": goalID, "dealerID": ctx.DealerID}, selectedFields(fields), &goal)
 
 	if err == mgo.ErrNotFound {
 		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
 		return
 	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
@@ -358,7 +371,8 @@ func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 //
 // Returns list of dealer goals identified by dealer id passed in header
 //
-// By default /goals returns list of complete dealer goals objects. In case you need only certain fields, you can specify an optional query parameter "fields",
+// By default /goals returns list of complete dealer goals objects.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 //
 // ---
@@ -387,7 +401,7 @@ func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response e.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
+//   description: e.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
 //   required: false
 //   type: string
 // responses:
@@ -402,15 +416,16 @@ func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 //   '400':
 //     description: error querying data base
 func readDealerGoals(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
 	var goals []dealerGoal
-	err := mongoManager.ReadAll(ctx.Tenant, getDealerGoalCollectionName(), bson.M{"dealerID": dealerID}, selectedFields(fields), &goals)
+	err := mongoManager.ReadAll(ctx.Tenant, dealerGoalCollectionName,
+		bson.M{"dealerID": dealerID}, selectedFields(fields), &goals)
 
 	if err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
@@ -425,7 +440,8 @@ func readDealerGoals(w http.ResponseWriter, r *http.Request) {
 //
 // Returns list of dealer groups identified by dealer id passed in header
 //
-// By default /groups returns list of complete dealer groups objects. In case you need only certain fields, you can specify an optional query parameter "fields",
+// By default /groups returns list of complete dealer groups objects.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
 // passing a list of comma separated fields you want in response.
 //
 // ---
@@ -454,7 +470,7 @@ func readDealerGoals(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: list of comma separated fields you want in response e.g /groups?fields=dealerGroupName,dealerGroupName,dealers
+//   description: e.g /groups?fields=dealerGroupName,dealerGroupName,dealers
 //   required: false
 //   type: string
 // responses:
@@ -469,14 +485,15 @@ func readDealerGoals(w http.ResponseWriter, r *http.Request) {
 //   '400':
 //     description: error querying data base
 func readDealerGroups(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
 	var groups []dealerGroup
-	err := mongoManager.ReadAll(ctx.Tenant, getDealerGroupCollectionName(), bson.M{"dealers": dealerID}, selectedFields(fields), &groups)
+	err := mongoManager.ReadAll(ctx.Tenant, dealerGroupCollectionName,
+		bson.M{"dealers": dealerID}, selectedFields(fields), &groups)
 	if err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorQueryingDB, err)
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
