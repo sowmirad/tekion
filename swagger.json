@@ -22,7 +22,7 @@
   "paths": {
     "/contact/{cid}": {
       "get": {
-        "description": "By default /contact/{cid} returns complete dealer contact object. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "description": "By default /contact/{cid} returns complete dealer contact object.\nIn case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
         "produces": [
           "application/json"
         ],
@@ -69,7 +69,7 @@
           },
           {
             "type": "string",
-            "description": "list of comma separated fields you want in response e.g /contact/{cid}?fields=user,userDisplayName,userDisplayTitle",
+            "description": "e.g /contact/{cid}?fields=user,userDisplayName,userDisplayTitle",
             "name": "fields",
             "in": "query"
           }
@@ -92,7 +92,7 @@
     },
     "/contacts": {
       "get": {
-        "description": "By default /contacts returns list of complete dealer contacts objects. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "description": "By default /contacts returns list of complete dealer contacts objects.\nIn case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
         "produces": [
           "application/json"
         ],
@@ -132,7 +132,7 @@
           },
           {
             "type": "string",
-            "description": "list of comma separated fields you want in response e.g /contacts?fields=user,userDisplayName,userDisplayTitle",
+            "description": "e.g /contacts?fields=user,userDisplayName,userDisplayTitle",
             "name": "fields",
             "in": "query"
           }
@@ -158,7 +158,7 @@
     },
     "/dealer": {
       "get": {
-        "description": "By default /dealer returns complete dealer object. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "description": "By default /dealer returns complete dealer object.\nIn case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
         "produces": [
           "application/json"
         ],
@@ -198,7 +198,7 @@
           },
           {
             "type": "string",
-            "description": "list of comma separated fields you want in response e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress",
+            "description": "e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress",
             "name": "fields",
             "in": "query"
           }
@@ -221,7 +221,7 @@
     },
     "/fixedoperation": {
       "get": {
-        "description": "By default /fixedoperation returns list of complete fixed operation objects. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "description": "By default /fixedoperation returns list of complete fixed operation objects.\nIn case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
         "produces": [
           "application/json"
         ],
@@ -261,7 +261,7 @@
           },
           {
             "type": "string",
-            "description": "list of comma separated fields you want in response e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity",
+            "description": "e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity",
             "name": "fields",
             "in": "query"
           }
@@ -287,7 +287,7 @@
     },
     "/goal/{gid}": {
       "get": {
-        "description": "By default /goal/{gid} returns complete dealer goal object. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "description": "By default /goal/{gid} returns complete dealer goal object.\nIn case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
         "produces": [
           "application/json"
         ],
@@ -334,7 +334,7 @@
           },
           {
             "type": "string",
-            "description": "list of comma separated fields you want in response e.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal",
+            "description": "e.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal",
             "name": "fields",
             "in": "query"
           }
@@ -357,7 +357,7 @@
     },
     "/goals": {
       "get": {
-        "description": "By default /goals returns list of complete dealer goals objects. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "description": "By default /goals returns list of complete dealer goals objects.\nIn case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
         "produces": [
           "application/json"
         ],
@@ -397,7 +397,7 @@
           },
           {
             "type": "string",
-            "description": "list of comma separated fields you want in response e.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal",
+            "description": "e.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal",
             "name": "fields",
             "in": "query"
           }
@@ -423,7 +423,7 @@
     },
     "/groups": {
       "get": {
-        "description": "By default /groups returns list of complete dealer groups objects. In case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "description": "By default /groups returns list of complete dealer groups objects.\nIn case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
         "produces": [
           "application/json"
         ],
@@ -463,7 +463,7 @@
           },
           {
             "type": "string",
-            "description": "list of comma separated fields you want in response e.g /groups?fields=dealerGroupName,dealerGroupName,dealers",
+            "description": "e.g /groups?fields=dealerGroupName,dealerGroupName,dealers",
             "name": "fields",
             "in": "query"
           }
@@ -507,10 +507,12 @@
       "type": "object",
       "properties": {
         "amenityID": {
+          "description": "ID maps to AmenitiesMaster._id",
           "type": "string",
           "x-go-name": "ID"
         },
         "name": {
+          "description": "Name maps to AmenitiesMaster.name",
           "type": "string",
           "x-go-name": "Name"
         }
@@ -518,69 +520,70 @@
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
     },
     "appointmentCapacity": {
-      "description": "appointmentCapacity struct contains details of the number of hours present for each skill, stored as slice of embedded objects in fixed operation struct",
+      "description": "stored as slice of embedded objects in fixed operation struct",
       "type": "object",
+      "title": "appointmentCapacity struct contains details of the number of hours present for each skill,",
       "properties": {
         "appointmentSlotDuration": {
-          "description": "Slot duration",
+          "description": "AppointmentSlotDuration appointment slot duration",
           "type": "integer",
           "format": "int16",
           "x-go-name": "AppointmentSlotDuration"
         },
         "appointmentsPerSlot": {
-          "description": "Number of appointments per slot",
+          "description": "AppointmentsPerSlot number of appointments per slot",
           "type": "integer",
           "format": "int16",
           "x-go-name": "AppointmentsPerSlot"
         },
         "friday": {
-          "description": "Available hrs on friday",
+          "description": "Friday available hrs on friday",
           "type": "string",
           "x-go-name": "Friday"
         },
         "monday": {
-          "description": "Available hrs on monday",
+          "description": "Monday available hrs on monday",
           "type": "string",
           "x-go-name": "Monday"
         },
         "numberOfServiceAdvisors": {
-          "description": "Number of service advisors assigned",
+          "description": "NumberOfServiceAdvisors number of service advisors assigned",
           "type": "integer",
           "format": "int16",
           "x-go-name": "NumberOfServiceAdvisors"
         },
         "saturday": {
-          "description": "Available hrs on saturday",
+          "description": "Saturday available hrs on saturday",
           "type": "string",
           "x-go-name": "Saturday"
         },
         "skillCode": {
-          "description": "Skill unique identifier",
+          "description": "SkillCode maps to SkillMaster.ID",
           "type": "string",
           "x-go-name": "SkillCode"
         },
         "skillName": {
-          "description": "Skill name",
+          "description": "SkillName name of skill, maps to skillMaster.Name\nrarely going to change, keeping a copy here to avoid extra call to skillMaster",
           "type": "string",
           "x-go-name": "SkillName"
         },
         "sunday": {
-          "description": "Available hrs on sunday",
+          "description": "Sunday available hrs on sunday",
           "type": "string",
           "x-go-name": "Sunday"
         },
         "thursday": {
-          "description": "Available hrs on thursday",
+          "description": "Thursday available hrs on thursday",
           "type": "string",
           "x-go-name": "Thursday"
         },
         "tuesday": {
-          "description": "Available hrs on tuesday",
+          "description": "Tuesday available hrs on tuesday",
           "type": "string",
           "x-go-name": "Tuesday"
         },
         "wednesday": {
-          "description": "Available hrs on wednesday",
+          "description": "Wednesday available hrs on wednesday",
           "type": "string",
           "x-go-name": "Wednesday"
         }
@@ -654,13 +657,8 @@
       "description": "dealer struct contains dealer details",
       "type": "object",
       "properties": {
-        "applicationCode": {
-          "description": "Application code of dealer",
-          "type": "string",
-          "x-go-name": "ApplicationCode"
-        },
         "bannerImages": {
-          "description": "Dealer banner image",
+          "description": "BannerImages dealer banner image",
           "type": "array",
           "items": {
             "$ref": "#/definitions/image"
@@ -668,12 +666,12 @@
           "x-go-name": "BannerImages"
         },
         "currency": {
-          "description": "Dealer Currency -  DEFAULT 'USD'",
+          "description": "Currency dealer currency -  DEFAULT 'USD'",
           "type": "string",
           "x-go-name": "Currency"
         },
         "dealerAddress": {
-          "description": "Dealer addresses",
+          "description": "Address list of dealer addresses",
           "type": "array",
           "items": {
             "$ref": "#/definitions/dealerAddress"
@@ -681,7 +679,7 @@
           "x-go-name": "Address"
         },
         "dealerContact": {
-          "description": "Dealer contacts",
+          "description": "Contact list of dealerContact ids",
           "type": "array",
           "items": {
             "type": "string"
@@ -689,7 +687,7 @@
           "x-go-name": "Contact"
         },
         "dealerDocumentTemplates": {
-          "description": "Dealer document templates",
+          "description": "DocumentTemplates list of dealer document templates",
           "type": "array",
           "items": {
             "$ref": "#/definitions/dealerDocumentTemplate"
@@ -697,12 +695,12 @@
           "x-go-name": "DocumentTemplates"
         },
         "dealerDoingBusinessAsName": {
-          "description": "Dealer doing business as name. This may or may not be government registered Name for the business",
+          "description": "DoingBusinessAsName this may or may not be government registered name for the business",
           "type": "string",
           "x-go-name": "DoingBusinessAsName"
         },
         "dealerGroup": {
-          "description": "Dealer groups",
+          "description": "Group list of groups dealer is part of",
           "type": "array",
           "items": {
             "type": "string"
@@ -710,12 +708,12 @@
           "x-go-name": "Group"
         },
         "dealerID": {
-          "description": "Dealer identification - Keep it Unique across the tenant",
+          "description": "ID dealer unique identifier",
           "type": "string",
           "x-go-name": "ID"
         },
         "dealerLogos": {
-          "description": "Dealer logos",
+          "description": "Logos dealer logos",
           "type": "array",
           "items": {
             "$ref": "#/definitions/image"
@@ -723,12 +721,12 @@
           "x-go-name": "Logos"
         },
         "dealerName": {
-          "description": "Dealer name",
+          "description": "Name dealer name",
           "type": "string",
           "x-go-name": "Name"
         },
         "dealerOperationSchedule": {
-          "description": "Dealer operation schedules",
+          "description": "OperationSchedule list of operation hours of different units like sales, parts etc",
           "type": "array",
           "items": {
             "$ref": "#/definitions/dealerOperationSchedule"
@@ -736,37 +734,37 @@
           "x-go-name": "OperationSchedule"
         },
         "dealershipCode": {
-          "description": "Dealership code",
+          "description": "DealershipCode\nA dealership can have one or more dealers in it.(Requested to change to dealerCode.\nBut this is not one to one as dealerID, thats the reason we put it as dealershipCode,\nThis is kind of dealer GroupCode)",
           "type": "string",
           "x-go-name": "DealershipCode"
         },
         "documentVersion": {
-          "description": "Document version to keep track of the changes - DEFAULT 1.0",
+          "description": "DocumentVersion to keep track of the changes - DEFAULT 1.0",
           "type": "number",
           "format": "float",
           "x-go-name": "DocumentVersion"
         },
         "isActive": {
-          "description": "Is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
+          "description": "IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
           "type": "boolean",
           "x-go-name": "IsActive"
         },
         "lastUpdatedByDisplayName": {
-          "description": "This is to display the name in the application",
+          "description": "LastUpdatedByDisplayName this is to display the name in the application",
           "type": "string",
           "x-go-name": "LastUpdatedByDisplayName"
         },
         "lastUpdatedByUser": {
-          "description": "Data updated by who",
+          "description": "LastUpdatedByUser data updated by who",
           "type": "string",
           "x-go-name": "LastUpdatedByUser"
         },
         "lastUpdatedDateTime": {
-          "description": "When was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP",
+          "description": "LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP",
           "x-go-name": "LastUpdatedDateTime"
         },
         "makeCode": {
-          "description": "Make code - Car manufacturer code",
+          "description": "MakeCode car manufacturer code",
           "type": "array",
           "items": {
             "type": "string"
@@ -774,32 +772,40 @@
           "x-go-name": "MakeCode"
         },
         "manufacturerIssuedNumber": {
-          "description": "Manufacturer (OEM) registered-issued Number",
+          "description": "ManufacturerIssuedNumber issued/registered number",
           "type": "string",
           "x-go-name": "ManufacturerIssuedNumber"
         },
         "phone": {
-          "description": "Dealership phone contact",
+          "description": "Phone dealer phone contact",
           "type": "string",
           "x-go-name": "Phone"
         },
+        "serviceConfigs": {
+          "description": "ServiceConfigs stores service related configs",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/serviceConfig"
+          },
+          "x-go-name": "ServiceConfigs"
+        },
         "stateIssuedNumber": {
-          "description": "State government registered or issued Number",
+          "description": "StateIssuedNumber state issued/registration number",
           "type": "string",
           "x-go-name": "StateIssuedNumber"
         },
         "tenantID": {
-          "description": "Tenant identification number",
+          "description": "TenantID tenants unique identifier",
           "type": "string",
           "x-go-name": "TenantID"
         },
         "timeZone": {
-          "description": "Dealer's timezone like PST (Pacific standard Time)",
+          "description": "TimeZone dealer timezone like PST (Pacific standard Time)",
           "type": "string",
           "x-go-name": "TimeZone"
         },
         "vehicleDamage": {
-          "description": "Dealer vehicle damage types",
+          "description": "VehicleDamage dealer vehicle damage types",
           "type": "array",
           "items": {
             "$ref": "#/definitions/vehicleDamage"
@@ -807,12 +813,12 @@
           "x-go-name": "VehicleDamage"
         },
         "videoURL": {
-          "description": "Dealer video url",
+          "description": "VideoURL dealer video url",
           "type": "string",
           "x-go-name": "VideoURL"
         },
         "website": {
-          "description": "Dealer website URL",
+          "description": "Website dealer website URL",
           "type": "string",
           "x-go-name": "Website"
         }
@@ -827,57 +833,57 @@
           "$ref": "#/definitions/DealerOperationType"
         },
         "city": {
-          "description": "Dealer location city",
+          "description": "City dealer location city",
           "type": "string",
           "x-go-name": "City"
         },
         "country": {
-          "description": "Dealer country",
+          "description": "Country dealer country",
           "type": "string",
           "x-go-name": "Country"
         },
         "county": {
-          "description": "Dealer location county",
+          "description": "County dealer location county",
           "type": "string",
           "x-go-name": "County"
         },
         "dealerAddressID": {
-          "description": "Dealer address unique identifier",
+          "description": "ID dealer address unique identifier",
           "type": "string",
           "x-go-name": "ID"
         },
         "isActive": {
-          "description": "Is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
+          "description": "IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
           "type": "boolean",
           "x-go-name": "IsActive"
         },
         "isdCode": {
-          "description": "extension ISD code according to dealer location",
+          "description": "ISDCode extension according to dealer location",
           "type": "string",
           "x-go-name": "ISDCode"
         },
         "locationUrl": {
-          "description": "google maps url of the dealer location",
+          "description": "LocationURL google maps url of the dealer location",
           "type": "string",
           "x-go-name": "LocationURL"
         },
         "state": {
-          "description": "Dealer Location state",
+          "description": "State dealer Location state",
           "type": "string",
           "x-go-name": "State"
         },
         "streetAddress1": {
-          "description": "Dealer address",
+          "description": "StreetAddress1 dealer address",
           "type": "string",
           "x-go-name": "StreetAddress1"
         },
         "streetAddress2": {
-          "description": "Dealer street address - additional address field",
+          "description": "StreetAddress2 dealer street address - additional address field",
           "type": "string",
           "x-go-name": "StreetAddress2"
         },
         "zipCode": {
-          "description": "Dealer zip code or postal code",
+          "description": "ZipCode dealer zip code or postal code",
           "type": "string",
           "x-go-name": "ZipCode"
         }
@@ -889,37 +895,37 @@
       "type": "object",
       "properties": {
         "customerCommunicationSource": {
-          "description": "Customer communication source",
+          "description": "CustomerCommunicationSource ? any example",
           "type": "string",
           "x-go-name": "CustomerCommunicationSource"
         },
         "dealerCommunicationID": {
-          "description": "Dealer communication unique identifier",
+          "description": "ID dealer communication unique identifier",
           "type": "string",
           "x-go-name": "ID"
         },
         "dealerID": {
-          "description": "Dealer identification",
+          "description": "DealerID dealer unique identifier",
           "type": "string",
           "x-go-name": "DealerID"
         },
         "incomingEmail": {
-          "description": "Customer communication incoming email",
+          "description": "IncomingEmail customer communication incoming email",
           "type": "string",
           "x-go-name": "IncomingEmail"
         },
         "isActive": {
-          "description": "Is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
+          "description": "IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
           "type": "boolean",
           "x-go-name": "IsActive"
         },
         "outGoingEmail": {
-          "description": "Customer communication out going email",
+          "description": "OutGoingEmail customer communication out going email",
           "type": "string",
           "x-go-name": "OutGoingEmail"
         },
         "phone": {
-          "description": "Dealership phone contact",
+          "description": "Phone delaer phone contact",
           "type": "string",
           "x-go-name": "Phone"
         }
@@ -931,12 +937,12 @@
       "type": "object",
       "properties": {
         "dealerContactID": {
-          "description": "Dealer contact unique identifier",
+          "description": "ID dealer contact unique identifier",
           "type": "string",
           "x-go-name": "ID"
         },
         "dealerID": {
-          "description": "Dealer identification number",
+          "description": "DealerID dealer identification number",
           "type": "string",
           "x-go-name": "DealerID"
         },
@@ -944,28 +950,28 @@
           "$ref": "#/definitions/DealerOperationType"
         },
         "documentVersion": {
-          "description": "Document version to keep track of the changes - DEFAULT 1.0",
+          "description": "DocumentVersion to keep track of the changes - DEFAULT 1.0",
           "type": "number",
           "format": "float",
           "x-go-name": "DocumentVersion"
         },
         "isActive": {
-          "description": "Is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
+          "description": "IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
           "type": "boolean",
           "x-go-name": "IsActive"
         },
         "lastUpdatedByDisplayName": {
-          "description": "This is to display the name in the application",
+          "description": "LastUpdatedByDisplayName this is to display the name in the application",
           "type": "string",
           "x-go-name": "LastUpdatedByDisplayName"
         },
         "lastUpdatedByUser": {
-          "description": "Data updated by who",
+          "description": "LastUpdatedByUser data updated by who",
           "type": "string",
           "x-go-name": "LastUpdatedByUser"
         },
         "lastUpdatedDateTime": {
-          "description": "When was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP",
+          "description": "LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP",
           "x-go-name": "LastUpdatedDateTime"
         },
         "user": {
@@ -974,12 +980,12 @@
           "x-go-name": "User"
         },
         "userDisplayName": {
-          "description": "Dealer contact/user display name like \"Scott Hertler\"",
+          "description": "UserDisplayName dealer contact/user display name like \"Scott Hertler\"",
           "type": "string",
           "x-go-name": "UserDisplayName"
         },
         "userDisplayTitle": {
-          "description": "Dealer contact or User title like \"General Manager\" or \"Parts Clerk\"",
+          "description": "UserDisplayTitle dealer contact or user title like \"General Manager\" or \"Parts Clerk\"",
           "type": "string",
           "x-go-name": "UserDisplayTitle"
         }
@@ -987,26 +993,27 @@
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
     },
     "dealerDocumentTemplate": {
-      "description": "dealerDocumentTemplate struct contains details of the templates specific to the dealer, stored as slice of embedded objects in dealer struct",
+      "description": "stored as slice of embedded objects in dealer struct",
       "type": "object",
+      "title": "dealerDocumentTemplate struct contains details of the templates specific to the dealer,",
       "properties": {
         "dealerDocumentTemplateID": {
-          "description": "Dealer document template unique identifier",
+          "description": "ID dealer document template unique identifier",
           "type": "string",
           "x-go-name": "ID"
         },
         "isActive": {
-          "description": "Is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
+          "description": "IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
           "type": "boolean",
           "x-go-name": "IsActive"
         },
         "templateImageID": {
-          "description": "Unique identifier of template image stored in S3 bucket",
+          "description": "TemplateImageID unique identifier of dealer document template image stored in S3 bucket",
           "type": "string",
           "x-go-name": "TemplateImageID"
         },
         "templateName": {
-          "description": "Template name",
+          "description": "TemplateName dealer document template name",
           "type": "string",
           "x-go-name": "TemplateName"
         },
@@ -1020,50 +1027,55 @@
       "description": "dealerGoal",
       "type": "object",
       "properties": {
-        "averageLaborRateAdvisorGoal": {
-          "description": "averageLaborRateAdvisorGoal",
+        "averageLaborRate": {
+          "description": "AverageLaborRate average labor rate for service advisor",
           "type": "string",
-          "x-go-name": "AverageLaborRateAdvisorGoal"
+          "x-go-name": "AverageLaborRate"
         },
         "dealerGoalID": {
-          "description": "dealerGoalID",
+          "description": "ID goal unique identifier",
           "type": "string",
           "x-go-name": "ID"
         },
         "dealerID": {
-          "description": "dealerID",
+          "description": "DealerID dealer unique identifier",
           "type": "string",
           "x-go-name": "DealerID"
         },
         "documentVersion": {
-          "description": "Document version to keep track of the changes - DEFAULT 1.0",
+          "description": "DocumentVersion to keep track of the changes - DEFAULT 1.0",
           "type": "number",
           "format": "float",
           "x-go-name": "DocumentVersion"
         },
-        "hoursPerRepairOrderAdvisorGoal": {
-          "description": "hoursPerRepairOrderAdvisorGoal",
+        "hoursPerRepairOrder": {
+          "description": "HoursPerRepairOrder time to be spent by service advisor per RO",
           "type": "string",
-          "x-go-name": "HoursPerRepairOrderAdvisorGoal"
+          "x-go-name": "HoursPerRepairOrder"
+        },
+        "isActive": {
+          "description": "IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
+          "type": "boolean",
+          "x-go-name": "IsActive"
         },
         "lastUpdatedByDisplayName": {
-          "description": "This is to Display the Name in the application",
+          "description": "LastUpdatedByDisplayName this is to display the name in the application",
           "type": "string",
           "x-go-name": "LastUpdatedByDisplayName"
         },
         "lastUpdatedByUser": {
-          "description": "Data updated by who",
+          "description": "LastUpdatedByUser data updated by who",
           "type": "string",
           "x-go-name": "LastUpdatedByUser"
         },
         "lastUpdatedDateTime": {
-          "description": "When was this last updated Date and Time - type: datetime - DEFAULT CURRENT_TIMESTAMP",
+          "description": "LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP",
           "x-go-name": "LastUpdatedDateTime"
         },
-        "totalHoursAdvisorGoal": {
-          "description": "totalHoursAdvisorGoal",
+        "totalHours": {
+          "description": "TotalHours total time spent by service advisor",
           "type": "string",
-          "x-go-name": "TotalHoursAdvisorGoal"
+          "x-go-name": "TotalHours"
         }
       },
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
@@ -1072,18 +1084,8 @@
       "description": "dealerGroup",
       "type": "object",
       "properties": {
-        "dealerGroupID": {
-          "description": "Unique identifier of dealer group",
-          "type": "string",
-          "x-go-name": "ID"
-        },
-        "dealerGroupName": {
-          "description": "Name of group",
-          "type": "string",
-          "x-go-name": "Name"
-        },
         "dealers": {
-          "description": "List of dealer id's",
+          "description": "Dealers list of dealer ids",
           "type": "array",
           "items": {
             "type": "string"
@@ -1096,34 +1098,50 @@
           "x-go-name": "Desc"
         },
         "documentVersion": {
-          "description": "Document version to keep track of the changes - DEFAULT 1.0",
+          "description": "DocumentVersion to keep track of the changes - DEFAULT 1.0",
           "type": "number",
           "format": "float",
           "x-go-name": "DocumentVersion"
         },
+        "groupID": {
+          "description": "ID unique identifier of dealer group",
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "groupName": {
+          "description": "Name of group",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "isActive": {
+          "description": "IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
+          "type": "boolean",
+          "x-go-name": "IsActive"
+        },
         "lastUpdatedByDisplayName": {
-          "description": "This is to Display the Name in the application",
+          "description": "LastUpdatedByDisplayName this is to display the name in the application",
           "type": "string",
           "x-go-name": "LastUpdatedByDisplayName"
         },
         "lastUpdatedByUser": {
-          "description": "Data updated by who",
+          "description": "LastUpdatedByUser data updated by who",
           "type": "string",
           "x-go-name": "LastUpdatedByUser"
         },
         "lastUpdatedDateTime": {
-          "description": "When was this last updated Date and Time - type: datetime - DEFAULT CURRENT_TIMESTAMP",
+          "description": "LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP",
           "x-go-name": "LastUpdatedDateTime"
         }
       },
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
     },
     "dealerOperationSchedule": {
-      "description": "dealerOperationSchedule struct contains details of the dealer operation schedule, stored as slice of embedded objects in dealer struct",
+      "description": "stored as slice of embedded objects in dealer struct",
       "type": "object",
+      "title": "dealerOperationSchedule struct contains details of the dealer operation schedule,",
       "properties": {
         "dealerOperationScheduleID": {
-          "description": "Dealer operation schedule unique identifier",
+          "description": "ID dealer operation schedule unique identifier",
           "type": "string",
           "x-go-name": "ID"
         },
@@ -1131,74 +1149,102 @@
           "$ref": "#/definitions/DealerOperationType"
         },
         "fridayCloseHour": {
-          "description": "Business close hour or office end time today: 5:00 PM",
+          "description": "FridayCloseHour business close hour or office end time today: 16:00, 24 hr format",
           "type": "string",
           "x-go-name": "FridayCloseHour"
         },
         "fridayOpenHour": {
-          "description": "Business open hour or office start time today : 7:00 AM",
+          "description": "FridayOpenHour business open hour or office start time today : 7:00, 24 hr format",
           "type": "string",
           "x-go-name": "FridayOpenHour"
         },
         "mondayCloseHour": {
-          "description": "Business close hour or office end time today: 5:00 PM",
+          "description": "MondayCloseHour business close hour or office end time today: 16:00, 24 hr format",
           "type": "string",
           "x-go-name": "MondayCloseHour"
         },
         "mondayOpenHour": {
-          "description": "Business open hour or office start time today : 7:00 AM",
+          "description": "MondayOpenHour business open hour or office start time today : 7:00, 24 hr format",
           "type": "string",
           "x-go-name": "MondayOpenHour"
         },
         "saturdayCloseHour": {
-          "description": "Business close hour or office end time today: 5:00 PM",
+          "description": "SaturdayCloseHour business close hour or office end time today: 16:00, 24 hr format",
           "type": "string",
           "x-go-name": "SaturdayCloseHour"
         },
         "saturdayOpenHour": {
-          "description": "Business open hour or office start time today : 7:00 AM",
+          "description": "SaturdayOpenHour business open hour or office start time today : 7:00, 24 hr format",
           "type": "string",
           "x-go-name": "SaturdayOpenHour"
         },
         "sundayCloseHour": {
-          "description": "Business close hour or office end time today: 5:00 PM",
+          "description": "SundayCloseHour business close hour or office end time today: 16:00, 24 hr format",
           "type": "string",
           "x-go-name": "SundayCloseHour"
         },
         "sundayOpenHour": {
-          "description": "Business open hour or office start time today : 7:00 AM",
+          "description": "SundayOpenHour business open hour or office start time today : 7:00, 24 hr format",
           "type": "string",
           "x-go-name": "SundayOpenHour"
         },
         "thursdayCloseHour": {
-          "description": "Business close hour or office end time today: 5:00 PM",
+          "description": "ThursdayCloseHour business close hour or office end time today: 16:00, 24 hr format",
           "type": "string",
           "x-go-name": "ThursdayCloseHour"
         },
         "thursdayOpenHour": {
-          "description": "Business open hour or office start time today : 7:00 AM",
+          "description": "ThursdayOpenHour business open hour or office start time today : 7:00, 24 hr format",
           "type": "string",
           "x-go-name": "ThursdayOpenHour"
         },
         "tuesdayCloseHour": {
-          "description": "Business close hour or office end time today: 5:00 PM",
+          "description": "TuesdayCloseHour business close hour or office end time today: 16:00, 24 hr format",
           "type": "string",
           "x-go-name": "TuesdayCloseHour"
         },
         "tuesdayOpenHour": {
-          "description": "Business open hour or office start time today : 7:00 AM",
+          "description": "TuesdayOpenHour business open hour or office start time today : 7:00, 24 hr format",
           "type": "string",
           "x-go-name": "TuesdayOpenHour"
         },
         "wednesdayCloseHour": {
-          "description": "Business close hour or office end time today: 5:00 PM",
+          "description": "WednesdayCloseHour business close hour or office end time today: 16:00, 24 hr format",
           "type": "string",
           "x-go-name": "WednesdayCloseHour"
         },
         "wednesdayOpenHour": {
-          "description": "Business open hour or office start time today : 7:00 AM",
+          "description": "WednesdayOpenHour business open hour or office start time today : 7:00, 24 hr format",
           "type": "string",
           "x-go-name": "WednesdayOpenHour"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "doorRate": {
+      "description": "doorRate struct",
+      "type": "object",
+      "properties": {
+        "customerPay": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "CustomerPay"
+        },
+        "endDate": {
+          "x-go-name": "EndDate"
+        },
+        "internal": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "Internal"
+        },
+        "startDate": {
+          "x-go-name": "StartDate"
+        },
+        "warranty": {
+          "type": "number",
+          "format": "double",
+          "x-go-name": "Warranty"
         }
       },
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
@@ -1208,15 +1254,15 @@
       "type": "object",
       "properties": {
         "BARNumber": {
-          "description": "Bureau of Automotive Repair Number",
+          "description": "BARNumber Bureau of Automotive Repair Number",
           "type": "string"
         },
         "EPANumber": {
-          "description": "Environmental Protection Agency Number",
+          "description": "EPANumber Environmental Protection Agency Number",
           "type": "string"
         },
         "amenities": {
-          "description": "List of amenities provided by dealer",
+          "description": "Amenities list of amenities provided by dealer",
           "type": "array",
           "items": {
             "$ref": "#/definitions/amenities"
@@ -1224,7 +1270,7 @@
           "x-go-name": "Amenities"
         },
         "appointmentCapacity": {
-          "description": "List of fixed operation appointment capacities",
+          "description": "AppointmentCapacity list of fixed operation appointment capacities",
           "type": "array",
           "items": {
             "$ref": "#/definitions/appointmentCapacity"
@@ -1235,28 +1281,44 @@
           "$ref": "#/definitions/appointmentHour"
         },
         "dealerID": {
-          "description": "Dealer unique identifier",
+          "description": "DealerID dealers unique identifier",
           "type": "string",
           "x-go-name": "DealerID"
         },
+        "defaultOperationCodes": {
+          "description": "DefaultOperationCodes dealers default operation codes",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "DefaultOperationCodes"
+        },
         "disclaimer": {
-          "description": "dealer disclaimer message",
+          "description": "Disclaimer dealers disclaimer message",
           "type": "string",
           "x-go-name": "Disclaimer"
         },
         "documentVersion": {
-          "description": "Document version to keep track of the changes - DEFAULT 1.0",
+          "description": "DocumentVersion to keep track of the changes - DEFAULT 1.0",
           "type": "number",
           "format": "float",
           "x-go-name": "DocumentVersion"
         },
+        "doorRates": {
+          "description": "DoorRates fixed operation door rates",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/doorRate"
+          },
+          "x-go-name": "DoorRates"
+        },
         "fixedOperationID": {
-          "description": "Fixed operation unique identifier",
+          "description": "ID fixed operation unique identifier",
           "type": "string",
           "x-go-name": "ID"
         },
         "floorCapacity": {
-          "description": "List of floor capacities",
+          "description": "FloorCapacity list of floor capacities",
           "type": "array",
           "items": {
             "$ref": "#/definitions/floorCapacity"
@@ -1264,7 +1326,7 @@
           "x-go-name": "FloorCapacity"
         },
         "holidays": {
-          "description": "List of holidays",
+          "description": "Holidays list of holidays",
           "type": "array",
           "items": {
             "$ref": "#/definitions/holiday"
@@ -1272,94 +1334,109 @@
           "x-go-name": "Holidays"
         },
         "isActive": {
-          "description": "Is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
+          "description": "IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
           "type": "boolean",
           "x-go-name": "IsActive"
         },
         "lastUpdatedByDisplayName": {
-          "description": "This is to display the name in the application",
+          "description": "LastUpdatedByDisplayName this is to display the name in the application",
           "type": "string",
           "x-go-name": "LastUpdatedByDisplayName"
         },
         "lastUpdatedByUser": {
-          "description": "Data updated by who",
+          "description": "LastUpdatedByUser data updated by who",
           "type": "string",
           "x-go-name": "LastUpdatedByUser"
         },
         "lastUpdatedDateTime": {
-          "description": "When was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP",
+          "description": "LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP",
           "x-go-name": "LastUpdatedDateTime"
         },
         "manufacturerLogos": {
-          "description": "List of manufacturer logos",
+          "description": "ManufacturerLogos list of manufacturer logos",
           "type": "array",
           "items": {
             "$ref": "#/definitions/image"
           },
           "x-go-name": "ManufacturerLogos"
         },
+        "recommendedOperationCodes": {
+          "description": "RecommendedOperationCodes dealers recommended operation codes",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "RecommendedOperationCodes"
+        },
         "serviceAdvisors": {
-          "description": "List of service advisors",
+          "description": "ServiceAdvisors list of service advisors",
           "type": "array",
           "items": {
             "$ref": "#/definitions/users"
           },
           "x-go-name": "ServiceAdvisors"
+        },
+        "taxPercentage": {
+          "description": "TaxPercentage fixed operation tax percentage",
+          "type": "number",
+          "format": "double",
+          "x-go-name": "TaxPercentage"
         }
       },
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
     },
     "floorCapacity": {
-      "description": "floorCapacity struct contains details of dealer floor capacities, , stored as slice of embedded objects in fixed operation struct",
+      "description": "stored as slice of embedded objects in fixed operation struct",
       "type": "object",
+      "title": "floorCapacity struct contains details of dealer floor capacities,",
       "properties": {
         "fridayHour": {
-          "description": "Skill hrs available on friday",
+          "description": "FridayHour skill hrs available on friday",
           "type": "string",
           "x-go-name": "FridayHour"
         },
         "mondayHour": {
-          "description": "Skill hrs available on monday",
+          "description": "MondayHour skill hrs available on monday",
           "type": "string",
           "x-go-name": "MondayHour"
         },
         "saturdayHour": {
-          "description": "Skill hrs available on saturday",
+          "description": "SaturdayHour skill hrs available on saturday",
           "type": "string",
           "x-go-name": "SaturdayHour"
         },
         "skillCode": {
-          "description": "Skill unique identifier",
+          "description": "SkillCode maps to SkillMaster.ID",
           "type": "string",
           "x-go-name": "SkillCode"
         },
         "skillName": {
-          "description": "Skill name",
+          "description": "SkillName name of skill, maps to skillMaster.Name\nrarely going to change, keeping a copy here to avoid extra call to skillMaster",
           "type": "string",
           "x-go-name": "SkillName"
         },
         "sundayHours": {
-          "description": "Skill hrs available on sunday",
+          "description": "SundayHours skill hrs available on sunday",
           "type": "string",
           "x-go-name": "SundayHours"
         },
         "thursdayHour": {
-          "description": "Skill hrs available on thursday",
+          "description": "ThursdayHour skill hrs available on thursday",
           "type": "string",
           "x-go-name": "ThursdayHour"
         },
         "total": {
-          "description": "Weekly hrs available",
+          "description": "Total weekly hrs available",
           "type": "string",
           "x-go-name": "Total"
         },
         "tuesdayHour": {
-          "description": "Skill hrs available on tuesday",
+          "description": "TuesdayHour skill hrs available on tuesday",
           "type": "string",
           "x-go-name": "TuesdayHour"
         },
         "wednesdayHour": {
-          "description": "Skill hrs available on wednesday",
+          "description": "WednesdayHour skill hrs available on wednesday",
           "type": "string",
           "x-go-name": "WednesdayHour"
         }
@@ -1371,21 +1448,21 @@
       "type": "object",
       "properties": {
         "carryOver": {
+          "description": "CarryOver Not sure what it means ?",
           "type": "boolean",
           "x-go-name": "CarryOver"
         },
         "date": {
-          "description": "Holiday date like 25th Dec",
-          "type": "string",
+          "description": "Date of the holiday",
           "x-go-name": "Date"
         },
         "endOperationHour": {
-          "description": "Operation hrs end - \"5:00\"",
+          "description": "EndOperationHour Operation hrs end time in 24 hr format - \"17:00\"",
           "type": "string",
           "x-go-name": "EndOperationHour"
         },
         "startOperationHour": {
-          "description": "Operation hrs start - \"7:00\"",
+          "description": "StartOperationHour Operation hrs start time in 24 hr format - \"7:00\"",
           "type": "string",
           "x-go-name": "StartOperationHour"
         }
@@ -1403,12 +1480,12 @@
           "x-go-name": "Height"
         },
         "imageID": {
-          "description": "Image id - unique identifier of the image in S3 bucket",
+          "description": "ImageID image id - unique identifier of the image in S3 bucket",
           "type": "string",
           "x-go-name": "ImageID"
         },
         "title": {
-          "description": "Image title - e.g Dublin logo",
+          "description": "Title image title - e.g Dublin logo",
           "type": "string",
           "x-go-name": "Title"
         },
@@ -1421,22 +1498,40 @@
       },
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
     },
-    "users": {
-      "description": "users struct contains details of the users detail specific to the dealer, stored as slice of embedded objects in fixed operation struct\nUsing generic user type instead of serviceAdvisor type",
+    "serviceConfig": {
+      "description": "micro services will add their dealer related configurations here",
       "type": "object",
       "properties": {
+        "config": {
+          "description": "Config is an interface you can store what ever you want here",
+          "type": "object",
+          "x-go-name": "Config"
+        },
+        "serviceID": {
+          "description": "ID is service id like tscheduling, tcheckin etc",
+          "type": "string",
+          "x-go-name": "ID"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "users": {
+      "description": "stored as slice of embedded objects in fixed operation struct\nUsing generic user type instead of serviceAdvisor type",
+      "type": "object",
+      "title": "users struct contains details of the users detail specific to the dealer,",
+      "properties": {
         "dealerID": {
-          "description": "Dealer unique identifier",
+          "description": "DealerID dealers unique identifier",
           "type": "string",
           "x-go-name": "DealerID"
         },
         "jobTitle": {
-          "description": "User job title",
+          "description": "JobTitle users job title",
           "type": "string",
           "x-go-name": "JobTitle"
         },
         "userID": {
-          "description": "User unique identifier",
+          "description": "UserID users unique identifier",
           "type": "string",
           "x-go-name": "UserID"
         }
@@ -1444,11 +1539,12 @@
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
     },
     "vehicleDamage": {
-      "description": "vehicleDamage struct contains details of the dealer vehicle damage types, stored as slice of embedded objects in dealer struct",
+      "description": "stored as slice of embedded objects in dealer struct",
       "type": "object",
+      "title": "vehicleDamage struct contains details of the dealer vehicle damage types,",
       "properties": {
         "damageType": {
-          "description": "Damage type like Scratch, Dent, Chip etc",
+          "description": "DamageType vehicle damage type like scratch, dent, chip etc",
           "type": "string",
           "x-go-name": "DamageType"
         },
@@ -1458,18 +1554,23 @@
           "x-go-name": "Description"
         },
         "imageURL": {
-          "description": "URL of the damage image",
+          "description": "ImageURL url of the vehicle damage image",
           "type": "string",
           "x-go-name": "ImageURL"
         },
+        "isActive": {
+          "description": "IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'",
+          "type": "boolean",
+          "x-go-name": "IsActive"
+        },
         "priority": {
-          "description": "Decided the sequence in which damage types will be displayed on UI",
+          "description": "Priority decides the sequence in which damage types will be displayed on UI",
           "type": "integer",
           "format": "int64",
           "x-go-name": "Priority"
         },
         "vehicleDamageID": {
-          "description": "Vehicle damage unique identifier",
+          "description": "ID vehicle damage unique identifier",
           "type": "string",
           "x-go-name": "ID"
         }
