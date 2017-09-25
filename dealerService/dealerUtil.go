@@ -44,17 +44,17 @@ func selectedFields(fields []string) bson.M {
 }
 
 // prepareSelectQuery is to select query form listdealersReq.SelectedFields
-func (lstdealer *listDealersReq) prepareSelectQuery() bson.M {
-	if len(lstdealer.SelectedFields) != 0 {
+func (lstDealer *listDealersReq) prepareSelectQuery() bson.M {
+	if len(lstDealer.SelectedFields) != 0 {
 		selectQ := make(bson.M)
-		for _, v := range lstdealer.SelectedFields {
+		for _, v := range lstDealer.SelectedFields {
 			selectQ[v] = 1
 		}
 		return selectQ
 	}
 	return nil
 }
-func getUserdls(ctx apiContext.APIContext, r *http.Request, userDtlsRes *userDtlsRes) error {
+func getUserDtls(ctx apiContext.APIContext, r *http.Request, userDtlsRes *userDtlsRes) error {
 	url := consulhelper.GetServiceNodes(loginServiceID) + signupEndPoint + ctx.UserName
 	resp, err := hwrap.MakeHTTPRequestWithCustomHeader(http.MethodGet, url, appJSON, r.Header, nil)
 	if err != nil {
@@ -76,7 +76,9 @@ func getUserdls(ctx apiContext.APIContext, r *http.Request, userDtlsRes *userDtl
 	}
 
 	return nil
-} //prepareUpdateQuery is use to update the DealerMaster
+}
+
+//prepareUpdateQuery is use to update the DealerMaster
 func (d *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) bson.M {
 
 	updateQuery := make(bson.M)

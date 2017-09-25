@@ -137,7 +137,7 @@ func patchDealer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var userDtls userDtlsRes
-	if err := getUserdls(ctx, r, &userDtls); err != nil {
+	if err := getUserDtls(ctx, r, &userDtls); err != nil {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentNotFound,
 			fmt.Errorf("failed to get user id in db: %v", err))
 		return
