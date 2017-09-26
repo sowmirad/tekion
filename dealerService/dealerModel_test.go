@@ -568,7 +568,7 @@ func contactDataSetup() {
 		log.Error(err)
 	}
 	defer session.Close()
-	err = session.DB(validContext.Tenant).C(getDealerContactCollectionName()).Insert(validContact)
+	err = session.DB(validContext.Tenant).C(Coll()).Insert(validContact)
 	if err != nil {
 		log.Error(err)
 	}

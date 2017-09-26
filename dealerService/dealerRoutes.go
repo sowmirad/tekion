@@ -104,7 +104,7 @@ func Start() {
 	tapi.AddRoutes(
 		"dealerList",
 		http.MethodPost,
-		"/dealer",
+		"/dealers",
 		dealerList,
 		acl.ACLStruct{
 			// TODO PremittedRoles (SuperAdmin)

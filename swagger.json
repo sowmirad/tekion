@@ -217,6 +217,130 @@
             "description": "error querying data base"
           }
         }
+      },
+      "patch": {
+        "description": "By default /dealerDtls returns complete dealer details.\nIn case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "dealer"
+        ],
+        "summary": "Returns dealer list of columns to update",
+        "operationId": "patchDealer",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer",
+            "name": "dealerid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "client type",
+            "name": "clientid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "current tenant name",
+            "name": "tenantname",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "auth token",
+            "name": "tekion-api-token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress",
+            "name": "fields",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "dealer object",
+            "schema": {
+              "$ref": "#/definitions/dealer"
+            }
+          },
+          "204": {
+            "description": "dealer not found in data base"
+          },
+          "400": {
+            "description": "error querying data base"
+          }
+        }
+      }
+    },
+    "/dealers": {
+      "post": {
+        "description": "By default /lstDealer returns complete dealer list.\nIn case you need only certain fields, you can specify an optional query parameter \"fields\",\npassing a list of comma separated fields you want in response.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "listDealersReq"
+        ],
+        "summary": "Returns Dealer list",
+        "operationId": "dealerList",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "unique identifier of the dealer",
+            "name": "dealerid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "client type",
+            "name": "clientid",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "current tenant name",
+            "name": "tenantname",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "auth token",
+            "name": "tekion-api-token",
+            "in": "header",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress",
+            "name": "fields",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "dealer object",
+            "schema": {
+              "$ref": "#/definitions/dealer"
+            }
+          },
+          "204": {
+            "description": "dealer not found in data base"
+          },
+          "400": {
+            "description": "error querying data base"
+          }
+        }
       }
     },
     "/fixedoperation": {
@@ -501,6 +625,22 @@
       "format": "int8",
       "title": "DealerOperationType : valid for 3 collections as of now.",
       "x-go-package": "bitbucket.org/tekion/tenums/constants"
+    },
+    "MetaData": {
+      "description": "MetaData of HTTP API response",
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Code"
+        },
+        "msg": {
+          "type": "string",
+          "x-go-name": "Msg"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tbaas/tapi"
     },
     "amenities": {
       "description": "amenities struct contains list of dealer amenities, stored as slice of embedded objects in fixed operation struct",
@@ -1498,6 +1638,26 @@
       },
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
     },
+    "listDealersReq": {
+      "type": "object",
+      "properties": {
+        "dealerIDs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "IDs"
+        },
+        "selectedFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "SelectedFields"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
     "serviceConfig": {
       "description": "micro services will add their dealer related configurations here",
       "type": "object",
@@ -1511,6 +1671,29 @@
           "description": "ID is service id like tscheduling, tcheckin etc",
           "type": "string",
           "x-go-name": "ID"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "userData": {
+      "description": "this is the response we get from signup user endpoint",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "x-go-name": "DisplayName"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "userDtlsRes": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/userData"
+        },
+        "meta": {
+          "$ref": "#/definitions/MetaData"
         }
       },
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"

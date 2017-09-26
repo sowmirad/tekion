@@ -502,14 +502,14 @@ type listDealersReq struct {
 	SelectedFields []string `json:"selectedFields"`
 }
 
+// swagger:model userDtlsRes
 type userDtlsRes struct {
 	Meta tapi.MetaData `json:"meta"`
 	Data userData      `json:"data"`
 }
 
 // this is the response we get from signup user endpoint
-// only account idp[
+// swagger:model userData
 type userData struct {
 	DisplayName string `json:"displayName"`
 }
-

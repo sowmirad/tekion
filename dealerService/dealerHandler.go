@@ -97,6 +97,52 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 }
 
 //dealerList is to query list of dealers from Dealermaster
+// swagger:operation POST /dealers listDealersReq dealerList
+//
+// Returns Dealer list
+//
+// By default /lstDealer returns complete dealer list.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
+// passing a list of comma separated fields you want in response.
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: dealer object
+//     schema:
+//         "$ref": "#/definitions/dealer"
+//   '204':
+//     description: dealer not found in data base
+//   '400':
+//     description: error querying data base
 func dealerList(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 
@@ -124,6 +170,52 @@ func dealerList(w http.ResponseWriter, r *http.Request) {
 }
 
 // patchDealer is to query list of dealers from Dealermaster
+// swagger:operation PATCH /dealer dealer patchDealer
+//
+// Returns dealer list of columns to update
+//
+// By default /dealerDtls returns complete dealer details.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
+// passing a list of comma separated fields you want in response.
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: dealer object
+//     schema:
+//         "$ref": "#/definitions/dealer"
+//   '204':
+//     description: dealer not found in data base
+//   '400':
+//     description: error querying data base
 func patchDealer(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	var dealerDtls dealer
