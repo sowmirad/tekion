@@ -246,6 +246,34 @@ func patchDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", nil)
 }
 
+//createNewDealer is for creating new dealer
+func createDealer(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+
+	var dealerDtls dealer
+
+	err := json.NewDecoder(r.Body).Decode(&dealerDtls)
+	if err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+			fmt.Errorf("error while decoding creating new dealer payload: %v", err))
+		return
+	}
+
+	if err = validateNewDealer(ctx, &dealerDtls); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorWithQueryParams,
+			fmt.Errorf("missing fields required to create new dealer: %v", err))
+		return
+	}
+
+	//Inserting dealers into DB
+	if err = mMgr.Create(ctx.Tenant, dealerCollectionName, &dealerDtls); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorInsertingMongoDoc,
+			fmt.Errorf("failed to insert new dealer in db: %v", err))
+		return
+	}
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created successfully", nil)
+}
+
 // swagger:operation GET /fixedoperation fixedOperation readFixedOperation
 //
 // Returns list of fixed operations identified by dealer id passed in header

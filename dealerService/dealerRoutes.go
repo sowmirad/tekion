@@ -121,6 +121,16 @@ func Start() {
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
 		},
 	)
+	tapi.AddRoutes(
+		"createDealer",
+		http.MethodPost,
+		"/createDealer",
+		createDealer,
+		acl.ACLStruct{
+			// TODO PremittedRoles (SuperAdmin)
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)
 	//log service start info
 	log.GenericInfo("", "", "", "Started Tekion tdealer on port:8079")
 	tapi.Start("8079", "/tdealer")
