@@ -1,6 +1,8 @@
-import { GET } from './api';
+import { GET,POST } from './api';
+
 
 export default {
   getDealerInfo: GET('/tdealer/dealer'),
   getFixedOperation: GET('/tdealer/fixedoperation'),
+  getDealerList: POST('/tdealer/dealers'),
 };
