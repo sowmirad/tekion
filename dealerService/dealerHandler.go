@@ -20,6 +20,7 @@ import (
 	"bitbucket.org/tekion/tbaas/tapi"
 	"encoding/json"
 	"fmt"
+
 )
 
 var (
@@ -28,6 +29,9 @@ var (
 
 const (
 	apiCtxKey = "apiContext"
+)
+var (
+	errDealerName = errors.New("dealer name is empty")
 )
 
 // swagger:operation GET /dealer dealer readDealer
@@ -258,19 +262,27 @@ func createDealer(w http.ResponseWriter, r *http.Request) {
 			fmt.Errorf("error while decoding creating new dealer payload: %v", err))
 		return
 	}
-
-	if err = validateNewDealer(ctx, &dealerDtls); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorWithQueryParams,
-			fmt.Errorf("missing fields required to create new dealer: %v", err))
+	if len(dealerDtls.Name) != 0 {
+		// dealerName is to check the existing dealer in table
+		var tempUsr dealer
+		find := bson.M{"dealerName": dealerDtls.Name}
+		err := mMgr.ReadOne(ctx.Tenant, dealerCollectionName, find, nil, &tempUsr)
+		if err == mgo.ErrNotFound {
+			//Inserting dealers into DB
+			if err = mMgr.Create(ctx.Tenant, dealerCollectionName, &dealerDtls); err != nil {
+				tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorInsertingMongoDoc,
+					fmt.Errorf("failed to insert new dealer in db: %v", err))
+				return
+			}
+		}else {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentExists, errors.New("dealer already exists"))
+			return
+		}
+	} else {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentNotFound, errDealerName)
 		return
 	}
 
-	//Inserting dealers into DB
-	if err = mMgr.Create(ctx.Tenant, dealerCollectionName, &dealerDtls); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorInsertingMongoDoc,
-			fmt.Errorf("failed to insert new dealer in db: %v", err))
-		return
-	}
 	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created successfully", nil)
 }
 

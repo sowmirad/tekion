@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"errors"
 
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"bitbucket.org/tekion/tbaas/consulhelper"
@@ -21,9 +20,7 @@ const (
 	signupEndPoint = "/tuser/username/"
 	appJSON        = "application/json"
 )
-var(
-	errDealerName            = errors.New("dealer name is empty")
-)
+
 
 // TODO : should be moved to some common library
 // fetchFieldsFromRequest reads the query string and fetches "fields" parameter.
@@ -127,10 +124,3 @@ func (d *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) 
 	return bson.M{"$set": updateQuery}
 }
 
-func validateNewDealer(ctx apiContext.APIContext, dealerDtls *dealer) error {
-	if len(dealerDtls.Name) == 0 {
-		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, errDealerName)
-		return errDealerName
-	}
-	return nil
-}
