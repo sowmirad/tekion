@@ -21,7 +21,6 @@ const (
 	appJSON        = "application/json"
 )
 
-
 // TODO : should be moved to some common library
 // fetchFieldsFromRequest reads the query string and fetches "fields" parameter.
 // It return slice of strings or nil if "fields" parameter was not found in query string.
@@ -123,4 +122,3 @@ func (d *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) 
 	updateQuery["documentVersion"] = d.DocumentVersion
 	return bson.M{"$set": updateQuery}
 }
-

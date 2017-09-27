@@ -20,18 +20,16 @@ import (
 	"bitbucket.org/tekion/tbaas/tapi"
 	"encoding/json"
 	"fmt"
-
-)
-
-var (
-	errDealerID = errors.New("empty user id")
+	"strings"
 )
 
 const (
 	apiCtxKey = "apiContext"
 )
+
 var (
 	errDealerName = errors.New("dealer name is empty")
+	errDealerID = errors.New("empty dealer id")
 )
 
 // swagger:operation GET /dealer dealer readDealer
@@ -262,7 +260,8 @@ func createDealer(w http.ResponseWriter, r *http.Request) {
 			fmt.Errorf("error while decoding creating new dealer payload: %v", err))
 		return
 	}
-	if len(dealerDtls.Name) != 0 {
+
+	if len(strings.TrimRight(strings.TrimLeft(dealerDtls.Name," "), " ")) != 0 {
 		// dealerName is to check the existing dealer in table
 		var tempUsr dealer
 		find := bson.M{"dealerName": dealerDtls.Name}
@@ -274,7 +273,7 @@ func createDealer(w http.ResponseWriter, r *http.Request) {
 					fmt.Errorf("failed to insert new dealer in db: %v", err))
 				return
 			}
-		}else {
+		} else {
 			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentExists, errors.New("dealer already exists"))
 			return
 		}
