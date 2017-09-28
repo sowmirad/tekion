@@ -29,7 +29,7 @@ const (
 
 var (
 	errDealerName = errors.New("dealer name is empty")
-	errDealerID = errors.New("empty dealer id")
+	errDealerID   = errors.New("empty dealer id")
 )
 
 // swagger:operation GET /dealer dealer readDealer
@@ -261,7 +261,7 @@ func createDealer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(strings.TrimRight(strings.TrimLeft(dealerDtls.Name," "), " ")) != 0 {
+	if len(strings.TrimRight(strings.TrimLeft(dealerDtls.Name, " "), " ")) != 0 {
 		// dealerName is to check the existing dealer in table
 		var tempUsr dealer
 		find := bson.M{"dealerName": dealerDtls.Name}
@@ -288,24 +288,42 @@ func createDealer(w http.ResponseWriter, r *http.Request) {
 // update dealer details
 func updateDealer(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
-	var dealerupdate dealer
-	if err := json.NewDecoder(r.Body).Decode(&dealerupdate); err != nil {
+	var dealer dealer
+	if err := json.NewDecoder(r.Body).Decode(&dealer); err != nil {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
 			fmt.Errorf("error encountered while decoding userDetails payload: %v", err))
 		return
 	}
-	if len(dealerupdate.ID) == 0 {
+	if len(dealer.ID) == 0 {
+		// create new dealer
+		// generating customerID from GetNextSequence function
+		id, err := mMgr.GetNextSequence(ctx.Tenant, dealerCollectionName)
+		if err != nil {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+				fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
+			return
+		}
+		dealer.ID = id
+		if err := mMgr.Create(ctx.Tenant, dealerCollectionName, &dealer); err != nil {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+				fmt.Errorf("error encountered while updating dealer details in db: %v", err))
+			return
+
+		}
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errDealerID)
 		return
-	}
-	findQ := bson.M{"_id": dealerupdate.ID}
-	if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, dealerupdate); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
-			fmt.Errorf("error encountered while updating dealer details in db: %v", err))
-		return
+	} else {
+		// update existing dealer
+		findQ := bson.M{"_id": dealer.ID}
+		if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, &dealer); err != nil {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+				fmt.Errorf("error encountered while updating dealer details in db: %v", err))
+			return
 
+		}
 	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", dealerupdate)
+
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", &dealer)
 }
 
 // swagger:operation GET /fixedoperation fixedOperation readFixedOperation

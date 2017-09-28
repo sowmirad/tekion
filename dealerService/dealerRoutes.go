@@ -66,7 +66,7 @@ func Start() {
 		},
 	)
 	// todo create and update should be one function. Figure out why and write one
-	tapi.AddRoutes(
+/*	tapi.AddRoutes(
 		"createDealer",
 		http.MethodPost,
 		"/createDealer",
@@ -75,11 +75,11 @@ func Start() {
 			// TODO PremittedRoles (SuperAdmin)
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
 		},
-	)
+	)*/
 	tapi.AddRoutes(
 		"updateDealer",
 		http.MethodPost,
-		"/updatedealer",
+		"/dealer",
 		updateDealer,
 		acl.ACLStruct{
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
