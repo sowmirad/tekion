@@ -43,7 +43,7 @@ func Start() {
 		"/dealer",
 		readDealer,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher", "BDC"},
 		},
 	)
 	tapi.AddRoutes(
