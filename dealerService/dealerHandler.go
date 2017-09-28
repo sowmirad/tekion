@@ -285,13 +285,13 @@ func createDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created successfully", nil)
 }
 
-// update dealer details
-func updateDealer(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+// saveDealer dealer details
+func saveDealer(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	var dealer dealer
 	if err := json.NewDecoder(r.Body).Decode(&dealer); err != nil {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
-			fmt.Errorf("error encountered while decoding userDetails payload: %v", err))
+			fmt.Errorf("error encountered while decoding save dealer payload: %v", err))
 		return
 	}
 	if len(dealer.ID) == 0 {
@@ -319,7 +319,6 @@ func updateDealer(w http.ResponseWriter, r *http.Request) {
 			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
 				fmt.Errorf("error encountered while updating dealer details in db: %v", err))
 			return
-
 		}
 	}
 
