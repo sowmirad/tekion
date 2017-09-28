@@ -159,21 +159,22 @@ func updateDealer(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	var dealerupdate dealer
 	if err := json.NewDecoder(r.Body).Decode(&dealerupdate); err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload,
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
 			fmt.Errorf("error encountered while decoding userDetails payload: %v", err))
 		return
 	}
 	if len(dealerupdate.ID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorDecodingPayload, errDealerID)
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errDealerID)
 		return
 	}
 	findQ := bson.M{"_id": dealerupdate.ID}
-	if err := mMgr.Update(ctx.Tenant, getDealerCollectionName(), findQ, dealerupdate); err != nil {
-		tapi.WriteHTTPErrorResponse(w, getModuleID(), erratum.ErrorUpdatingMongoDoc,
+	if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, dealerupdate); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
 			fmt.Errorf("error encountered while updating dealer details in db: %v", err))
 		return
 
 	}
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", dealerupdate)
 }
 
 // swagger:operation GET /fixedoperation fixedOperation readFixedOperation
