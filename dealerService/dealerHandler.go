@@ -20,14 +20,16 @@ import (
 	"bitbucket.org/tekion/tbaas/tapi"
 	"encoding/json"
 	"fmt"
-)
-
-var (
-	errDealerID = errors.New("empty user id")
+	"strings"
 )
 
 const (
 	apiCtxKey = "apiContext"
+)
+
+var (
+	errDealerName = errors.New("dealer name is empty")
+	errDealerID = errors.New("empty dealer id")
 )
 
 // swagger:operation GET /dealer dealer readDealer
@@ -97,6 +99,52 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 }
 
 //dealerList is to query list of dealers from Dealermaster
+// swagger:operation POST /dealers listDealersReq dealerList
+//
+// Returns Dealer list
+//
+// By default /lstDealer returns complete dealer list.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
+// passing a list of comma separated fields you want in response.
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: dealer object
+//     schema:
+//         "$ref": "#/definitions/dealer"
+//   '204':
+//     description: dealer not found in data base
+//   '400':
+//     description: error querying data base
 func dealerList(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 
@@ -124,6 +172,52 @@ func dealerList(w http.ResponseWriter, r *http.Request) {
 }
 
 // patchDealer is to query list of dealers from Dealermaster
+// swagger:operation PATCH /dealer dealer patchDealer
+//
+// Returns dealer list of columns to update
+//
+// By default /dealerDtls returns complete dealer details.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
+// passing a list of comma separated fields you want in response.
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: dealer object
+//     schema:
+//         "$ref": "#/definitions/dealer"
+//   '204':
+//     description: dealer not found in data base
+//   '400':
+//     description: error querying data base
 func patchDealer(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 	var dealerDtls dealer
@@ -152,6 +246,43 @@ func patchDealer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", nil)
+}
+
+//createNewDealer is for creating new dealer
+func createDealer(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+
+	var dealerDtls dealer
+
+	err := json.NewDecoder(r.Body).Decode(&dealerDtls)
+	if err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+			fmt.Errorf("error while decoding creating new dealer payload: %v", err))
+		return
+	}
+
+	if len(strings.TrimRight(strings.TrimLeft(dealerDtls.Name," "), " ")) != 0 {
+		// dealerName is to check the existing dealer in table
+		var tempUsr dealer
+		find := bson.M{"dealerName": dealerDtls.Name}
+		err := mMgr.ReadOne(ctx.Tenant, dealerCollectionName, find, nil, &tempUsr)
+		if err == mgo.ErrNotFound {
+			//Inserting dealers into DB
+			if err = mMgr.Create(ctx.Tenant, dealerCollectionName, &dealerDtls); err != nil {
+				tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorInsertingMongoDoc,
+					fmt.Errorf("failed to insert new dealer in db: %v", err))
+				return
+			}
+		} else {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentExists, errors.New("dealer already exists"))
+			return
+		}
+	} else {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentNotFound, errDealerName)
+		return
+	}
+
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created successfully", nil)
 }
 
 // update dealer details
