@@ -77,7 +77,7 @@ func Start() {
 		},
 	)*/
 	tapi.AddRoutes(
-		"updateDealer",
+		"saveDealer",
 		http.MethodPost,
 		"/dealer",
 		saveDealer,
