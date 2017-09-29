@@ -83,6 +83,8 @@ export function getDealerList(config, payload) {
 }
 
 export function updateDealerInfo(config, payload) {
+  console.log('config', config);
+
   return async (dispatch) => {
     dispatch(updateDealerInfoRequest);
     const { error, response } = await Services.updateDealerInfo(
