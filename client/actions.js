@@ -65,8 +65,8 @@ export function getFixedOperationForDealer(config) {
 
 export function setDealerInfo(dealerInfo) {
   return async (dispatch) => {
-      dispatch(getDealerInfoSuccess({ dealerInfo }));
-    }
+    dispatch(getDealerInfoSuccess({ dealerInfo }));
+  };
 }
 
 export function getDealerList(config, payload) {
@@ -82,10 +82,13 @@ export function getDealerList(config, payload) {
   };
 }
 
-export function updateDealerInfo(config,payload) {
+export function updateDealerInfo(config, payload) {
   return async (dispatch) => {
     dispatch(updateDealerInfoRequest);
-    const { error, response } = await Services.updateDealerInfo(config,payload);
+    const { error, response } = await Services.updateDealerInfo(
+      config,
+      payload,
+    );
     if (response) {
       dispatch(updateDealerInfoSuccess(response));
     }
