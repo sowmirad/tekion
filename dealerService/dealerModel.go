@@ -66,6 +66,8 @@ type dealer struct {
 	// But this is not one to one as dealerID, thats the reason we put it as dealershipCode,
 	// This is kind of dealer GroupCode)
 	DealershipCode string `bson:"dealershipCode" json:"dealershipCode"`
+	// Application code of dealer
+	ApplicationCode string `bson:"applicationCode" json:"applicationCode"`
 	// Group list of groups dealer is part of
 	Group []string `bson:"dealerGroup" json:"dealerGroup"`
 	// Address list of dealer addresses

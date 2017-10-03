@@ -28,8 +28,9 @@ const (
 )
 
 var (
-	errDealerName = errors.New("dealer name is empty")
-	errDealerID   = errors.New("empty dealer id")
+	errDealerName       = errors.New("dealer name is empty")
+	errDealerID         = errors.New("empty dealer id")
+	errFixedOperationID = errors.New("empty fixed Operation id")
 )
 
 // swagger:operation GET /dealer dealer readDealer
@@ -390,6 +391,30 @@ func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperation)
+}
+
+//patchFixedOperation is use to update patchfixed operation
+func patchFixedOperation(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	var fixedOpDtls fixedOperation
+	if err := json.NewDecoder(r.Body).Decode(&fixedOpDtls); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+			fmt.Errorf("error encountered while decoding fixed operation payload: %v", err))
+		return
+	}
+	if len(fixedOpDtls.ID) == 0 {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errFixedOperationID)
+		return
+	}
+	findQ := bson.M{"_id": fixedOpDtls.ID}
+	updateQ := fixedOpDtls.prepareUpdateQuery(ctx, r)
+	if err := mMgr.Update(ctx.Tenant, fixedOperationCollectionName, findQ, updateQ); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+			fmt.Errorf("error encountered while updating fixed operation details in db: %v", err))
+		return
+	}
+
+	tapi.WriteHTTPResponse(w, http.StatusOK, "fixed operations details updated successfully", nil)
 }
 
 // swagger:operation GET /contact/{cid} dealerContact readDealerContact

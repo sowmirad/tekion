@@ -44,7 +44,7 @@ func Start() {
 		"/dealer",
 		readDealer,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher", "BDCSpecialist"},
 		},
 	)
 	tapi.AddRoutes(
@@ -92,6 +92,16 @@ func Start() {
 		readFixedOperation,
 		acl.ACLStruct{
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+		},
+	)
+	tapi.AddRoutes(
+		"patchFixedOperation",
+		http.MethodPatch,
+		"/fixedoperation",
+		patchFixedOperation,
+		acl.ACLStruct{
+			// TODO PremittedRoles (SuperAdmin)
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
 		},
 	)
 	tapi.AddRoutes(
