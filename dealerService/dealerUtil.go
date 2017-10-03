@@ -118,7 +118,27 @@ func (d *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) 
 
 	updateQuery["lastUpdatedByUser"] = d.LastUpdatedByUser
 	updateQuery["lastUpdatedByDisplayName"] = d.LastUpdatedByDisplayName
-	updateQuery["lastUpdatedDateTime"] = d.LastUpdatedByDisplayName
+	updateQuery["lastUpdatedDateTime"] = d.LastUpdatedDateTime
+	updateQuery["documentVersion"] = d.DocumentVersion
+	return bson.M{"$set": updateQuery}
+}
+
+func (d *fixedOperation) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) bson.M {
+	updateQuery := make(bson.M)
+	if len(d.DealerID) != 0 {
+		updateQuery["dealerID"] = d.DealerID
+	}
+	if len(d.EPANumber) != 0 {
+		updateQuery["EPANumber"] = d.EPANumber
+	}
+	if len(d.BARNumber) != 0 {
+		updateQuery["BARNumber"] = d.BARNumber
+	}
+	if len(d.Disclaimer) != 0 {
+		updateQuery["taxPercentage"] = d.Disclaimer
+	}
+	updateQuery["lastUpdatedByUser"] = d.LastUpdatedByUser
+	updateQuery["lastUpdatedDateTime"] = d.LastUpdatedDateTime
 	updateQuery["documentVersion"] = d.DocumentVersion
 	return bson.M{"$set": updateQuery}
 }

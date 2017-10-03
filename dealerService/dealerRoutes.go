@@ -57,6 +57,16 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
+		"patchFixedOperation",
+		http.MethodPatch,
+		"/fixedoperation",
+		patchFixedOperation,
+		acl.ACLStruct{
+			// TODO PremittedRoles (SuperAdmin)
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)
+	tapi.AddRoutes(
 		"readDealerContact",
 		http.MethodGet,
 		"/contact/{cid}",
