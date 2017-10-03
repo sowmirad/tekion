@@ -286,6 +286,46 @@ func createDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created successfully", nil)
 }
 
+// saveDealer dealer details
+func saveDealer(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+	var dealer dealer
+	if err := json.NewDecoder(r.Body).Decode(&dealer); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+			fmt.Errorf("error encountered while decoding save dealer payload: %v", err))
+		return
+	}
+	if len(dealer.ID) == 0 {
+		// create new dealer
+		// generating customerID from GetNextSequence function
+		id, err := mMgr.GetNextSequence(ctx.Tenant, dealerCollectionName)
+		if err != nil {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+				fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
+			return
+		}
+		dealer.ID = id
+		if err := mMgr.Create(ctx.Tenant, dealerCollectionName, &dealer); err != nil {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+				fmt.Errorf("error encountered while updating dealer details in db: %v", err))
+			return
+
+		}
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errDealerID)
+		return
+	} else {
+		// update existing dealer
+		findQ := bson.M{"_id": dealer.ID}
+		if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, &dealer); err != nil {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+				fmt.Errorf("error encountered while updating dealer details in db: %v", err))
+			return
+		}
+	}
+
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", &dealer)
+}
+
 // swagger:operation GET /fixedoperation fixedOperation readFixedOperation
 //
 // Returns list of fixed operations identified by dealer id passed in header

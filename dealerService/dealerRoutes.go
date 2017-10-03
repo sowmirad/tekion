@@ -48,6 +48,44 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
+		"dealerList",
+		http.MethodPost,
+		"/dealers",
+		dealerList,
+		acl.ACLStruct{
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)
+	tapi.AddRoutes(
+		"patchDealer",
+		http.MethodPatch,
+		"/dealer",
+		patchDealer,
+		acl.ACLStruct{
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)
+	// todo create and update should be one function. Figure out why and write one
+	/*	tapi.AddRoutes(
+		"createDealer",
+		http.MethodPost,
+		"/createDealer",
+		createDealer,
+		acl.ACLStruct{
+			// TODO PremittedRoles (SuperAdmin)
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)*/
+	tapi.AddRoutes(
+		"saveDealer",
+		http.MethodPost,
+		"/dealer",
+		saveDealer,
+		acl.ACLStruct{
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)
+	tapi.AddRoutes(
 		"readFixedOperation",
 		http.MethodGet,
 		"/fixedoperation",
@@ -111,36 +149,7 @@ func Start() {
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
-	tapi.AddRoutes(
-		"dealerList",
-		http.MethodPost,
-		"/dealers",
-		dealerList,
-		acl.ACLStruct{
-			// TODO PremittedRoles (SuperAdmin)
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
-		},
-	)
-	tapi.AddRoutes(
-		"patchDealer",
-		http.MethodPatch,
-		"/dealer",
-		patchDealer,
-		acl.ACLStruct{
-			// TODO PremittedRoles (SuperAdmin)
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
-		},
-	)
-	tapi.AddRoutes(
-		"createDealer",
-		http.MethodPost,
-		"/createDealer",
-		createDealer,
-		acl.ACLStruct{
-			// TODO PremittedRoles (SuperAdmin)
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
-		},
-	)
+
 	//log service start info
 	log.GenericInfo("", "", "", "Started Tekion tdealer on port:8079")
 	tapi.Start("8079", "/tdealer")

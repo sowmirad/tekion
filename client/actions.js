@@ -9,6 +9,9 @@ import {
   TEKION_DEALER_LIST_REQUEST,
   TEKION_DEALER_LIST_SUCCESS,
   TEKION_DEALER_LIST_FAILURE,
+  TEKION_UPDATE_DEALER_INFO_REQUEST,
+  TEKION_UPDATE_DEALER_INFO_SUCCESS,
+  TEKION_UPDATE_DEALER_INFO_FAILURE,
 } from './constants';
 import Services from './services';
 
@@ -29,6 +32,10 @@ const getFixedOperationsFailure = createAction(
 const getDealerListRequest = createAction(TEKION_DEALER_LIST_REQUEST);
 const getDealerListSuccess = createAction(TEKION_DEALER_LIST_SUCCESS);
 const getDealerListFailure = createAction(TEKION_DEALER_LIST_FAILURE);
+
+const updateDealerInfoRequest = createAction(TEKION_UPDATE_DEALER_INFO_REQUEST);
+const updateDealerInfoSuccess = createAction(TEKION_UPDATE_DEALER_INFO_SUCCESS);
+const updateDealerInfoFailure = createAction(TEKION_UPDATE_DEALER_INFO_FAILURE);
 
 export function getDealerInfo(config) {
   return async (dispatch) => {
@@ -58,19 +65,37 @@ export function getFixedOperationForDealer(config) {
 
 export function setDealerInfo(dealerInfo) {
   return async (dispatch) => {
-      dispatch(getDealerInfoSuccess({ dealerInfo }));
-    }
+    dispatch(getDealerInfoSuccess({ dealerInfo }));
+  };
 }
 
-export function getDealerList(config) {
+export function getDealerList(config, payload) {
   return async (dispatch) => {
     dispatch(getDealerListRequest);
-    const { error, response } = await Services.getDealerList(config);
+    const { error, response } = await Services.getDealerList(config, payload);
     if (response) {
-      dispatch(getDealerListSuccess({ dealerInfo: response.data }));
+      dispatch(getDealerListSuccess({ dealerList: response.data }));
     }
     if (error) {
       dispatch(getDealerListFailure(error));
+    }
+  };
+}
+
+export function updateDealerInfo(config, payload) {
+  console.log('config', config);
+
+  return async (dispatch) => {
+    dispatch(updateDealerInfoRequest);
+    const { error, response } = await Services.updateDealerInfo(
+      config,
+      payload,
+    );
+    if (response) {
+      dispatch(updateDealerInfoSuccess(response));
+    }
+    if (error) {
+      dispatch(updateDealerInfoFailure(error));
     }
   };
 }

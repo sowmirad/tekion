@@ -502,6 +502,8 @@ type dealerGroup struct {
 type listDealersReq struct {
 	IDs            []string `json:"dealerIDs"`
 	SelectedFields []string `json:"selectedFields"`
+	SortBy         string   `json:"SortBy"`
+	Limit          int      `json:"limit"`
 }
 
 // swagger:model userDtlsRes
