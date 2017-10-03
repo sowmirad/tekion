@@ -12,6 +12,9 @@ import {
   TEKION_UPDATE_DEALER_INFO_REQUEST,
   TEKION_UPDATE_DEALER_INFO_SUCCESS,
   TEKION_UPDATE_DEALER_INFO_FAILURE,
+  TEKION_CREATE_DEALER_REQUEST,
+  TEKION_CREATE_DEALER_SUCCESS,
+  TEKION_CREATE_DEALER_FAILURE,
 } from './constants';
 
 const initialState = ip.freeze({
@@ -23,6 +26,8 @@ const initialState = ip.freeze({
   dealerListStatus: null,
   dealerData: null,
   updateDealerDataStatus: null,
+  newDealerData: null,
+  newDealerDataStatus: null,
 });
 
 export default function (state = initialState, action) {
@@ -85,6 +90,21 @@ export default function (state = initialState, action) {
     case TEKION_UPDATE_DEALER_INFO_FAILURE:
       state = ip.set(state, 'dealerData', null);
       state = ip.set(state, 'updateDealerDataStatus', 'failed');
+      return state;
+
+    case TEKION_CREATE_DEALER_REQUEST:
+      state = ip.set(state, 'newDealerData', null);
+      state = ip.set(state, 'newDealerDataStatus', 'fetching');
+      return state;
+
+    case TEKION_CREATE_DEALER_SUCCESS:
+      state = ip.set(state, 'newDealerData', action.payload.dealerInfo);
+      state = ip.set(state, 'newDealerDataStatus', 'success');
+      return state;
+
+    case TEKION_CREATE_DEALER_FAILURE:
+      state = ip.set(state, 'newDealerData', null);
+      state = ip.set(state, 'newDealerDataStatus', 'failed');
       return state;
 
     default:

@@ -12,6 +12,9 @@ import {
   TEKION_UPDATE_DEALER_INFO_REQUEST,
   TEKION_UPDATE_DEALER_INFO_SUCCESS,
   TEKION_UPDATE_DEALER_INFO_FAILURE,
+  TEKION_CREATE_DEALER_REQUEST,
+  TEKION_CREATE_DEALER_SUCCESS,
+  TEKION_CREATE_DEALER_FAILURE,
 } from './constants';
 import Services from './services';
 
@@ -36,6 +39,10 @@ const getDealerListFailure = createAction(TEKION_DEALER_LIST_FAILURE);
 const updateDealerInfoRequest = createAction(TEKION_UPDATE_DEALER_INFO_REQUEST);
 const updateDealerInfoSuccess = createAction(TEKION_UPDATE_DEALER_INFO_SUCCESS);
 const updateDealerInfoFailure = createAction(TEKION_UPDATE_DEALER_INFO_FAILURE);
+
+const createDealerRequest = createAction(TEKION_CREATE_DEALER_REQUEST);
+const createDealerSuccess = createAction(TEKION_CREATE_DEALER_SUCCESS);
+const createDealerFailure = createAction(TEKION_CREATE_DEALER_FAILURE);
 
 export function getDealerInfo(config) {
   return async (dispatch) => {
@@ -83,7 +90,7 @@ export function getDealerList(config, payload) {
 }
 
 export function updateDealerInfo(config, payload) {
-  console.log('config', config);
+  console.log('config in action', config);
 
   return async (dispatch) => {
     dispatch(updateDealerInfoRequest);
@@ -96,6 +103,21 @@ export function updateDealerInfo(config, payload) {
     }
     if (error) {
       dispatch(updateDealerInfoFailure(error));
+    }
+  };
+}
+
+export function createNewDealer(config, payload) {
+  console.log('config in action', config);
+
+  return async (dispatch) => {
+    dispatch(createDealerRequest);
+    const { error, response } = await Services.createDealer(config, payload);
+    if (response) {
+      dispatch(createDealerSuccess(response));
+    }
+    if (error) {
+      dispatch(createDealerFailure(error));
     }
   };
 }
