@@ -249,7 +249,7 @@ func patchDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", nil)
 }
 
-//createNewDealer is for creating new dealer
+/*//createNewDealer is for creating new dealer
 func createDealer(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 
@@ -262,11 +262,11 @@ func createDealer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(strings.TrimRight(strings.TrimLeft(dealerDtls.Name, " "), " ")) != 0 {
+	if len(strings.TrimSpace(dealerDtls.Name)) != 0 {
 		// dealerName is to check the existing dealer in table
 		var tempUsr dealer
 		find := bson.M{"dealerName": dealerDtls.Name}
-		err := mMgr.ReadOne(ctx.Tenant, dealerCollectionName, find, nil, &tempUsr)
+		err := mMgr.Count(ctx.Tenant, dealerCollectionName, find, nil, &tempUsr)
 		if err == mgo.ErrNotFound {
 			//Inserting dealers into DB
 			if err = mMgr.Create(ctx.Tenant, dealerCollectionName, &dealerDtls); err != nil {
@@ -275,7 +275,8 @@ func createDealer(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else {
-			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentExists, errors.New("dealer already exists"))
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentExists,
+				errors.New("dealer already exists"))
 			return
 		}
 	} else {
@@ -284,7 +285,7 @@ func createDealer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created successfully", nil)
-}
+}*/
 
 // saveDealer dealer details
 func saveDealer(w http.ResponseWriter, r *http.Request) {
@@ -298,6 +299,21 @@ func saveDealer(w http.ResponseWriter, r *http.Request) {
 	if len(dealer.ID) == 0 {
 		// create new dealer
 		// generating customerID from GetNextSequence function
+		if len(strings.TrimSpace(dealer.Name)) != 0 {
+			findQ := bson.M{"dealerName": dealer.Name}
+			count, err := mMgr.Count(ctx, dealerCollectionName, findQ)
+			if err != nil {
+				tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+					fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
+				return
+			}
+			if count != 0 {
+				tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+					fmt.Errorf("dealer name already exists"))
+				return
+			}
+		}
+
 		id, err := mMgr.GetNextSequence(ctx.Tenant, dealerCollectionName)
 		if err != nil {
 			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
@@ -307,11 +323,11 @@ func saveDealer(w http.ResponseWriter, r *http.Request) {
 		dealer.ID = id
 		if err := mMgr.Create(ctx.Tenant, dealerCollectionName, &dealer); err != nil {
 			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
-				fmt.Errorf("error encountered while updating dealer details in db: %v", err))
+				fmt.Errorf("error encountered while creating dealer details in db: %v", err))
 			return
 
 		}
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errDealerID)
+		tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created", &dealer)
 		return
 	} else {
 		// update existing dealer
