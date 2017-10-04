@@ -5,5 +5,5 @@ export default {
   getFixedOperation: GET('/tdealer/fixedoperation'),
   getDealerList: POST('/tdealer/dealers'),
   updateDealerInfo: POST('/tdealer/dealer'),
-  createNewDealer: POST('tdealer/dealer'),
+  createNewDealer: POST('/tdealer/dealer'),
 };

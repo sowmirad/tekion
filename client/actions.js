@@ -112,7 +112,7 @@ export function createNewDealer(config, payload) {
 
   return async (dispatch) => {
     dispatch(createDealerRequest);
-    const { error, response } = await Services.createDealer(config, payload);
+    const { error, response } = await Services.createNewDealer(config, payload);
     if (response) {
       dispatch(createDealerSuccess(response));
     }
