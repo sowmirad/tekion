@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 )
 
 const (
@@ -33,6 +34,9 @@ var (
 	errFixedOperationID = errors.New("empty fixed Operation id")
 )
 
+func init(){
+	time.Local = time.UTC
+}
 // swagger:operation GET /dealer dealer readDealer
 //
 // Returns Dealer identified by the dealer id
@@ -296,6 +300,13 @@ func saveDealer(w http.ResponseWriter, r *http.Request) {
 			fmt.Errorf("error encountered while decoding save dealer payload: %v", err))
 		return
 	}
+
+	if err := fillDealerMetaData(ctx, r, &dealer); err != nil{
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.DefaultErrorCode,
+			fmt.Errorf("failed to populate update/create dealer metadata: %v", err))
+		return
+	}
+
 	if len(dealer.ID) == 0 {
 		// create new dealer
 		// generating customerID from GetNextSequence function
@@ -317,7 +328,7 @@ func saveDealer(w http.ResponseWriter, r *http.Request) {
 		id, err := mMgr.GetNextSequence(ctx.Tenant, dealerCollectionName)
 		if err != nil {
 			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
-				fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
+					fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
 			return
 		}
 		dealer.ID = id

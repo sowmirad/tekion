@@ -13,12 +13,22 @@ import (
 	"bitbucket.org/tekion/tbaas/log"
 
 	"gopkg.in/mgo.v2/bson"
+	"time"
 )
 
 const (
 	loginServiceID = "tuser"
-	signupEndPoint = "/tuser/username/"
+	signUpEndPoint = "/tuser/username/"
 	appJSON        = "application/json"
+)
+
+const (
+	customerServiceID         = "tcustomer"
+	getUserByUserNameEndPoint = "/tloginservice/getUserByUserName/"
+)
+
+var (
+	docVersion = float32(1.0)
 )
 
 // TODO : should be moved to some common library
@@ -55,7 +65,7 @@ func (lstDealer *listDealersReq) prepareSelectQuery() bson.M {
 	return nil
 }
 func getUserDtls(ctx apiContext.APIContext, r *http.Request, userDtlsRes *userDtlsRes) error {
-	url := consulhelper.GetServiceNodes(loginServiceID) + signupEndPoint + ctx.UserName
+	url := consulhelper.GetServiceNodes(loginServiceID) + signUpEndPoint + ctx.UserName
 	resp, err := hwrap.MakeHTTPRequestWithCustomHeader(http.MethodGet, url, appJSON, r.Header, nil)
 	if err != nil {
 		err = fmt.Errorf("call to %s failed, error: %v", url, err)
@@ -141,4 +151,47 @@ func (d *fixedOperation) prepareUpdateQuery(ctx apiContext.APIContext, r *http.R
 	updateQuery["lastUpdatedDateTime"] = d.LastUpdatedDateTime
 	updateQuery["documentVersion"] = d.DocumentVersion
 	return bson.M{"$set": updateQuery}
+}
+
+func fillDealerMetaData(ctx apiContext.APIContext, r *http.Request, dealer *dealer) error {
+	dealer.IsActive = true
+	dealer.LastUpdatedDateTime = time.Now()
+	dealer.DocumentVersion = docVersion
+	userName, displayName, err := getUserNameAndDisplayName(ctx, r)
+	if err != nil {
+		err = fmt.Errorf("failed to get user name and user display name for customer meta data, error: %v", err)
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
+		return err
+	}
+	dealer.LastUpdatedByUser = userName
+	dealer.LastUpdatedByDisplayName = displayName
+
+	return err
+}
+
+func getUserNameAndDisplayName(ctx apiContext.APIContext, r *http.Request) (string, string, error) {
+	url := consulhelper.GetServiceNodes(loginServiceID) + getUserByUserNameEndPoint + ctx.UserName
+	resp, err := hwrap.MakeHTTPRequestWithCustomHeader(http.MethodGet, url, appJSON, r.Header, nil)
+	if err != nil {
+		err = fmt.Errorf("call to %s failed, error: %v", url, err)
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
+		return "", "", err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		err := fmt.Errorf("call to %s returned error code: %d", url, resp.StatusCode)
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
+		return "", "", err
+	}
+
+	var user getUserByUserNameResp
+
+	if err = json.NewDecoder(resp.Body).Decode(&user); err != nil {
+		err = fmt.Errorf("failed to decoding %s reponse, error: %v", url, err)
+		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
+		return "", "", err
+	}
+
+	defer resp.Body.Close()
+	return user.Data.Name, user.Data.DisplayName, err
 }
