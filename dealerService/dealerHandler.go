@@ -34,9 +34,10 @@ var (
 	errFixedOperationID = errors.New("empty fixed Operation id")
 )
 
-func init(){
+func init() {
 	time.Local = time.UTC
 }
+
 // swagger:operation GET /dealer dealer readDealer
 //
 // Returns Dealer identified by the dealer id
@@ -301,7 +302,7 @@ func saveDealer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := fillDealerMetaData(ctx, r, &dealer); err != nil{
+	if err := fillDealerMetaData(ctx, r, &dealer); err != nil {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.DefaultErrorCode,
 			fmt.Errorf("failed to populate update/create dealer metadata: %v", err))
 		return
@@ -319,7 +320,8 @@ func saveDealer(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			if count != 0 {
-				tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+				tapi.WriteCustomHTTPErrorResponse(w, serviceID, "400", http.StatusBadRequest,
+					"dealer name already exists", 1,
 					fmt.Errorf("dealer name already exists"))
 				return
 			}
@@ -328,7 +330,7 @@ func saveDealer(w http.ResponseWriter, r *http.Request) {
 		id, err := mMgr.GetNextSequence(ctx.Tenant, dealerCollectionName)
 		if err != nil {
 			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
-					fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
+				fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
 			return
 		}
 		dealer.ID = id
