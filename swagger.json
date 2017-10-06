@@ -290,7 +290,7 @@
           "dealer"
         ],
         "summary": "Returns list of dealers list",
-        "operationId": "dealerList",
+        "operationId": "dealersList",
         "parameters": [
           {
             "type": "string",
