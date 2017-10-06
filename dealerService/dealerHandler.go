@@ -104,7 +104,7 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealer)
 }
 
-// swagger:operation POST /dealers dealer dealerList
+// swagger:operation POST /dealers dealer dealersList
 //
 // Returns list of dealers list
 //
@@ -158,7 +158,7 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 //     description: dealer not found in data base
 //   '400':
 //     description: error querying data base
-func dealerList(w http.ResponseWriter, r *http.Request) {
+func dealersList(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
 
 	var lstDealer listDealersReq

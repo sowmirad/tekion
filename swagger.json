@@ -289,8 +289,8 @@
         "tags": [
           "dealer"
         ],
-        "summary": "Returns Dealer list",
-        "operationId": "dealerList",
+        "summary": "Returns list of dealers list",
+        "operationId": "dealersList",
         "parameters": [
           {
             "type": "string",
