@@ -104,10 +104,9 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealer)
 }
 
-//dealerList is to query list of dealers from Dealermaster
-// swagger:operation POST /dealers listDealersReq dealerList
+// swagger:operation POST /dealers dealer dealerList
 //
-// Returns Dealer list
+// Returns list of dealers list
 //
 // By default /lstDealer returns complete dealer list.
 // In case you need only certain fields, you can specify an optional query parameter "fields",
@@ -139,13 +138,21 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
+//   description: e.g /dealers?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
 //   required: false
 //   type: string
+// - name: listDealersReq
+//   in: body
+//   description: listDealersReq object
+//   required: true
+//   schema:
+//      "$ref": "#/definitions/listDealersReq"
 // responses:
 //   '200':
 //     description: dealer object
 //     schema:
+//       type: array
+//       items:
 //         "$ref": "#/definitions/dealer"
 //   '204':
 //     description: dealer not found in data base
@@ -160,7 +167,7 @@ func dealerList(w http.ResponseWriter, r *http.Request) {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, err)
 		return
 	}
-	findQuery := bson.M{}
+	findQuery := lstDealer.prepareFindQuery()
 	selectQuery := lstDealer.prepareSelectQuery()
 	var dealerLst []dealer
 
@@ -177,7 +184,6 @@ func dealerList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// patchDealer is to query list of dealers from Dealermaster
 // swagger:operation PATCH /dealer dealer patchDealer
 //
 // Returns dealer list of columns to update
@@ -253,44 +259,6 @@ func patchDealer(w http.ResponseWriter, r *http.Request) {
 
 	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", nil)
 }
-
-/*//createNewDealer is for creating new dealer
-func createDealer(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
-
-	var dealerDtls dealer
-
-	err := json.NewDecoder(r.Body).Decode(&dealerDtls)
-	if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
-			fmt.Errorf("error while decoding creating new dealer payload: %v", err))
-		return
-	}
-
-	if len(strings.TrimSpace(dealerDtls.Name)) != 0 {
-		// dealerName is to check the existing dealer in table
-		var tempUsr dealer
-		find := bson.M{"dealerName": dealerDtls.Name}
-		err := mMgr.Count(ctx.Tenant, dealerCollectionName, find, nil, &tempUsr)
-		if err == mgo.ErrNotFound {
-			//Inserting dealers into DB
-			if err = mMgr.Create(ctx.Tenant, dealerCollectionName, &dealerDtls); err != nil {
-				tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorInsertingMongoDoc,
-					fmt.Errorf("failed to insert new dealer in db: %v", err))
-				return
-			}
-		} else {
-			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentExists,
-				errors.New("dealer already exists"))
-			return
-		}
-	} else {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentNotFound, errDealerName)
-		return
-	}
-
-	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created successfully", nil)
-}*/
 
 // saveDealer dealer details
 func saveDealer(w http.ResponseWriter, r *http.Request) {
@@ -389,15 +357,13 @@ func saveDealer(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
+//   description: e.g /fixedoperation?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
 //   required: false
 //   type: string
 // responses:
 //   '200':
 //     description: list of fixed operations
 //     schema:
-//       type: array
-//       items:
 //         "$ref": "#/definitions/fixedOperation"
 //   '204':
 //     description: fixed operations not found in data base

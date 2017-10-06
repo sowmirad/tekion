@@ -287,7 +287,7 @@
           "application/json"
         ],
         "tags": [
-          "listDealersReq"
+          "dealer"
         ],
         "summary": "Returns Dealer list",
         "operationId": "dealerList",
@@ -322,16 +322,28 @@
           },
           {
             "type": "string",
-            "description": "e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress",
+            "description": "e.g /dealers?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress",
             "name": "fields",
             "in": "query"
+          },
+          {
+            "description": "listDealersReq object",
+            "name": "listDealersReq",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/listDealersReq"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "dealer object",
             "schema": {
-              "$ref": "#/definitions/dealer"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/dealer"
+              }
             }
           },
           "204": {
@@ -385,7 +397,7 @@
           },
           {
             "type": "string",
-            "description": "e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity",
+            "description": "e.g /fixedoperation?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity",
             "name": "fields",
             "in": "query"
           }
@@ -394,10 +406,7 @@
           "200": {
             "description": "list of fixed operations",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/fixedOperation"
-              }
+              "$ref": "#/definitions/fixedOperation"
             }
           },
           "204": {
@@ -797,6 +806,11 @@
       "description": "dealer struct contains dealer details",
       "type": "object",
       "properties": {
+        "applicationCode": {
+          "description": "Application code of dealer",
+          "type": "string",
+          "x-go-name": "ApplicationCode"
+        },
         "bannerImages": {
           "description": "BannerImages dealer banner image",
           "type": "array",
@@ -1583,6 +1597,18 @@
       },
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
     },
+    "getUserByUserNameResp": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/userDetails"
+        },
+        "meta": {
+          "$ref": "#/definitions/MetaData"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
     "holiday": {
       "description": "holiday struct contains details of holidays, stored as slice of embedded objects in fixed operation struct",
       "type": "object",
@@ -1641,12 +1667,20 @@
     "listDealersReq": {
       "type": "object",
       "properties": {
+        "SortBy": {
+          "type": "string"
+        },
         "dealerIDs": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "x-go-name": "IDs"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Limit"
         },
         "selectedFields": {
           "type": "array",
@@ -1682,6 +1716,21 @@
         "displayName": {
           "type": "string",
           "x-go-name": "DisplayName"
+        }
+      },
+      "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"
+    },
+    "userDetails": {
+      "description": "userDetails - user information",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "x-go-name": "DisplayName"
+        },
+        "username": {
+          "type": "string",
+          "x-go-name": "Name"
         }
       },
       "x-go-package": "bitbucket.org/tekion/tdealer/dealerService"

@@ -64,6 +64,19 @@ func (lstDealer *listDealersReq) prepareSelectQuery() bson.M {
 	}
 	return nil
 }
+
+func (lstDealer *listDealersReq) prepareFindQuery() bson.M {
+	findQ := make(bson.M)
+	if len(lstDealer.IDs) != 0 {
+		ids := make([]string, 0, len(lstDealer.IDs))
+		for _, id := range lstDealer.IDs {
+			ids = append(ids, id)
+		}
+		findQ["_id"] = bson.M{"$in":ids}
+	}
+	return findQ
+}
+
 func getUserDtls(ctx apiContext.APIContext, r *http.Request, userDtlsRes *userDtlsRes) error {
 	url := consulhelper.GetServiceNodes(loginServiceID) + signUpEndPoint + ctx.UserName
 	resp, err := hwrap.MakeHTTPRequestWithCustomHeader(http.MethodGet, url, appJSON, r.Header, nil)
