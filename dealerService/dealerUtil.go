@@ -58,7 +58,11 @@ func (lstDealer *listDealersReq) prepareSelectQuery() bson.M {
 	if len(lstDealer.SelectedFields) != 0 {
 		selectQ := make(bson.M)
 		for _, v := range lstDealer.SelectedFields {
-			selectQ[v] = 1
+			if v == "dealerID" {
+				selectQ["_id"] = 1
+			} else {
+				selectQ[v] = 1
+			}
 		}
 		return selectQ
 	}
@@ -72,7 +76,7 @@ func (lstDealer *listDealersReq) prepareFindQuery() bson.M {
 		for _, id := range lstDealer.IDs {
 			ids = append(ids, id)
 		}
-		findQ["_id"] = bson.M{"$in":ids}
+		findQ["_id"] = bson.M{"$in": ids}
 	}
 	return findQ
 }
