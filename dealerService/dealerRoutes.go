@@ -48,10 +48,10 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
-		"dealerList",
+		"dealersList",
 		http.MethodPost,
 		"/dealers",
-		dealerList,
+		dealersList,
 		acl.ACLStruct{
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
 		},
