@@ -6,6 +6,15 @@ import {
   TEKION_GET_FIXED_OPERATION_REQUEST,
   TEKION_GET_FIXED_OPERATION_SUCCESS,
   TEKION_GET_FIXED_OPERATION_FAILURE,
+  TEKION_DEALER_LIST_REQUEST,
+  TEKION_DEALER_LIST_SUCCESS,
+  TEKION_DEALER_LIST_FAILURE,
+  TEKION_UPDATE_DEALER_INFO_REQUEST,
+  TEKION_UPDATE_DEALER_INFO_SUCCESS,
+  TEKION_UPDATE_DEALER_INFO_FAILURE,
+  TEKION_CREATE_DEALER_REQUEST,
+  TEKION_CREATE_DEALER_SUCCESS,
+  TEKION_CREATE_DEALER_FAILURE,
 } from './constants';
 
 const initialState = ip.freeze({
@@ -13,6 +22,12 @@ const initialState = ip.freeze({
   requestStatus: null,
   fixedOperationStatus: null,
   fixedOperationData: null,
+  dealerList: null,
+  dealerListStatus: null,
+  dealerData: null,
+  updateDealerDataStatus: null,
+  newDealerData: null,
+  newDealerDataStatus: null,
 });
 
 export default function (state = initialState, action) {
@@ -43,8 +58,53 @@ export default function (state = initialState, action) {
       return state;
 
     case TEKION_GET_FIXED_OPERATION_FAILURE:
-      state = ip.set(state, 'fixedOperationData', 'failed');
+      state = ip.set(state, 'fixedOperationStatus', 'failed');
       state = ip.set(state, 'fixedOperationData', null);
+      return state;
+
+    case TEKION_DEALER_LIST_REQUEST:
+      state = ip.set(state, 'dealerList', null);
+      state = ip.set(state, 'dealerListStatus', 'fetching');
+      return state;
+
+    case TEKION_DEALER_LIST_SUCCESS:
+      state = ip.set(state, 'dealerList', action.payload.dealerList);
+      state = ip.set(state, 'dealerListStatus', 'success');
+      return state;
+
+    case TEKION_DEALER_LIST_FAILURE:
+      state = ip.set(state, 'dealerList', null);
+      state = ip.set(state, 'dealerListStatus', 'failed');
+      return state;
+
+    case TEKION_UPDATE_DEALER_INFO_REQUEST:
+      state = ip.set(state, 'dealerData', null);
+      state = ip.set(state, 'updateDealerDataStatus', 'fetching');
+      return state;
+
+    case TEKION_UPDATE_DEALER_INFO_SUCCESS:
+      state = ip.set(state, 'dealerData', action.payload.dealerInfo);
+      state = ip.set(state, 'updateDealerDataStatus', 'success');
+      return state;
+
+    case TEKION_UPDATE_DEALER_INFO_FAILURE:
+      state = ip.set(state, 'dealerData', null);
+      state = ip.set(state, 'updateDealerDataStatus', 'failed');
+      return state;
+
+    case TEKION_CREATE_DEALER_REQUEST:
+      state = ip.set(state, 'newDealerData', null);
+      state = ip.set(state, 'newDealerDataStatus', 'fetching');
+      return state;
+
+    case TEKION_CREATE_DEALER_SUCCESS:
+      state = ip.set(state, 'newDealerData', action.payload.dealerInfo);
+      state = ip.set(state, 'newDealerDataStatus', 'success');
+      return state;
+
+    case TEKION_CREATE_DEALER_FAILURE:
+      state = ip.set(state, 'newDealerData', null);
+      state = ip.set(state, 'newDealerDataStatus', 'failed');
       return state;
 
     default:

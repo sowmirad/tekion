@@ -31,6 +31,7 @@ import (
 	"bitbucket.org/tekion/tacl/acl"
 	"bitbucket.org/tekion/tbaas/log"
 	"bitbucket.org/tekion/tbaas/tapi"
+	"net/http"
 )
 
 //TODO : Need new admin scope
@@ -39,7 +40,7 @@ import (
 func Start() {
 	tapi.AddRoutes(
 		"readDealer",
-		"GET",
+		http.MethodGet,
 		"/dealer",
 		readDealer,
 		acl.ACLStruct{
@@ -47,8 +48,46 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
+		"dealersList",
+		http.MethodPost,
+		"/dealers",
+		dealersList,
+		acl.ACLStruct{
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)
+	tapi.AddRoutes(
+		"patchDealer",
+		http.MethodPatch,
+		"/dealer",
+		patchDealer,
+		acl.ACLStruct{
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)
+	// todo create and update should be one function. Figure out why and write one
+	/*	tapi.AddRoutes(
+		"createDealer",
+		http.MethodPost,
+		"/createDealer",
+		createDealer,
+		acl.ACLStruct{
+			// TODO PremittedRoles (SuperAdmin)
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)*/
+	tapi.AddRoutes(
+		"saveDealer",
+		http.MethodPost,
+		"/dealer",
+		saveDealer,
+		acl.ACLStruct{
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)
+	tapi.AddRoutes(
 		"readFixedOperation",
-		"GET",
+		http.MethodGet,
 		"/fixedoperation",
 		readFixedOperation,
 		acl.ACLStruct{
@@ -56,8 +95,18 @@ func Start() {
 		},
 	)
 	tapi.AddRoutes(
+		"patchFixedOperation",
+		http.MethodPatch,
+		"/fixedoperation",
+		patchFixedOperation,
+		acl.ACLStruct{
+			// TODO PremittedRoles (SuperAdmin)
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+		},
+	)
+	tapi.AddRoutes(
 		"readDealerContact",
-		"GET",
+		http.MethodGet,
 		"/contact/{cid}",
 		readDealerContact,
 		acl.ACLStruct{
@@ -66,7 +115,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerContacts",
-		"GET",
+		http.MethodGet,
 		"/contacts",
 		readDealerContacts,
 		acl.ACLStruct{
@@ -75,7 +124,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerGoal",
-		"GET",
+		http.MethodGet,
 		"/goal/{gid}",
 		readDealerGoal,
 		acl.ACLStruct{
@@ -84,7 +133,7 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerGoals",
-		"GET",
+		http.MethodGet,
 		"/goals",
 		readDealerGoals,
 		acl.ACLStruct{
@@ -93,13 +142,14 @@ func Start() {
 	)
 	tapi.AddRoutes(
 		"readDealerGroups",
-		"GET",
+		http.MethodGet,
 		"/groups",
 		readDealerGroups,
 		acl.ACLStruct{
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
+
 	//log service start info
 	log.GenericInfo("", "", "", "Started Tekion tdealer on port:8079")
 	tapi.Start("8079", "/tdealer")

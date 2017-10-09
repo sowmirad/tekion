@@ -4,8 +4,8 @@ package dealerService
 
 import (
 	//standard libraries
+	"errors"
 	"net/http"
-
 	//third party libraries
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
@@ -16,12 +16,27 @@ import (
 	"bitbucket.org/tekion/erratum"
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"bitbucket.org/tekion/tbaas/mongoManager"
+	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
 	"bitbucket.org/tekion/tbaas/tapi"
+	"encoding/json"
+	"fmt"
+	"strings"
+	"time"
 )
 
 const (
 	apiCtxKey = "apiContext"
 )
+
+var (
+	errDealerName       = errors.New("dealer name is empty")
+	errDealerID         = errors.New("empty dealer id")
+	errFixedOperationID = errors.New("empty fixed Operation id")
+)
+
+func init() {
+	time.Local = time.UTC
+}
 
 // swagger:operation GET /dealer dealer readDealer
 //
@@ -89,6 +104,225 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealer)
 }
 
+// swagger:operation POST /dealers dealer dealersList
+//
+// Returns list of dealers list
+//
+// By default /lstDealer returns complete dealer list.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
+// passing a list of comma separated fields you want in response.
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: e.g /dealers?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
+//   required: false
+//   type: string
+// - name: listDealersReq
+//   in: body
+//   description: listDealersReq object
+//   required: true
+//   schema:
+//      "$ref": "#/definitions/listDealersReq"
+// responses:
+//   '200':
+//     description: dealer object
+//     schema:
+//       type: array
+//       items:
+//         "$ref": "#/definitions/dealer"
+//   '204':
+//     description: dealer not found in data base
+//   '400':
+//     description: error querying data base
+func dealersList(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+
+	var lstDealer listDealersReq
+	err := json.NewDecoder(r.Body).Decode(&lstDealer)
+	if err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, err)
+		return
+	}
+	findQuery := lstDealer.prepareFindQuery()
+	selectQuery := lstDealer.prepareSelectQuery()
+	var dealerLst []dealer
+
+	if err := mMgr.ReadAll(ctx.Tenant, dealerCollectionName, findQuery, selectQuery, &dealerLst); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		return
+	}
+	if len(dealerLst) == 0 {
+		tapi.WriteHTTPResponse(w, http.StatusOK, "No document found, returning empty list", dealerLst)
+		return
+	}
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer list", dealerLst)
+	return
+
+}
+
+// swagger:operation PATCH /dealer dealer patchDealer
+//
+// Returns dealer list of columns to update
+//
+// By default /dealerDtls returns complete dealer details.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
+// passing a list of comma separated fields you want in response.
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: e.g /dealer?fields=dealerDoingBusinessAsName,vehicleDamage,dealerAddress
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: dealer object
+//     schema:
+//         "$ref": "#/definitions/dealer"
+//   '204':
+//     description: dealer not found in data base
+//   '400':
+//     description: error querying data base
+func patchDealer(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	var dealerDtls dealer
+	if err := json.NewDecoder(r.Body).Decode(&dealerDtls); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+			fmt.Errorf("error encountered while decoding userDetails payload: %v", err))
+		return
+	}
+	if len(dealerDtls.ID) == 0 {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errDealerID)
+		return
+	}
+	var userDtls userDtlsRes
+	if err := getUserDtls(ctx, r, &userDtls); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentNotFound,
+			fmt.Errorf("failed to get user id in db: %v", err))
+		return
+	}
+	findQ := bson.M{"_id": dealerDtls.ID}
+	dealerDtls.LastUpdatedByDisplayName = userDtls.Data.DisplayName
+	updateQ := dealerDtls.prepareUpdateQuery(ctx, r)
+	if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, updateQ); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+			fmt.Errorf("error encountered while updating dealer details in db: %v", err))
+		return
+	}
+
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", nil)
+}
+
+// saveDealer dealer details
+func saveDealer(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+	var dealer dealer
+	if err := json.NewDecoder(r.Body).Decode(&dealer); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+			fmt.Errorf("error encountered while decoding save dealer payload: %v", err))
+		return
+	}
+
+	if err := fillDealerMetaData(ctx, r, &dealer); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.DefaultErrorCode,
+			fmt.Errorf("failed to populate update/create dealer metadata: %v", err))
+		return
+	}
+
+	if len(dealer.ID) == 0 {
+		// create new dealer
+		// generating customerID from GetNextSequence function
+		if len(strings.TrimSpace(dealer.Name)) != 0 {
+			findQ := bson.M{"dealerName": dealer.Name}
+			count, err := mMgr.Count(ctx, dealerCollectionName, findQ)
+			if err != nil {
+				tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+					fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
+				return
+			}
+			if count != 0 {
+				tapi.WriteCustomHTTPErrorResponse(w, serviceID, "400", http.StatusBadRequest,
+					"dealer name already exists", 1,
+					fmt.Errorf("dealer name already exists"))
+				return
+			}
+		}
+
+		id, err := mMgr.GetNextSequence(ctx.Tenant, dealerCollectionName)
+		if err != nil {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+				fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
+			return
+		}
+		dealer.ID = id
+		if err := mMgr.Create(ctx.Tenant, dealerCollectionName, &dealer); err != nil {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+				fmt.Errorf("error encountered while creating dealer details in db: %v", err))
+			return
+
+		}
+		tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created", &dealer)
+		return
+	} else {
+		// update existing dealer
+		findQ := bson.M{"_id": dealer.ID}
+		if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, &dealer); err != nil {
+			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+				fmt.Errorf("error encountered while updating dealer details in db: %v", err))
+			return
+		}
+	}
+
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", &dealer)
+}
+
 // swagger:operation GET /fixedoperation fixedOperation readFixedOperation
 //
 // Returns list of fixed operations identified by dealer id passed in header
@@ -123,15 +357,13 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 //   type: string
 // - name: fields
 //   in: query
-//   description: e.g /fixedoperations?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
+//   description: e.g /fixedoperation?field=serviceAdvisors,floorCapacity,appointmentHour,appointmentCapacity
 //   required: false
 //   type: string
 // responses:
 //   '200':
 //     description: list of fixed operations
 //     schema:
-//       type: array
-//       items:
 //         "$ref": "#/definitions/fixedOperation"
 //   '204':
 //     description: fixed operations not found in data base
@@ -154,6 +386,30 @@ func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperation)
+}
+
+//patchFixedOperation is use to update patchfixed operation
+func patchFixedOperation(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+	var fixedOpDtls fixedOperation
+	if err := json.NewDecoder(r.Body).Decode(&fixedOpDtls); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+			fmt.Errorf("error encountered while decoding fixed operation payload: %v", err))
+		return
+	}
+	if len(fixedOpDtls.ID) == 0 {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errFixedOperationID)
+		return
+	}
+	findQ := bson.M{"_id": fixedOpDtls.ID}
+	updateQ := fixedOpDtls.prepareUpdateQuery(ctx, r)
+	if err := mMgr.Update(ctx.Tenant, fixedOperationCollectionName, findQ, updateQ); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+			fmt.Errorf("error encountered while updating fixed operation details in db: %v", err))
+		return
+	}
+
+	tapi.WriteHTTPResponse(w, http.StatusOK, "fixed operations details updated successfully", nil)
 }
 
 // swagger:operation GET /contact/{cid} dealerContact readDealerContact

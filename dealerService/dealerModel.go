@@ -3,6 +3,7 @@ package dealerService
 // This file contains all the models related to dealer
 
 import (
+	"bitbucket.org/tekion/tbaas/tapi"
 	"bitbucket.org/tekion/tenums/constants"
 	"time"
 )
@@ -318,7 +319,11 @@ type fixedOperation struct {
 	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
-	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+	DocumentVersion        float32 `bson:"documentVersion" json:"documentVersion"`
+	DefaultCustomerPaytype string  `bson:"defaultCustomerPaytype" json:"defaultCustomerPaytype"`
+	DefaultWarrantyPaytype string  `bson:"defaultWarrantyPaytype" json:"defaultWarrantyPaytype"`
+	DefaultInternalPaytype string  `bson:"defaultInternalPaytype" json:"defaultInternalPaytype"`
+	DefaultPrinter         string  `bson:"defaultPrinter" json:"defaultPrinter"`
 }
 
 // Embedded structures in fixed operations-- start
@@ -495,4 +500,24 @@ type dealerGroup struct {
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
 	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+}
+
+// swagger:model listDealersReq
+type listDealersReq struct {
+	IDs            []string `json:"dealerIDs"`
+	SelectedFields []string `json:"selectedFields"`
+	SortBy         string   `json:"SortBy"`
+	Limit          int      `json:"limit"`
+}
+
+// swagger:model userDtlsRes
+type userDtlsRes struct {
+	Meta tapi.MetaData `json:"meta"`
+	Data userData      `json:"data"`
+}
+
+// this is the response we get from signup user endpoint
+// swagger:model userData
+type userData struct {
+	DisplayName string `json:"displayName"`
 }

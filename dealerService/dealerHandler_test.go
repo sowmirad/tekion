@@ -1,14 +1,29 @@
 package dealerService
 
 import (
+	"bitbucket.org/tekion/tbaas/apiContext"
 	"encoding/json"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-
+	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	. "github.com/smartystreets/goconvey/convey"
+	"net/http"
+	"net/http/httptest"
+	//"strings"
+	"testing"
+	//"github.com/smartystreets/goconvey/convey"
+	//"github.com/go-kit/kit/transport/grpc"
+
+	"github.com/golang/go/src/pkg/bytes"
+	//grpc2 "google.golang.org/grpc"
+	"bitbucket.org/tekion/tbaas/tapi"
+
 )
+ var(
+ 	    TenantName = "Test"
+ 		DealerID	= "3"
+        ClientID	= "web"
+        ctx = apiContext.APIContext{Tenant: TenantName, DealerID: DealerID, ClientID: ClientID}
+ )
 
 func TestReadContacts(t *testing.T) {
 	contactDataSetup()
@@ -620,3 +635,48 @@ func TestReadDealerGoal(t *testing.T) {
 	})
 	clearGoalDataSetup()
 }
+func SetHeader() http.Header {
+	header := http.Header{}
+	header.Set(TenantName, ctx.Tenant)
+	header.Set(DealerID, ctx.DealerID)
+	header.Set(tapi.TekionAPIToken, "TestToken")
+	header.Set(ClientID, ctx.ClientID)
+
+	return header
+}
+
+func TestDealerUpdate(t *testing.T) {
+	insertDealerData()
+	Update_api_check := dealer{
+		ID: "3",
+		Name:"TestingDealer",
+		MakeCode:[]string{"make1"},
+
+		DoingBusinessAsName: "business_name_as",
+		StateIssuedNumber:"234556",
+		ManufacturerIssuedNumber:"24456677",
+		Website:"http://dealer.com",
+		TimeZone:"us-pecific",
+		Currency:"usd",
+		TenantID:"88",
+		Phone:"8983833939",
+	}
+	Convey("check if inserted data is updates",func(){
+		res := httptest.NewRecorder()
+		inputObject,_ := json.Marshal(Update_api_check)
+		req, err := http.NewRequest("POST", "/tdealer/updatedealer",bytes.NewBuffer(inputObject))
+        req.Header = SetHeader()
+		context.Set(req, "apiContext", ctx)
+		if nil != err {
+			t.Error(err)
+		}
+		updateDealer(res, req)
+		Convey("Response code should be 200", func() {
+			So(res.Code, ShouldEqual, http.StatusOK)
+		})
+	})
+	clearDealerData()
+}
+
+
+
