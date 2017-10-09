@@ -319,7 +319,11 @@ type fixedOperation struct {
 	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
-	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+	DocumentVersion        float32 `bson:"documentVersion" json:"documentVersion"`
+	DefaultCustomerPaytype string  `bson:"defaultCustomerPaytype" json:"defaultCustomerPaytype"`
+	DefaultWarrantyPaytype string  `bson:"defaultWarrantyPaytype" json:"defaultWarrantyPaytype"`
+	DefaultInternalPaytype string  `bson:"defaultInternalPaytype" json:"defaultInternalPaytype"`
+	DefaultPrinter         string  `bson:"defaultPrinter" json:"defaultPrinter"`
 }
 
 // Embedded structures in fixed operations-- start
