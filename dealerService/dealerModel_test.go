@@ -14,9 +14,7 @@ import (
 	//"bitbucket.org/tekion/tbaas/uuid"
 	//"bitbucket.org/tekion/tbaas/tapi"
 	"bitbucket.org/tekion/tenums/constants"
-
 )
-
 
 // metaData of HTTP API response
 type metaData struct {
@@ -34,9 +32,8 @@ type apiResponse struct {
 var (
 	testToken     = "TestToken"
 	validClientID = "mobile"
-	validContext  = apiContext.APIContext{Tenant: validTenantName, DealerID:validDealerID , ClientID: validClientID}
+	validContext  = apiContext.APIContext{Tenant: validTenantName, DealerID: validDealerID, ClientID: validClientID}
 )
-
 
 // Invalid vars
 var (
@@ -46,14 +43,14 @@ var (
 	invalidFixedOperationID = bson.NewObjectId().String()
 	invalidContactID        = bson.NewObjectId().String()
 	invalidGoalID           = bson.NewObjectId().String()
-	invalidTenantContext    = apiContext.APIContext{Tenant: invalidTenantName, DealerID: validDealerID , ClientID: validClientID}
+	invalidTenantContext    = apiContext.APIContext{Tenant: invalidTenantName, DealerID: validDealerID, ClientID: validClientID}
 	invalidDealerIDContext  = apiContext.APIContext{Tenant: validTenantName, DealerID: invalidDealerID, ClientID: validClientID}
-	invalidClintIDContext   = apiContext.APIContext{Tenant: validTenantName, DealerID: validDealerID , ClientID: invalidClientID}
+	invalidClintIDContext   = apiContext.APIContext{Tenant: validTenantName, DealerID: validDealerID, ClientID: invalidClientID}
 )
 
 func setHeaders(req *http.Request) {
 	req.Header.Set("tenantname", validTenantName) // TODO : should be changed to Tenant-Name
-	req.Header.Set("dealerid", validDealerID )     // TODO : should be changed to Dealer-ID
+	req.Header.Set("dealerid", validDealerID)     // TODO : should be changed to Dealer-ID
 	req.Header.Set("tekion-api-token", testToken) // TODO : should be changed to Tekion-API-Token
 	req.Header.Set("clientid", "mobile")          // TODO : should be changed to Client-ID
 
@@ -234,7 +231,7 @@ var (
 	validDealerDocumentVersion = float32(1.0)
 
 	//dealerFieldsSlice = []string{"dealerName", "makeCode", "dealerDoingBusinessAsName", "stateIssuedNumber", "manufacturerIssuedNumber", "website", "timeZone", "currency", "tenantID", "phone", "dealerLogos", "vehicleDamage", "dealershipCode", "dealerGroup", "dealerAddress", "dealerDocumentTemplates", "dealerOperationSchedule", "dealerContact"}
-	dealerFields      = "dealerName,makeCode,dealerDoingBusinessAsName,stateIssuedNumber,manufacturerIssuedNumber,website,timeZone,currency,tenantID,phone,dealerLogos,vehicleDamage,dealershipCode,dealerGroup,dealerAddress,dealerDocumentTemplates,dealerOperationSchedule,dealerContact"
+	dealerFields = "dealerName,makeCode,dealerDoingBusinessAsName,stateIssuedNumber,manufacturerIssuedNumber,website,timeZone,currency,tenantID,phone,dealerLogos,vehicleDamage,dealershipCode,dealerGroup,dealerAddress,dealerDocumentTemplates,dealerOperationSchedule,dealerContact"
 )
 
 //Dealer objects
@@ -672,7 +669,6 @@ var (
 	groupFields      = "dealerGroupName,dealers,description"
 )
 
-
 // DealerGroup objects
 var (
 	validGroup = dealerGroup{
@@ -703,11 +699,12 @@ func groupDataSetup() {
 		log.Error(err)
 	}
 	defer session.Close()
-	err = session.DB(validContext.Tenant).C(()).Insert(validGroup)
+	err = session.DB(validContext.Tenant).C(dealerCollectionName).Insert(validGroup)
 	if err != nil {
 		log.Error(err)
 	}
 }
+
 //
 //func clearGroupDataSetup() {
 //	session, err := mongoManager.GetS(validContext.Tenant)

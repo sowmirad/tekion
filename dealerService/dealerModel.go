@@ -330,8 +330,8 @@ type fixedOperation struct {
 // Embedded structures in fixed operations-- start
 
 type servicePrefix struct {
-	OpCode string `json:"opCode"`
-	NoOp   string `json:"noOp"`
+	OpCode   string `bson:"opCode" json:"opCode"`
+	NoOpCode string `bson:"noOpCode" json:"noOpCode"`
 }
 
 // TODO : need inputs from Venkat on start end and carryover fields
