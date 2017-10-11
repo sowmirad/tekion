@@ -309,7 +309,12 @@ type fixedOperation struct {
 	// DoorRates fixed operation door rates
 	DoorRates []doorRate `bson:"doorRates" json:"doorRates"`
 	// Disclaimer dealers disclaimer message
-	Disclaimer string `bson:"disclaimer" json:"disclaimer"`
+	Disclaimer             string        `bson:"disclaimer" json:"disclaimer"`
+	DefaultCustomerPaytype string        `bson:"defaultCustomerPaytype" json:"defaultCustomerPaytype"`
+	DefaultWarrantyPaytype string        `bson:"defaultWarrantyPaytype" json:"defaultWarrantyPaytype"`
+	DefaultInternalPaytype string        `bson:"defaultInternalPaytype" json:"defaultInternalPaytype"`
+	DefaultPrinter         string        `bson:"defaultPrinter" json:"defaultPrinter"`
+	ServicePrefix          servicePrefix `bson:"servicePrefix" json:"servicePrefix"`
 	// IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// LastUpdatedByUser data updated by who
@@ -319,14 +324,15 @@ type fixedOperation struct {
 	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
-	DocumentVersion        float32 `bson:"documentVersion" json:"documentVersion"`
-	DefaultCustomerPaytype string  `bson:"defaultCustomerPaytype" json:"defaultCustomerPaytype"`
-	DefaultWarrantyPaytype string  `bson:"defaultWarrantyPaytype" json:"defaultWarrantyPaytype"`
-	DefaultInternalPaytype string  `bson:"defaultInternalPaytype" json:"defaultInternalPaytype"`
-	DefaultPrinter         string  `bson:"defaultPrinter" json:"defaultPrinter"`
+	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
 }
 
 // Embedded structures in fixed operations-- start
+
+type servicePrefix struct {
+	OpCode string `json:"opCode"`
+	NoOp   string `json:"noOp"`
+}
 
 // TODO : need inputs from Venkat on start end and carryover fields
 
