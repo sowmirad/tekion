@@ -16,14 +16,14 @@ import (
 	"github.com/golang/go/src/pkg/bytes"
 	//grpc2 "google.golang.org/grpc"
 	"bitbucket.org/tekion/tbaas/tapi"
-
 )
- var(
- 	    TenantName = "Test"
- 		DealerID	= "3"
-        ClientID	= "web"
-        ctx = apiContext.APIContext{Tenant: TenantName, DealerID: DealerID, ClientID: ClientID}
- )
+
+var (
+	TenantName = "Test"
+	DealerID   = "3"
+	ClientID   = "web"
+	ctx        = apiContext.APIContext{Tenant: TenantName, DealerID: DealerID, ClientID: ClientID}
+)
 
 func TestReadContacts(t *testing.T) {
 	contactDataSetup()
@@ -648,24 +648,24 @@ func SetHeader() http.Header {
 func TestDealerUpdate(t *testing.T) {
 	insertDealerData()
 	Update_api_check := dealer{
-		ID: "3",
-		Name:"TestingDealer",
-		MakeCode:[]string{"make1"},
+		ID:       "3",
+		Name:     "TestingDealer",
+		MakeCode: []string{"make1"},
 
-		DoingBusinessAsName: "business_name_as",
-		StateIssuedNumber:"234556",
-		ManufacturerIssuedNumber:"24456677",
-		Website:"http://dealer.com",
-		TimeZone:"us-pecific",
-		Currency:"usd",
-		TenantID:"88",
-		Phone:"8983833939",
+		DoingBusinessAsName:      "business_name_as",
+		StateIssuedNumber:        "234556",
+		ManufacturerIssuedNumber: "24456677",
+		Website:                  "http://dealer.com",
+		TimeZone:                 "us-pecific",
+		Currency:                 "usd",
+		TenantID:                 "88",
+		Phone:                    "8983833939",
 	}
-	Convey("check if inserted data is updates",func(){
+	Convey("check if inserted data is updates", func() {
 		res := httptest.NewRecorder()
-		inputObject,_ := json.Marshal(Update_api_check)
-		req, err := http.NewRequest("POST", "/tdealer/updatedealer",bytes.NewBuffer(inputObject))
-        req.Header = SetHeader()
+		inputObject, _ := json.Marshal(Update_api_check)
+		req, err := http.NewRequest("POST", "/tdealer/updatedealer", bytes.NewBuffer(inputObject))
+		req.Header = SetHeader()
 		context.Set(req, "apiContext", ctx)
 		if nil != err {
 			t.Error(err)
@@ -677,6 +677,3 @@ func TestDealerUpdate(t *testing.T) {
 	})
 	clearDealerData()
 }
-
-
-
