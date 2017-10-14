@@ -330,6 +330,7 @@ type fixedOperation struct {
 
 // Embedded structures in fixed operations-- start
 
+// swagger:model servicePrefix
 type servicePrefix struct {
 	OpCode   string `bson:"opCode" json:"opCode"`
 	NoOpCode string `bson:"noOpCode" json:"noOpCode"`
