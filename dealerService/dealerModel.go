@@ -448,6 +448,7 @@ type amenities struct {
 	ID string `bson:"amenityID" json:"amenityID"`
 	// Name maps to AmenitiesMaster.name
 	Name string `bson:"name" json:"name"`
+	IconURL string `bson:"iconURL" json:"iconURL"`
 }
 
 // doorRate struct
