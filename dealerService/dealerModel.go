@@ -309,14 +309,14 @@ type fixedOperation struct {
 	// DoorRates fixed operation door rates
 	DoorRates []doorRate `bson:"doorRates" json:"doorRates"`
 	// Disclaimer dealers disclaimer message
-	Disclaimer             string        `bson:"disclaimer" json:"disclaimer"`
-	DefaultCustomerPaytype string        `bson:"defaultCustomerPaytype" json:"defaultCustomerPaytype"`
-	DefaultWarrantyPaytype string        `bson:"defaultWarrantyPaytype" json:"defaultWarrantyPaytype"`
-	DefaultInternalPaytype string        `bson:"defaultInternalPaytype" json:"defaultInternalPaytype"`
-	DefaultPrinter         string        `bson:"defaultPrinter" json:"defaultPrinter"`
-	ServicePrefix          servicePrefix `bson:"servicePrefix" json:"servicePrefix"`
-	CustomConcernOpcode    string        `bson:"customConcernOpcode" json:"customConcernOpcode"`
-	ServiceMenuDisclaimer  string        `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
+	Disclaimer             string   `bson:"disclaimer" json:"disclaimer"`
+	DefaultCustomerPaytype string   `bson:"defaultCustomerPaytype" json:"defaultCustomerPaytype"`
+	DefaultWarrantyPaytype string   `bson:"defaultWarrantyPaytype" json:"defaultWarrantyPaytype"`
+	DefaultInternalPaytype string   `bson:"defaultInternalPaytype" json:"defaultInternalPaytype"`
+	DefaultPrinter         string   `bson:"defaultPrinter" json:"defaultPrinter"`
+	ConcernType            []string `bson:"concernType" json:"concernType"`
+	CustomConcernOpcode    string   `bson:"customConcernOpcode" json:"customConcernOpcode"`
+	ServiceMenuDisclaimer  string   `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
 	// IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// LastUpdatedByUser data updated by who
@@ -330,12 +330,6 @@ type fixedOperation struct {
 }
 
 // Embedded structures in fixed operations-- start
-
-// swagger:model servicePrefix
-type servicePrefix struct {
-	OpCode   string `bson:"opCode" json:"opCode"`
-	NoOpCode string `bson:"noOpCode" json:"noOpCode"`
-}
 
 // TODO : need inputs from Venkat on start end and carryover fields
 
@@ -530,4 +524,9 @@ type userDtlsRes struct {
 // swagger:model userData
 type userData struct {
 	DisplayName string `json:"displayName"`
+}
+
+type readDealerAndFixedOpRes struct{
+	Dealer *dealer `json:"dealer"`
+	FixedOperation *fixedOperation `json:"fixedOperation"`
 }
