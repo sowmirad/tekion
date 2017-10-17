@@ -316,6 +316,7 @@ type fixedOperation struct {
 	DefaultPrinter         string   `bson:"defaultPrinter" json:"defaultPrinter"`
 	ConcernType            []string `bson:"concernType" json:"concernType"`
 	CustomConcernOpcode    string   `bson:"customConcernOpcode" json:"customConcernOpcode"`
+	ServiceMenuDisclaimer  string   `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
 	// IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// LastUpdatedByUser data updated by who
@@ -441,7 +442,8 @@ type amenities struct {
 	// ID maps to AmenitiesMaster._id
 	ID string `bson:"amenityID" json:"amenityID"`
 	// Name maps to AmenitiesMaster.name
-	Name string `bson:"name" json:"name"`
+	Name    string `bson:"name" json:"name"`
+	IconURL string `bson:"iconURL" json:"iconURL"`
 }
 
 // doorRate struct
