@@ -149,6 +149,15 @@ func Start() {
 			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
+	tapi.AddRoutes(
+		"readDealerGroups",
+		http.MethodGet,
+		"/aggregate/dealer/fixedoperation",
+		aggregateDealerFixedOp,
+		acl.ACLStruct{
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+		},
+	)
 
 	//log service start info
 	log.GenericInfo("", "", "", "Started Tekion tdealer on port:8079")

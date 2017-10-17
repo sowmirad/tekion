@@ -525,3 +525,8 @@ type userDtlsRes struct {
 type userData struct {
 	DisplayName string `json:"displayName"`
 }
+
+type readDealerAndFixedOpRes struct{
+	Dealer *dealer `json:"dealer"`
+	FixedOperation *fixedOperation `json:"fixedOperation"`
+}

@@ -38,6 +38,12 @@ func init() {
 	time.Local = time.UTC
 }
 
+const (
+	docFound = iota
+	dealerDocNotFound
+	fixedOpDocNotFound
+)
+
 // swagger:operation GET /dealer dealer readDealer
 //
 // Returns Dealer identified by the dealer id
@@ -758,4 +764,37 @@ func readDealerGroups(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", groups)
+}
+
+func aggregateDealerFixedOp(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+	dealerID := ctx.DealerID // should be corrected to Dealer-ID
+
+	var dealer *dealer
+	err := mongoManager.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, nil, &dealer)
+	if err == mgo.ErrNotFound {
+		tapi.WriteCustomHTTPResponse(w, http.StatusOK, "dealer doc not found", dealerDocNotFound, nil)
+		return
+	} else if err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		return
+	}
+
+	var fixedOp *fixedOperation
+	err = mongoManager.ReadOne(ctx.Tenant, fixedOperationCollectionName,
+		bson.M{"dealerID": dealerID}, nil, &fixedOp)
+	if err == mgo.ErrNotFound {
+		tapi.WriteCustomHTTPResponse(w, http.StatusNoContent, "fixed operation doc not found",
+			fixedOpDocNotFound, nil)
+		return
+	} else if err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		return
+	}
+
+	var dealerAndFixedOp readDealerAndFixedOpRes
+	dealerAndFixedOp.Dealer = dealer
+	dealerAndFixedOp.FixedOperation = fixedOp
+
+	tapi.WriteCustomHTTPResponse(w, http.StatusOK, "document found", docFound, dealerAndFixedOp)
 }
