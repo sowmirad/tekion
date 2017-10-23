@@ -317,6 +317,7 @@ type fixedOperation struct {
 	ConcernType            []string `bson:"concernType" json:"concernType"`
 	CustomConcernOpcode    string   `bson:"customConcernOpcode" json:"customConcernOpcode"`
 	ServiceMenuDisclaimer  string   `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
+	PrinterEmail           string   `bson:"printerEmail" json:"printerEmail"`
 	// IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// LastUpdatedByUser data updated by who
@@ -526,7 +527,7 @@ type userData struct {
 	DisplayName string `json:"displayName"`
 }
 
-type readDealerAndFixedOpRes struct{
-	Dealer *dealer `json:"dealer"`
+type readDealerAndFixedOpRes struct {
+	Dealer         *dealer         `json:"dealer"`
 	FixedOperation *fixedOperation `json:"fixedOperation"`
 }
