@@ -309,15 +309,13 @@ type fixedOperation struct {
 	// DoorRates fixed operation door rates
 	DoorRates []doorRate `bson:"doorRates" json:"doorRates"`
 	// Disclaimer dealers disclaimer message
-	Disclaimer             string   `bson:"disclaimer" json:"disclaimer"`
-	DefaultCustomerPaytype string   `bson:"defaultCustomerPaytype" json:"defaultCustomerPaytype"`
-	DefaultWarrantyPaytype string   `bson:"defaultWarrantyPaytype" json:"defaultWarrantyPaytype"`
-	DefaultInternalPaytype string   `bson:"defaultInternalPaytype" json:"defaultInternalPaytype"`
-	DefaultPrinter         string   `bson:"defaultPrinter" json:"defaultPrinter"`
-	ConcernType            []string `bson:"concernType" json:"concernType"`
-	CustomConcernOpcode    string   `bson:"customConcernOpcode" json:"customConcernOpcode"`
-	ServiceMenuDisclaimer  string   `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
-	PrinterEmail           string   `bson:"printerEmail" json:"printerEmail"`
+	Disclaimer            string         `bson:"disclaimer" json:"disclaimer"`
+	PayTypeMapping        payTypeMapping `bson:"payTypeMapping" json:"payTypeMapping"`
+	DefaultPrinter        string         `bson:"defaultPrinter" json:"defaultPrinter"`
+	ConcernType           []string       `bson:"concernType" json:"concernType"`
+	CustomConcernOpcode   string         `bson:"customConcernOpcode" json:"customConcernOpcode"`
+	ServiceMenuDisclaimer string         `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
+	PrinterEmail          string         `bson:"printerEmail" json:"printerEmail"`
 	// IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// LastUpdatedByUser data updated by who
@@ -328,6 +326,14 @@ type fixedOperation struct {
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
 	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+}
+
+// model for default payType codes
+// swagger:model payTypeMapping
+type payTypeMapping struct {
+	CustomerPay string `bson:"CP" json:"CP"`
+	InternalPay string `bson:"I" json:"I"`
+	WarrantyPay string `bson:"W" json:"W"`
 }
 
 // Embedded structures in fixed operations-- start
