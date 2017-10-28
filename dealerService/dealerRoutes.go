@@ -91,7 +91,7 @@ func Start() {
 		"/fixedoperation",
 		readFixedOperation,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher", "BDCSpecialist"},
 		},
 	)
 	tapi.AddRoutes(
