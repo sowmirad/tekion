@@ -326,7 +326,7 @@ type fixedOperation struct {
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
 	DocumentVersion     float32  `bson:"documentVersion" json:"documentVersion"`
-	RecallOpcodeMapping string   `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
+	RecallOpCodeMapping string   `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
 	Printers            Printers `bson:"printers" json:"printers"`
 }
 
