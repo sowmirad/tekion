@@ -44,7 +44,7 @@ func Start() {
 		"/dealer",
 		readDealer,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher", "BDCSpecialist"},
+			PermittedRoles: []string{"SystemUser", "SystemAdmin", "ServiceAdvisor", "Technician", "Dispatcher", "BDCSpecialist"},
 		},
 	)
 	tapi.AddRoutes(
@@ -53,7 +53,7 @@ func Start() {
 		"/dealers",
 		dealersList,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+			PermittedRoles: []string{"SystemUser", "SystemAdmin", "ServiceAdvisor"},
 		},
 	)
 	tapi.AddRoutes(
@@ -62,7 +62,7 @@ func Start() {
 		"/dealer",
 		patchDealer,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+			PermittedRoles: []string{"SystemUser", "SystemAdmin", "ServiceAdvisor"},
 		},
 	)
 	// todo create and update should be one function. Figure out why and write one
