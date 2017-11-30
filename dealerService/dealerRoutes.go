@@ -83,7 +83,7 @@ func Start() {
 		"/dealer",
 		saveDealer,
 		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor"},
 		},
 	)
 	tapi.AddRoutes(
@@ -92,7 +92,7 @@ func Start() {
 		"/fixedoperation",
 		readFixedOperation,
 		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher", "BDCSpecialist"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "SystemAdmin", "Technician", "Dispatcher", "BDCSpecialist"},
 		},
 	)
 	tapi.AddRoutes(
@@ -102,7 +102,7 @@ func Start() {
 		patchFixedOperation,
 		acl.ACLStruct{
 			// TODO PremittedRoles (SuperAdmin)
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor"},
 		},
 	)
 	tapi.AddRoutes(
@@ -111,7 +111,7 @@ func Start() {
 		"/contact/{cid}",
 		readDealerContact,
 		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "SystemAdmin", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -120,7 +120,7 @@ func Start() {
 		"/contacts",
 		readDealerContacts,
 		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "SystemAdmin", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -129,7 +129,7 @@ func Start() {
 		"/goal/{gid}",
 		readDealerGoal,
 		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "SystemAdmin", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -138,7 +138,7 @@ func Start() {
 		"/goals",
 		readDealerGoals,
 		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "SystemAdmin", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -147,7 +147,7 @@ func Start() {
 		"/groups",
 		readDealerGroups,
 		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "SystemAdmin", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -156,7 +156,7 @@ func Start() {
 		"/aggregate/dealer/fixedoperation",
 		aggregateDealerFixedOp,
 		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "SystemAdmin", "Technician", "Dispatcher"},
 		},
 	)
 
