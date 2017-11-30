@@ -28,10 +28,11 @@
 package dealerService
 
 import (
+	"net/http"
+
 	"bitbucket.org/tekion/tacl/acl"
 	"bitbucket.org/tekion/tbaas/log"
 	"bitbucket.org/tekion/tbaas/tapi"
-	"net/http"
 )
 
 //TODO : Need new admin scope
@@ -44,7 +45,7 @@ func Start() {
 		"/dealer",
 		readDealer,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "SystemAdmin", "ServiceAdvisor", "Technician", "Dispatcher", "BDCSpecialist"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "Technician", "Dispatcher", "BDCSpecialist"},
 		},
 	)
 	tapi.AddRoutes(
@@ -53,7 +54,7 @@ func Start() {
 		"/dealers",
 		dealersList,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "SystemAdmin", "ServiceAdvisor"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor"},
 		},
 	)
 	tapi.AddRoutes(
@@ -62,7 +63,7 @@ func Start() {
 		"/dealer",
 		patchDealer,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "SystemAdmin", "ServiceAdvisor"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor"},
 		},
 	)
 	// todo create and update should be one function. Figure out why and write one
@@ -82,7 +83,7 @@ func Start() {
 		"/dealer",
 		saveDealer,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor"},
 		},
 	)
 	tapi.AddRoutes(
@@ -91,7 +92,7 @@ func Start() {
 		"/fixedoperation",
 		readFixedOperation,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher", "BDCSpecialist"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher", "BDCSpecialist"},
 		},
 	)
 	tapi.AddRoutes(
@@ -101,7 +102,7 @@ func Start() {
 		patchFixedOperation,
 		acl.ACLStruct{
 			// TODO PremittedRoles (SuperAdmin)
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor"},
 		},
 	)
 	tapi.AddRoutes(
@@ -110,7 +111,7 @@ func Start() {
 		"/contact/{cid}",
 		readDealerContact,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -119,7 +120,7 @@ func Start() {
 		"/contacts",
 		readDealerContacts,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -128,7 +129,7 @@ func Start() {
 		"/goal/{gid}",
 		readDealerGoal,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -137,7 +138,7 @@ func Start() {
 		"/goals",
 		readDealerGoals,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -146,7 +147,7 @@ func Start() {
 		"/groups",
 		readDealerGroups,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 	tapi.AddRoutes(
@@ -155,7 +156,7 @@ func Start() {
 		"/aggregate/dealer/fixedoperation",
 		aggregateDealerFixedOp,
 		acl.ACLStruct{
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
+			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "Technician", "Dispatcher"},
 		},
 	)
 
