@@ -325,7 +325,16 @@ type fixedOperation struct {
 	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
-	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+	DocumentVersion     float32  `bson:"documentVersion" json:"documentVersion"`
+	RecallOpCodeMapping string   `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
+	Printers            Printers `bson:"printers" json:"printers"`
+}
+
+// model for printer email addresses
+// swagger:model Printers
+type Printers struct {
+	PartsPullSheet string `bson:"partsPullSheet" json:"partsPullSheet"`
+	CheckInSummary string `bson:"checkInSummary" json:"checkInSummary"`
 }
 
 // model for default payType codes
