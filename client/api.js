@@ -18,6 +18,9 @@ const makeMethod = (method, hasBody) => urlTemplate => (config, data) => {
     headers.tenantName = config.tenantName;
     headers.dealerId = config.dealerId;
     headers['tekion-api-token'] = config.access_token;
+    if (config.correlationId) {
+      headers.correlationId = config.correlationId;
+    }
   }
 
   if (config && config.clientId) {
