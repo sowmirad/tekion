@@ -1,19 +1,23 @@
 package dealerService
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	"bitbucket.org/tekion/tbaas/apiContext"
 	"bitbucket.org/tekion/tbaas/consulhelper"
 	"bitbucket.org/tekion/tbaas/hwrap"
-	"bitbucket.org/tekion/tbaas/log"
+	log "bitbucket.org/tekion/tbaas/log/v1"
+	"bitbucket.org/tekion/tbaas/tapi"
+	com "bitbucket.org/tekion/tenums/common"
+	l "bitbucket.org/tekion/tenums/login"
 
 	"gopkg.in/mgo.v2/bson"
-	"time"
 )
 
 const (
@@ -81,24 +85,24 @@ func (lstDealer *listDealersReq) prepareFindQuery() bson.M {
 	return findQ
 }
 
-func getUserDtls(ctx apiContext.APIContext, r *http.Request, userDtlsRes *userDtlsRes) error {
+func getUserDtls(ctx *customCtx, r *http.Request, userDtlsRes *userDtlsRes) error {
 	url := consulhelper.GetServiceNodes(loginServiceID) + signUpEndPoint + ctx.UserName
 	resp, err := hwrap.MakeHTTPRequestWithCustomHeader(http.MethodGet, url, appJSON, r.Header, nil)
 	if err != nil {
 		err = fmt.Errorf("call to %s failed, error: %v", url, err)
-		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
+		log.GenericError(ctx.TContext, err, nil)
 		return err
 	}
 	if resp.StatusCode != http.StatusOK {
 		respBody, _ := ioutil.ReadAll(resp.Body)
 		err := fmt.Errorf("call to %s returned error, response body: %s, code: %d", url, string(respBody), resp.StatusCode)
-		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
+		log.GenericError(ctx.TContext, err, nil)
 		return err
 	}
 	//Decode
 	if err = json.NewDecoder(resp.Body).Decode(&userDtlsRes); err != nil {
 		err = fmt.Errorf("error encountered while decoding %s reponse, error: %v", url, err)
-		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
+		log.GenericError(ctx.TContext, err, nil)
 		return err
 	}
 
@@ -106,7 +110,7 @@ func getUserDtls(ctx apiContext.APIContext, r *http.Request, userDtlsRes *userDt
 }
 
 //prepareUpdateQuery is use to update the DealerMaster
-func (d *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) bson.M {
+func (d *dealer) prepareUpdateQuery(ctx *customCtx) bson.M {
 
 	updateQuery := make(bson.M)
 	if len(d.Name) != 0 {
@@ -143,72 +147,125 @@ func (d *dealer) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) 
 		updateQuery["videoURL"] = d.VideoURL
 	}
 
+	updateQuery["isActive"] = true
 	updateQuery["lastUpdatedByUser"] = d.LastUpdatedByUser
 	updateQuery["lastUpdatedByDisplayName"] = d.LastUpdatedByDisplayName
-	updateQuery["lastUpdatedDateTime"] = d.LastUpdatedDateTime
-	updateQuery["documentVersion"] = d.DocumentVersion
+	updateQuery["lastUpdatedDateTime"] = time.Now()
+	updateQuery["documentVersion"] = docVersion
 	return bson.M{"$set": updateQuery}
 }
 
-func (d *fixedOperation) prepareUpdateQuery(ctx apiContext.APIContext, r *http.Request) bson.M {
+func (fo *fixedOperation) prepareUpdateQuery(ctx *customCtx) bson.M {
 	updateQuery := make(bson.M)
-	if len(d.DealerID) != 0 {
-		updateQuery["dealerID"] = d.DealerID
+	if len(fo.DealerID) != 0 {
+		updateQuery["dealerID"] = fo.DealerID
 	}
-	if len(d.EPANumber) != 0 {
-		updateQuery["EPANumber"] = d.EPANumber
+	if len(fo.EPANumber) != 0 {
+		updateQuery["EPANumber"] = fo.EPANumber
 	}
-	if len(d.BARNumber) != 0 {
-		updateQuery["BARNumber"] = d.BARNumber
+	if len(fo.BARNumber) != 0 {
+		updateQuery["BARNumber"] = fo.BARNumber
 	}
-	if len(d.Disclaimer) != 0 {
-		updateQuery["taxPercentage"] = d.Disclaimer
+	if len(fo.Disclaimer) != 0 {
+		updateQuery["taxPercentage"] = fo.Disclaimer
 	}
-	updateQuery["lastUpdatedByUser"] = d.LastUpdatedByUser
-	updateQuery["lastUpdatedDateTime"] = d.LastUpdatedDateTime
-	updateQuery["documentVersion"] = d.DocumentVersion
+	updateQuery["isActive"] = true
+	updateQuery["lastUpdatedByUser"] = fo.LastUpdatedByUser
+	updateQuery["lastUpdatedDateTime"] = time.Now()
+	updateQuery["documentVersion"] = docVersion
 	return bson.M{"$set": updateQuery}
 }
 
-func fillDealerMetaData(ctx apiContext.APIContext, r *http.Request, dealer *dealer) error {
-	dealer.IsActive = true
-	dealer.LastUpdatedDateTime = time.Now()
-	dealer.DocumentVersion = docVersion
-	userName, displayName, err := getUserNameAndDisplayName(ctx, r)
-	if err != nil {
-		err = fmt.Errorf("failed to get user name and user display name for customer meta data, error: %v", err)
-		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
-		return err
-	}
-	dealer.LastUpdatedByUser = userName
-	dealer.LastUpdatedByDisplayName = displayName
-
-	return err
+func (d *dealer) populateMetaData(ctx *customCtx) {
+	d.IsActive = true
+	d.LastUpdatedDateTime = time.Now()
+	d.DocumentVersion = docVersion
+	d.LastUpdatedByUser = ctx.UserName
+	d.LastUpdatedByDisplayName = ctx.UserDisplayName
 }
 
-func getUserNameAndDisplayName(ctx apiContext.APIContext, r *http.Request) (string, string, error) {
-	url := consulhelper.GetServiceNodes(loginServiceID) + getUserByUserNameEndPoint + ctx.UserName
-	resp, err := hwrap.MakeHTTPRequestWithCustomHeader(http.MethodGet, url, appJSON, r.Header, nil)
+func (fo *fixedOperation) populateMetaData(ctx *customCtx) {
+	fo.IsActive = true
+	fo.LastUpdatedDateTime = time.Now()
+	fo.DocumentVersion = docVersion
+	fo.LastUpdatedByUser = ctx.UserName
+	fo.LastUpdatedByDisplayName = ctx.UserDisplayName
+}
+
+/************************************ Context ************************************/
+type customCtx struct {
+	apiContext.TContext
+	UserID          string
+	UserDisplayName string
+}
+
+func getCustomCtx(r *http.Request) *customCtx {
+	customCtx := new(customCtx)
+	customCtx.TContext = apiContext.UpgradeCtx(r.Context())
+	return customCtx
+}
+
+func getUserCtx(r *http.Request) (*customCtx, error) {
+	customCtx := getCustomCtx(r)
+	userIDC, _ := r.Cookie(l.UserIDC)
+	userDisplayName, _ := r.Cookie(l.UserDisplayNameC)
+	if userIDC == nil || userDisplayName == nil {
+		usr, err := userByUserName(customCtx)
+		if err != nil {
+			err = fmt.Errorf("failed to get user details, userName: %s, err: %v ", customCtx.UserName, err)
+			return customCtx, err
+		}
+		customCtx.UserID = usr.ID
+		customCtx.UserDisplayName = usr.DisplayName
+	} else {
+		customCtx.UserID = userIDC.Value
+		customCtx.UserDisplayName = userDisplayName.Value
+	}
+
+	return customCtx, nil
+}
+
+func callAPI(ctx *customCtx, contentType, httpMethod, endpoint string, payload interface{}, query string) (*http.Response, error) {
+	var err error
+	var buff []byte
+	if payload != nil {
+		buff, err = json.Marshal(payload)
+		if err != nil {
+			err = fmt.Errorf("failed to marshal payload for %s: %v", endpoint, err)
+			return nil, err
+		}
+	}
+
+	req, err := http.NewRequest(httpMethod, endpoint, bytes.NewReader(buff))
 	if err != nil {
-		err = fmt.Errorf("call to %s failed, error: %v", url, err)
-		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
-		return "", "", err
+		err = fmt.Errorf(" failed to create request for %s: %v ", endpoint, err)
+		return nil, err
+	}
+	if len(query) != 0 {
+		req.URL.RawQuery = query
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		err := fmt.Errorf("call to %s returned error code: %d", url, resp.StatusCode)
-		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
-		return "", "", err
+	setHeaders(ctx, req, contentType)
+
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		err = fmt.Errorf(" call to %s failed: %v ", endpoint, err)
+		return nil, err
 	}
 
-	var user getUserByUserNameResp
-
-	if err = json.NewDecoder(resp.Body).Decode(&user); err != nil {
-		err = fmt.Errorf("failed to decoding %s reponse, error: %v", url, err)
-		log.GenericError(ctx.Tenant, ctx.DealerID, ctx.UserName, err)
-		return "", "", err
+	if res.StatusCode != http.StatusOK {
+		respBody, _ := ioutil.ReadAll(res.Body)
+		err = fmt.Errorf(" call to %s returned error code: %d, response body: %s ", endpoint, res.StatusCode, string(respBody))
+		return nil, err
 	}
+	return res, err
+}
 
-	defer resp.Body.Close()
-	return user.Data.Name, user.Data.DisplayName, err
+func setHeaders(ctx *customCtx, req *http.Request, contentType string) {
+	req.Header.Set(tapi.TenantName, ctx.Tenant)
+	req.Header.Set(tapi.DealerID, ctx.DealerID)
+	req.Header.Set(tapi.ClientID, ctx.ClientID)
+	req.Header.Set(tapi.TekionAPIToken, ctx.Token)
+	req.Header.Set(com.ContType, contentType)
 }

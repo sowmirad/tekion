@@ -7,21 +7,21 @@ import (
 	"errors"
 	"net/http"
 	//third party libraries
-	"github.com/gorilla/context"
+
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
 	//tekion specific libraries
-	"bitbucket.org/tekion/erratum"
-	"bitbucket.org/tekion/tbaas/apiContext"
-	"bitbucket.org/tekion/tbaas/mongoManager"
-	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
-	"bitbucket.org/tekion/tbaas/tapi"
 	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
+
+	"bitbucket.org/tekion/erratum"
+	"bitbucket.org/tekion/tbaas/mongoManager"
+	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
+	"bitbucket.org/tekion/tbaas/tapi"
 )
 
 const (
@@ -90,8 +90,8 @@ const (
 //     description: dealer not found in data base
 //   '400':
 //     description: error querying data base
-func readDealer(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+func readDealerH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
 	//assuming logged in user has access to view all the dealers
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
@@ -164,8 +164,8 @@ func readDealer(w http.ResponseWriter, r *http.Request) {
 //     description: dealer not found in data base
 //   '400':
 //     description: error querying data base
-func dealersList(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
+func dealersListH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
 
 	var lstDealer listDealersReq
 	err := json.NewDecoder(r.Body).Decode(&lstDealer)
@@ -236,27 +236,29 @@ func dealersList(w http.ResponseWriter, r *http.Request) {
 //     description: dealer not found in data base
 //   '400':
 //     description: error querying data base
-func patchDealer(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
-	var dealerDtls dealer
-	if err := json.NewDecoder(r.Body).Decode(&dealerDtls); err != nil {
+func patchDealerH(w http.ResponseWriter, r *http.Request) {
+	ctx, err := getUserCtx(r)
+	if err != nil {
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload, err)
+		return
+	}
+
+	d := new(dealer)
+	if err := json.NewDecoder(r.Body).Decode(d); err != nil {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
 			fmt.Errorf("error encountered while decoding userDetails payload: %v", err))
 		return
 	}
-	if len(dealerDtls.ID) == 0 {
+
+	if len(d.ID) == 0 {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errDealerID)
 		return
 	}
-	var userDtls userDtlsRes
-	if err := getUserDtls(ctx, r, &userDtls); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDocumentNotFound,
-			fmt.Errorf("failed to get user id in db: %v", err))
-		return
-	}
-	findQ := bson.M{"_id": dealerDtls.ID}
-	dealerDtls.LastUpdatedByDisplayName = userDtls.Data.DisplayName
-	updateQ := dealerDtls.prepareUpdateQuery(ctx, r)
+
+	d.populateMetaData(ctx)
+
+	findQ := bson.M{"_id": d.ID}
+	updateQ := d.prepareUpdateQuery(ctx)
 	if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, updateQ); err != nil {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
 			fmt.Errorf("error encountered while updating dealer details in db: %v", err))
@@ -267,27 +269,28 @@ func patchDealer(w http.ResponseWriter, r *http.Request) {
 }
 
 // saveDealer dealer details
-func saveDealer(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
-	var dealer dealer
-	if err := json.NewDecoder(r.Body).Decode(&dealer); err != nil {
+func saveDealerH(w http.ResponseWriter, r *http.Request) {
+	ctx, err := getUserCtx(r)
+	if err != nil {
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload, err)
+		return
+	}
+
+	d := new(dealer)
+	if err := json.NewDecoder(r.Body).Decode(d); err != nil {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
 			fmt.Errorf("error encountered while decoding save dealer payload: %v", err))
 		return
 	}
 
-	if err := fillDealerMetaData(ctx, r, &dealer); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.DefaultErrorCode,
-			fmt.Errorf("failed to populate update/create dealer metadata: %v", err))
-		return
-	}
+	d.populateMetaData(ctx)
 
-	if len(dealer.ID) == 0 {
+	if len(d.ID) == 0 {
 		// create new dealer
 		// generating customerID from GetNextSequence function
-		if len(strings.TrimSpace(dealer.Name)) != 0 {
-			findQ := bson.M{"dealerName": dealer.Name}
-			count, err := mMgr.Count(ctx, dealerCollectionName, findQ)
+		if len(strings.TrimSpace(d.Name)) != 0 {
+			findQ := bson.M{"dealerName": d.Name}
+			count, err := mMgr.Count(ctx.APIContext, dealerCollectionName, findQ)
 			if err != nil {
 				tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
 					fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
@@ -307,26 +310,25 @@ func saveDealer(w http.ResponseWriter, r *http.Request) {
 				fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
 			return
 		}
-		dealer.ID = id
-		if err := mMgr.Create(ctx.Tenant, dealerCollectionName, &dealer); err != nil {
+		d.ID = id
+		if err := mMgr.Create(ctx.Tenant, dealerCollectionName, d); err != nil {
 			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
 				fmt.Errorf("error encountered while creating dealer details in db: %v", err))
 			return
 
 		}
-		tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created", &dealer)
+		tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created", d)
 		return
-	} else {
-		// update existing dealer
-		findQ := bson.M{"_id": dealer.ID}
-		if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, &dealer); err != nil {
-			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
-				fmt.Errorf("error encountered while updating dealer details in db: %v", err))
-			return
-		}
+	}
+	// update existing dealer
+	findQ := bson.M{"_id": d.ID}
+	if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, d); err != nil {
+		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+			fmt.Errorf("error encountered while updating dealer details in db: %v", err))
+		return
 	}
 
-	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", &dealer)
+	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", d)
 }
 
 // swagger:operation GET /fixedoperation fixedOperation readFixedOperation
@@ -375,8 +377,8 @@ func saveDealer(w http.ResponseWriter, r *http.Request) {
 //     description: fixed operations not found in data base
 //   '400':
 //     description: error querying data base
-func readFixedOperation(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+func readFixedOperationH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	var fixedOperation fixedOperation
@@ -395,20 +397,28 @@ func readFixedOperation(w http.ResponseWriter, r *http.Request) {
 }
 
 //patchFixedOperation is use to update patchfixed operation
-func patchFixedOperation(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, "apiContext").(apiContext.APIContext)
-	var fixedOpDtls fixedOperation
-	if err := json.NewDecoder(r.Body).Decode(&fixedOpDtls); err != nil {
+func patchFixedOperationH(w http.ResponseWriter, r *http.Request) {
+	ctx, err := getUserCtx(r)
+	if err != nil {
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload, err)
+		return
+	}
+
+	fo := new(fixedOperation)
+	if err := json.NewDecoder(r.Body).Decode(fo); err != nil {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
 			fmt.Errorf("error encountered while decoding fixed operation payload: %v", err))
 		return
 	}
-	if len(fixedOpDtls.ID) == 0 {
+	if len(fo.ID) == 0 {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errFixedOperationID)
 		return
 	}
-	findQ := bson.M{"_id": fixedOpDtls.ID}
-	updateQ := fixedOpDtls.prepareUpdateQuery(ctx, r)
+
+	fo.populateMetaData(ctx)
+
+	findQ := bson.M{"_id": fo.ID}
+	updateQ := fo.prepareUpdateQuery(ctx)
 	if err := mMgr.Update(ctx.Tenant, fixedOperationCollectionName, findQ, updateQ); err != nil {
 		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
 			fmt.Errorf("error encountered while updating fixed operation details in db: %v", err))
@@ -469,13 +479,14 @@ func patchFixedOperation(w http.ResponseWriter, r *http.Request) {
 //     description: dealer contact not found in data base
 //   '400':
 //     description: error querying data base
-func readDealerContact(w http.ResponseWriter, r *http.Request) {
+func readDealerContactH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
+
 	vars := mux.Vars(r)
 	contactID := vars["cid"]
 
 	fields := fetchFieldsFromRequest(r)
 	var contact dealerContact
-	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	err := mongoManager.ReadOne(ctx.Tenant, dealerContactCollectionName,
 		bson.M{"_id": contactID, "dealerID": ctx.DealerID}, selectedFields(fields), &contact)
 	if err == mgo.ErrNotFound {
@@ -537,8 +548,8 @@ func readDealerContact(w http.ResponseWriter, r *http.Request) {
 //     description: dealer contacts not found in data base
 //   '400':
 //     description: error querying data base
-func readDealerContacts(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+func readDealerContactsH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
@@ -608,13 +619,14 @@ func readDealerContacts(w http.ResponseWriter, r *http.Request) {
 //     description: dealer goal not found in data base
 //   '400':
 //     description: error querying data base
-func readDealerGoal(w http.ResponseWriter, r *http.Request) {
+func readDealerGoalH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
+
 	vars := mux.Vars(r)
 	goalID := vars["gid"]
 
 	fields := fetchFieldsFromRequest(r)
 	var goal dealerGoal
-	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
 	err := mongoManager.ReadOne(ctx.Tenant, dealerGoalCollectionName,
 		bson.M{"_id": goalID, "dealerID": ctx.DealerID}, selectedFields(fields), &goal)
 
@@ -677,8 +689,8 @@ func readDealerGoal(w http.ResponseWriter, r *http.Request) {
 //     description: dealer goals not found in data base
 //   '400':
 //     description: error querying data base
-func readDealerGoals(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+func readDealerGoalsH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
@@ -746,8 +758,8 @@ func readDealerGoals(w http.ResponseWriter, r *http.Request) {
 //     description: dealer groups not found in data base
 //   '400':
 //     description: error querying data base
-func readDealerGroups(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+func readDealerGroupsH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
@@ -766,8 +778,8 @@ func readDealerGroups(w http.ResponseWriter, r *http.Request) {
 	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", groups)
 }
 
-func aggregateDealerFixedOp(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Get(r, apiCtxKey).(apiContext.APIContext)
+func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	var dealer *dealer
