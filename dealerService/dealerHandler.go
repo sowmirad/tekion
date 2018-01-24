@@ -100,14 +100,14 @@ func readDealerH(w http.ResponseWriter, r *http.Request) {
 
 	err := mongoManager.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, selectedFields(fields), &dealer)
 	if err == mgo.ErrNotFound {
-		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
 		return
 	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 	// No need to check if some thing was found or not. readOne returns "not found".
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", dealer)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", dealer)
 }
 
 // swagger:operation POST /dealers dealer dealersList
@@ -170,7 +170,7 @@ func dealersListH(w http.ResponseWriter, r *http.Request) {
 	var lstDealer listDealersReq
 	err := json.NewDecoder(r.Body).Decode(&lstDealer)
 	if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload, err)
 		return
 	}
 	findQuery := lstDealer.prepareFindQuery()
@@ -178,14 +178,14 @@ func dealersListH(w http.ResponseWriter, r *http.Request) {
 	var dealerLst []dealer
 
 	if err := mMgr.ReadAll(ctx.Tenant, dealerCollectionName, findQuery, selectQuery, &dealerLst); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 	if len(dealerLst) == 0 {
-		tapi.WriteHTTPResponse(w, http.StatusOK, "No document found, returning empty list", dealerLst)
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "No document found, returning empty list", dealerLst)
 		return
 	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer list", dealerLst)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "dealer list", dealerLst)
 	return
 
 }
@@ -245,13 +245,13 @@ func patchDealerH(w http.ResponseWriter, r *http.Request) {
 
 	d := new(dealer)
 	if err := json.NewDecoder(r.Body).Decode(d); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload,
 			fmt.Errorf("error encountered while decoding userDetails payload: %v", err))
 		return
 	}
 
 	if len(d.ID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errDealerID)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload, errDealerID)
 		return
 	}
 
@@ -260,12 +260,12 @@ func patchDealerH(w http.ResponseWriter, r *http.Request) {
 	findQ := bson.M{"_id": d.ID}
 	updateQ := d.prepareUpdateQuery(ctx)
 	if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, updateQ); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorUpdatingMongoDoc,
 			fmt.Errorf("error encountered while updating dealer details in db: %v", err))
 		return
 	}
 
-	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", nil)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "dealer details updated", nil)
 }
 
 // saveDealer dealer details
@@ -278,7 +278,7 @@ func saveDealerH(w http.ResponseWriter, r *http.Request) {
 
 	d := new(dealer)
 	if err := json.NewDecoder(r.Body).Decode(d); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload,
 			fmt.Errorf("error encountered while decoding save dealer payload: %v", err))
 		return
 	}
@@ -292,7 +292,7 @@ func saveDealerH(w http.ResponseWriter, r *http.Request) {
 			findQ := bson.M{"dealerName": d.Name}
 			count, err := mMgr.Count(ctx.APIContext, dealerCollectionName, findQ)
 			if err != nil {
-				tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+				tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload,
 					fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
 				return
 			}
@@ -306,29 +306,29 @@ func saveDealerH(w http.ResponseWriter, r *http.Request) {
 
 		id, err := mMgr.GetNextSequence(ctx.Tenant, dealerCollectionName)
 		if err != nil {
-			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+			tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload,
 				fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))
 			return
 		}
 		d.ID = id
 		if err := mMgr.Create(ctx.Tenant, dealerCollectionName, d); err != nil {
-			tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+			tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorUpdatingMongoDoc,
 				fmt.Errorf("error encountered while creating dealer details in db: %v", err))
 			return
 
 		}
-		tapi.WriteHTTPResponse(w, http.StatusOK, "dealer created", d)
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "dealer created", d)
 		return
 	}
 	// update existing dealer
 	findQ := bson.M{"_id": d.ID}
 	if err := mMgr.Update(ctx.Tenant, dealerCollectionName, findQ, d); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorUpdatingMongoDoc,
 			fmt.Errorf("error encountered while updating dealer details in db: %v", err))
 		return
 	}
 
-	tapi.WriteHTTPResponse(w, http.StatusOK, "dealer details updated", d)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "dealer details updated", d)
 }
 
 // swagger:operation GET /fixedoperation fixedOperation readFixedOperation
@@ -386,14 +386,14 @@ func readFixedOperationH(w http.ResponseWriter, r *http.Request) {
 	err := mongoManager.ReadOne(ctx.Tenant, fixedOperationCollectionName,
 		bson.M{"dealerID": dealerID}, selectedFields(fields), &fixedOperation)
 	if err == mgo.ErrNotFound {
-		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
 		return
 	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", fixedOperation)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", fixedOperation)
 }
 
 //patchFixedOperation is use to update patchfixed operation
@@ -406,12 +406,12 @@ func patchFixedOperationH(w http.ResponseWriter, r *http.Request) {
 
 	fo := new(fixedOperation)
 	if err := json.NewDecoder(r.Body).Decode(fo); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload,
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload,
 			fmt.Errorf("error encountered while decoding fixed operation payload: %v", err))
 		return
 	}
 	if len(fo.ID) == 0 {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorDecodingPayload, errFixedOperationID)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload, errFixedOperationID)
 		return
 	}
 
@@ -420,12 +420,12 @@ func patchFixedOperationH(w http.ResponseWriter, r *http.Request) {
 	findQ := bson.M{"_id": fo.ID}
 	updateQ := fo.prepareUpdateQuery(ctx)
 	if err := mMgr.Update(ctx.Tenant, fixedOperationCollectionName, findQ, updateQ); err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorUpdatingMongoDoc,
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorUpdatingMongoDoc,
 			fmt.Errorf("error encountered while updating fixed operation details in db: %v", err))
 		return
 	}
 
-	tapi.WriteHTTPResponse(w, http.StatusOK, "fixed operations details updated successfully", nil)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "fixed operations details updated successfully", nil)
 }
 
 // swagger:operation GET /contact/{cid} dealerContact readDealerContact
@@ -490,14 +490,14 @@ func readDealerContactH(w http.ResponseWriter, r *http.Request) {
 	err := mongoManager.ReadOne(ctx.Tenant, dealerContactCollectionName,
 		bson.M{"_id": contactID, "dealerID": ctx.DealerID}, selectedFields(fields), &contact)
 	if err == mgo.ErrNotFound {
-		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
 		return
 	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", contact)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", contact)
 }
 
 // swagger:operation GET /contacts dealerContacts readDealerContacts
@@ -557,15 +557,15 @@ func readDealerContactsH(w http.ResponseWriter, r *http.Request) {
 	err := mongoManager.ReadAll(ctx.Tenant, dealerContactCollectionName,
 		bson.M{"dealerID": dealerID}, selectedFields(fields), &contacts)
 	if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
 	if len(contacts) == 0 {
-		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
 		return
 	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", contacts)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", contacts)
 }
 
 // swagger:operation GET /goal/{gid} dealerGoal readDealerGoal
@@ -631,14 +631,14 @@ func readDealerGoalH(w http.ResponseWriter, r *http.Request) {
 		bson.M{"_id": goalID, "dealerID": ctx.DealerID}, selectedFields(fields), &goal)
 
 	if err == mgo.ErrNotFound {
-		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
 		return
 	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", goal)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", goal)
 }
 
 // swagger:operation GET /goals dealerGoals readDealerGoals
@@ -699,15 +699,15 @@ func readDealerGoalsH(w http.ResponseWriter, r *http.Request) {
 		bson.M{"dealerID": dealerID}, selectedFields(fields), &goals)
 
 	if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
 	if len(goals) == 0 {
-		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
 		return
 	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", goals)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", goals)
 }
 
 // swagger:operation GET /groups dealerGroups readDealerGroups
@@ -767,15 +767,15 @@ func readDealerGroupsH(w http.ResponseWriter, r *http.Request) {
 	err := mongoManager.ReadAll(ctx.Tenant, dealerGroupCollectionName,
 		bson.M{"dealers": dealerID}, selectedFields(fields), &groups)
 	if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
 	if len(groups) == 0 {
-		tapi.WriteHTTPResponse(w, http.StatusNoContent, "No document found", nil)
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
 		return
 	}
-	tapi.WriteHTTPResponse(w, http.StatusOK, "Document found", groups)
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", groups)
 }
 
 func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
@@ -785,10 +785,10 @@ func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
 	var dealer *dealer
 	err := mongoManager.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, nil, &dealer)
 	if err == mgo.ErrNotFound {
-		tapi.WriteCustomHTTPResponse(w, http.StatusOK, "dealer doc not found", dealerDocNotFound, nil)
+		tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "dealer doc not found", dealerDocNotFound, nil)
 		return
 	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
@@ -796,11 +796,11 @@ func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
 	err = mongoManager.ReadOne(ctx.Tenant, fixedOperationCollectionName,
 		bson.M{"dealerID": dealerID}, nil, &fixedOp)
 	if err == mgo.ErrNotFound {
-		tapi.WriteCustomHTTPResponse(w, http.StatusNoContent, "fixed operation doc not found",
+		tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusNoContent, "fixed operation doc not found",
 			fixedOpDocNotFound, nil)
 		return
 	} else if err != nil {
-		tapi.WriteHTTPErrorResponse(w, serviceID, erratum.ErrorQueryingDB, err)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
@@ -808,5 +808,5 @@ func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
 	dealerAndFixedOp.Dealer = dealer
 	dealerAndFixedOp.FixedOperation = fixedOp
 
-	tapi.WriteCustomHTTPResponse(w, http.StatusOK, "document found", docFound, dealerAndFixedOp)
+	tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "document found", docFound, dealerAndFixedOp)
 }
