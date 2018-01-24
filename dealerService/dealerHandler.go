@@ -3,18 +3,10 @@ package dealerService
 // This file contains handler functions
 
 import (
-	//standard libraries
-	"errors"
-	"net/http"
-	//third party libraries
-
-	"github.com/gorilla/mux"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
-
-	//tekion specific libraries
 	"encoding/json"
+	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
@@ -22,6 +14,10 @@ import (
 	"bitbucket.org/tekion/tbaas/mongoManager"
 	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
 	"bitbucket.org/tekion/tbaas/tapi"
+
+	"github.com/gorilla/mux"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 const (
@@ -186,8 +182,6 @@ func dealersListH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "dealer list", dealerLst)
-	return
-
 }
 
 // swagger:operation PATCH /dealer dealer patchDealer
