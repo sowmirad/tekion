@@ -40,7 +40,7 @@ const (
 	fixedOpDocNotFound
 )
 
-// swagger:operation GET /dealer dealer readDealer
+// swagger:operation GET /dealer dealer readDealerH
 //
 // Returns Dealer identified by the dealer id
 //
@@ -88,7 +88,7 @@ const (
 //     description: error querying data base
 func readDealerH(w http.ResponseWriter, r *http.Request) {
 	ctx := getCustomCtx(r)
-	//assuming logged in user has access to view all the dealers
+
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	fields := fetchFieldsFromRequest(r)
@@ -284,7 +284,7 @@ func saveDealerH(w http.ResponseWriter, r *http.Request) {
 		// generating customerID from GetNextSequence function
 		if len(strings.TrimSpace(d.Name)) != 0 {
 			findQ := bson.M{"dealerName": d.Name}
-			count, err := mMgr.Count(ctx.APIContext, dealerCollectionName, findQ)
+			count, err := mMgr.Count(ctx.TContext, dealerCollectionName, findQ)
 			if err != nil {
 				tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload,
 					fmt.Errorf("failed to generate dealer id for new dealer, error: %v", err))

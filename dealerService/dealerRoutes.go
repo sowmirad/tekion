@@ -30,7 +30,9 @@ package dealerService
 import (
 	"net/http"
 
-	"bitbucket.org/tekion/tbaas/log"
+	"bitbucket.org/tekion/tbaas/apiContext"
+
+	log "bitbucket.org/tekion/tbaas/log/v1"
 	"bitbucket.org/tekion/tbaas/tapi"
 )
 
@@ -169,6 +171,6 @@ func Start() {
 	)
 
 	//log service start info
-	log.GenericInfo("", "", "", "Started Tekion tdealer on port:8079")
+	log.GenericInfo(apiContext.TContext{}, "Started Tekion tdealer on port:8079", nil)
 	tapi.Start("8079", "/tdealer")
 }

@@ -1,20 +1,12 @@
 package dealerService
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
 
 	"bitbucket.org/tekion/tbaas/apiContext"
-	"bitbucket.org/tekion/tbaas/consulhelper"
-	"bitbucket.org/tekion/tbaas/hwrap"
-	log "bitbucket.org/tekion/tbaas/log/v1"
-	"bitbucket.org/tekion/tbaas/tapi"
-	com "bitbucket.org/tekion/tenums/common"
 	l "bitbucket.org/tekion/tenums/login"
 
 	"gopkg.in/mgo.v2/bson"
@@ -85,29 +77,29 @@ func (lstDealer *listDealersReq) prepareFindQuery() bson.M {
 	return findQ
 }
 
-func getUserDtls(ctx *customCtx, r *http.Request, userDtlsRes *userDtlsRes) error {
-	url := consulhelper.GetServiceNodes(loginServiceID) + signUpEndPoint + ctx.UserName
-	resp, err := hwrap.MakeHTTPRequestWithCustomHeader(http.MethodGet, url, appJSON, r.Header, nil)
-	if err != nil {
-		err = fmt.Errorf("call to %s failed, error: %v", url, err)
-		log.GenericError(ctx.TContext, err, nil)
-		return err
-	}
-	if resp.StatusCode != http.StatusOK {
-		respBody, _ := ioutil.ReadAll(resp.Body)
-		err := fmt.Errorf("call to %s returned error, response body: %s, code: %d", url, string(respBody), resp.StatusCode)
-		log.GenericError(ctx.TContext, err, nil)
-		return err
-	}
-	//Decode
-	if err = json.NewDecoder(resp.Body).Decode(&userDtlsRes); err != nil {
-		err = fmt.Errorf("error encountered while decoding %s reponse, error: %v", url, err)
-		log.GenericError(ctx.TContext, err, nil)
-		return err
-	}
+// func getUserDtls(ctx *customCtx, r *http.Request, userDtlsRes *userDtlsRes) error {
+// 	url := consulhelper.GetServiceNodes(ctx.TContext, loginServiceID) + signUpEndPoint + ctx.UserName
+// 	resp, err := hwrap.MakeHTTPRequestWithCustomHeader(http.MethodGet, url, appJSON, r.Header, nil)
+// 	if err != nil {
+// 		err = fmt.Errorf("call to %s failed, error: %v", url, err)
+// 		log.GenericError(ctx.TContext, err, nil)
+// 		return err
+// 	}
+// 	if resp.StatusCode != http.StatusOK {
+// 		respBody, _ := ioutil.ReadAll(resp.Body)
+// 		err := fmt.Errorf("call to %s returned error, response body: %s, code: %d", url, string(respBody), resp.StatusCode)
+// 		log.GenericError(ctx.TContext, err, nil)
+// 		return err
+// 	}
+// 	//Decode
+// 	if err = json.NewDecoder(resp.Body).Decode(&userDtlsRes); err != nil {
+// 		err = fmt.Errorf("error encountered while decoding %s reponse, error: %v", url, err)
+// 		log.GenericError(ctx.TContext, err, nil)
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 //prepareUpdateQuery is use to update the DealerMaster
 func (d *dealer) prepareUpdateQuery(ctx *customCtx) bson.M {
@@ -223,49 +215,4 @@ func getUserCtx(r *http.Request) (*customCtx, error) {
 	}
 
 	return customCtx, nil
-}
-
-func callAPI(ctx *customCtx, contentType, httpMethod, endpoint string, payload interface{}, query string) (*http.Response, error) {
-	var err error
-	var buff []byte
-	if payload != nil {
-		buff, err = json.Marshal(payload)
-		if err != nil {
-			err = fmt.Errorf("failed to marshal payload for %s: %v", endpoint, err)
-			return nil, err
-		}
-	}
-
-	req, err := http.NewRequest(httpMethod, endpoint, bytes.NewReader(buff))
-	if err != nil {
-		err = fmt.Errorf(" failed to create request for %s: %v ", endpoint, err)
-		return nil, err
-	}
-	if len(query) != 0 {
-		req.URL.RawQuery = query
-	}
-
-	setHeaders(ctx, req, contentType)
-
-	client := &http.Client{}
-	res, err := client.Do(req)
-	if err != nil {
-		err = fmt.Errorf(" call to %s failed: %v ", endpoint, err)
-		return nil, err
-	}
-
-	if res.StatusCode != http.StatusOK {
-		respBody, _ := ioutil.ReadAll(res.Body)
-		err = fmt.Errorf(" call to %s returned error code: %d, response body: %s ", endpoint, res.StatusCode, string(respBody))
-		return nil, err
-	}
-	return res, err
-}
-
-func setHeaders(ctx *customCtx, req *http.Request, contentType string) {
-	req.Header.Set(tapi.TenantName, ctx.Tenant)
-	req.Header.Set(tapi.DealerID, ctx.DealerID)
-	req.Header.Set(tapi.ClientID, ctx.ClientID)
-	req.Header.Set(tapi.TekionAPIToken, ctx.Token)
-	req.Header.Set(com.ContType, contentType)
 }
