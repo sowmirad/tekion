@@ -34,18 +34,7 @@ import (
 
 	log "bitbucket.org/tekion/tbaas/log/v1"
 	"bitbucket.org/tekion/tbaas/tapi"
-)
-
-const (
-	dealerResourceName        = "Dealer"
-	fixedOpResourceName       = "Fixed_Operations"
-	dealerContactResourceName = "Dealer_Contact"
-	dealerGoalResourceName    = "Dealer_Goal"
-	dealerGroupResourceName   = "Dealer_Group"
-	read                      = uint64(1)
-	create                    = uint64(2)
-	update                    = uint64(4)
-	delete                    = uint64(8)
+	com "bitbucket.org/tekion/tenums/common"
 )
 
 //TODO : Need new admin scope
@@ -57,8 +46,8 @@ func Start() {
 		"readDealer",
 		http.MethodGet,
 		"/dealer",
-		[]string{dealerResourceName},
-		read,
+		[]string{com.DealerResourceName},
+		[]uint64{com.Read},
 		readDealerH,
 	)
 
@@ -66,8 +55,8 @@ func Start() {
 		"dealersList",
 		http.MethodPost,
 		"/dealers",
-		[]string{dealerResourceName},
-		read,
+		[]string{com.DealerResourceName},
+		[]uint64{com.Read},
 		dealersListH,
 	)
 
@@ -75,8 +64,8 @@ func Start() {
 		"patchDealer",
 		http.MethodPatch,
 		"/dealer",
-		[]string{dealerResourceName},
-		update,
+		[]string{com.DealerResourceName},
+		[]uint64{com.Update},
 		patchDealerH,
 	)
 	// todo create and update should be one function. Figure out why and write one
@@ -94,8 +83,8 @@ func Start() {
 		"saveDealer",
 		http.MethodPost,
 		"/dealer",
-		[]string{dealerResourceName},
-		create+update,
+		[]string{com.DealerResourceName},
+		[]uint64{com.Create + com.Update},
 		saveDealerH,
 	)
 
@@ -103,8 +92,8 @@ func Start() {
 		"readFixedOperation",
 		http.MethodGet,
 		"/fixedoperation",
-		[]string{fixedOpResourceName},
-		read,
+		[]string{com.FixedOperationResourceName},
+		[]uint64{com.Read},
 		readFixedOperationH,
 	)
 
@@ -112,8 +101,8 @@ func Start() {
 		"patchFixedOperation",
 		http.MethodPatch,
 		"/fixedoperation",
-		[]string{fixedOpResourceName},
-		update,
+		[]string{com.FixedOperationResourceName},
+		[]uint64{com.Update},
 		patchFixedOperationH,
 	)
 
@@ -121,8 +110,8 @@ func Start() {
 		"readDealerContact",
 		http.MethodGet,
 		"/contact/{cid}",
-		[]string{dealerContactResourceName},
-		read,
+		[]string{com.ContactResourceName},
+		[]uint64{com.Read},
 		readDealerContactH,
 	)
 
@@ -130,8 +119,8 @@ func Start() {
 		"readDealerContacts",
 		http.MethodGet,
 		"/contacts",
-		[]string{dealerContactResourceName},
-		read,
+		[]string{com.ContactResourceName},
+		[]uint64{com.Read},
 		readDealerContactsH,
 	)
 
@@ -139,16 +128,16 @@ func Start() {
 		"readDealerGoal",
 		http.MethodGet,
 		"/goal/{gid}",
-		[]string{dealerGoalResourceName},
-		read,
+		[]string{com.GoalResourceName},
+		[]uint64{com.Read},
 		readDealerGoalH,
 	)
 	tapi.AddRoute(
 		"readDealerGoals",
 		http.MethodGet,
 		"/goals",
-		[]string{dealerGoalResourceName},
-		read,
+		[]string{com.GoalResourceName},
+		[]uint64{com.Read},
 		readDealerGoalsH,
 	)
 
@@ -156,8 +145,8 @@ func Start() {
 		"readDealerGroups",
 		http.MethodGet,
 		"/groups",
-		[]string{dealerGroupResourceName},
-		read,
+		[]string{com.GroupResourceName},
+		[]uint64{com.Read},
 		readDealerGroupsH,
 	)
 
@@ -165,8 +154,8 @@ func Start() {
 		"readDealerGroups",
 		http.MethodGet,
 		"/aggregate/dealer/fixedoperation",
-		[]string{dealerResourceName, fixedOpResourceName},
-		read,
+		[]string{com.DealerResourceName, com.FixedOperationResourceName},
+		[]uint64{com.Read},
 		aggregateDealerFixedOpH,
 	)
 
