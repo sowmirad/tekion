@@ -31,7 +31,9 @@ import (
 	"net/http"
 
 	"bitbucket.org/tekion/tacl/acl"
-	"bitbucket.org/tekion/tbaas/log"
+	"bitbucket.org/tekion/tbaas/apiContext"
+
+	log "bitbucket.org/tekion/tbaas/log/v1"
 	"bitbucket.org/tekion/tbaas/tapi"
 )
 
@@ -39,11 +41,129 @@ import (
 
 // Start add routes and start the service at specified port
 func Start() {
+
+	//tapi.AddRoute(
+	//	"readDealer",
+	//	http.MethodGet,
+	//	"/dealer",
+	//	[]string{com.DealerResourceName},
+	//	[]uint64{com.Read},
+	//	readDealerH,
+	//)
+	//
+	//tapi.AddRoute(
+	//	"dealersList",
+	//	http.MethodPost,
+	//	"/dealers",
+	//	[]string{com.DealerResourceName},
+	//	[]uint64{com.Read},
+	//	dealersListH,
+	//)
+	//
+	//tapi.AddRoute(
+	//	"patchDealer",
+	//	http.MethodPatch,
+	//	"/dealer",
+	//	[]string{com.DealerResourceName},
+	//	[]uint64{com.Update},
+	//	patchDealerH,
+	//)
+	//// todo create and update should be one function. Figure out why and write one
+	///*	tapi.AddRoutes(
+	//	"createDealer",
+	//	http.MethodPost,
+	//	"/createDealer",
+	//	createDealer,
+	//	acl.ACLStruct{
+	//		// TODO PremittedRoles (SuperAdmin)
+	//		PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "ServiceDirector"},
+	//	},
+	//)*/
+	//tapi.AddRoute(
+	//	"saveDealer",
+	//	http.MethodPost,
+	//	"/dealer",
+	//	[]string{com.DealerResourceName},
+	//	[]uint64{com.Create + com.Update},
+	//	saveDealerH,
+	//)
+	//
+	//tapi.AddRoute(
+	//	"readFixedOperation",
+	//	http.MethodGet,
+	//	"/fixedoperation",
+	//	[]string{com.FixedOperationResourceName},
+	//	[]uint64{com.Read},
+	//	readFixedOperationH,
+	//)
+	//
+	//tapi.AddRoute(
+	//	"patchFixedOperation",
+	//	http.MethodPatch,
+	//	"/fixedoperation",
+	//	[]string{com.FixedOperationResourceName},
+	//	[]uint64{com.Update},
+	//	patchFixedOperationH,
+	//)
+	//
+	//tapi.AddRoute(
+	//	"readDealerContact",
+	//	http.MethodGet,
+	//	"/contact/{cid}",
+	//	[]string{com.ContactResourceName},
+	//	[]uint64{com.Read},
+	//	readDealerContactH,
+	//)
+	//
+	//tapi.AddRoute(
+	//	"readDealerContacts",
+	//	http.MethodGet,
+	//	"/contacts",
+	//	[]string{com.ContactResourceName},
+	//	[]uint64{com.Read},
+	//	readDealerContactsH,
+	//)
+	//
+	//tapi.AddRoute(
+	//	"readDealerGoal",
+	//	http.MethodGet,
+	//	"/goal/{gid}",
+	//	[]string{com.GoalResourceName},
+	//	[]uint64{com.Read},
+	//	readDealerGoalH,
+	//)
+	//tapi.AddRoute(
+	//	"readDealerGoals",
+	//	http.MethodGet,
+	//	"/goals",
+	//	[]string{com.GoalResourceName},
+	//	[]uint64{com.Read},
+	//	readDealerGoalsH,
+	//)
+	//
+	//tapi.AddRoute(
+	//	"readDealerGroups",
+	//	http.MethodGet,
+	//	"/groups",
+	//	[]string{com.GroupResourceName},
+	//	[]uint64{com.Read},
+	//	readDealerGroupsH,
+	//)
+	//
+	//tapi.AddRoute(
+	//	"readDealerGroups",
+	//	http.MethodGet,
+	//	"/aggregate/dealer/fixedoperation",
+	//	[]string{com.DealerResourceName, com.FixedOperationResourceName},
+	//	[]uint64{com.Read},
+	//	aggregateDealerFixedOpH,
+	//)
+
 	tapi.AddRoutes(
 		"readDealer",
 		http.MethodGet,
 		"/dealer",
-		readDealer,
+		readDealerH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "ServiceDirector", "Technician", "Dispatcher", "BDCSpecialist"},
 		},
@@ -52,7 +172,7 @@ func Start() {
 		"dealersList",
 		http.MethodPost,
 		"/dealers",
-		dealersList,
+		dealersListH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "ServiceDirector"},
 		},
@@ -61,7 +181,7 @@ func Start() {
 		"patchDealer",
 		http.MethodPatch,
 		"/dealer",
-		patchDealer,
+		patchDealerH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "ServiceDirector"},
 		},
@@ -81,7 +201,7 @@ func Start() {
 		"saveDealer",
 		http.MethodPost,
 		"/dealer",
-		saveDealer,
+		saveDealerH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "ServiceDirector"},
 		},
@@ -90,7 +210,7 @@ func Start() {
 		"readFixedOperation",
 		http.MethodGet,
 		"/fixedoperation",
-		readFixedOperation,
+		readFixedOperationH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher", "BDCSpecialist"},
 		},
@@ -99,7 +219,7 @@ func Start() {
 		"patchFixedOperation",
 		http.MethodPatch,
 		"/fixedoperation",
-		patchFixedOperation,
+		patchFixedOperationH,
 		acl.ACLStruct{
 			// TODO PremittedRoles (SuperAdmin)
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "ServiceDirector"},
@@ -109,7 +229,7 @@ func Start() {
 		"readDealerContact",
 		http.MethodGet,
 		"/contact/{cid}",
-		readDealerContact,
+		readDealerContactH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
 		},
@@ -118,7 +238,7 @@ func Start() {
 		"readDealerContacts",
 		http.MethodGet,
 		"/contacts",
-		readDealerContacts,
+		readDealerContactsH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
 		},
@@ -127,7 +247,7 @@ func Start() {
 		"readDealerGoal",
 		http.MethodGet,
 		"/goal/{gid}",
-		readDealerGoal,
+		readDealerGoalH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
 		},
@@ -136,7 +256,7 @@ func Start() {
 		"readDealerGoals",
 		http.MethodGet,
 		"/goals",
-		readDealerGoals,
+		readDealerGoalsH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
 		},
@@ -145,7 +265,7 @@ func Start() {
 		"readDealerGroups",
 		http.MethodGet,
 		"/groups",
-		readDealerGroups,
+		readDealerGroupsH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
 		},
@@ -154,13 +274,13 @@ func Start() {
 		"readDealerGroups",
 		http.MethodGet,
 		"/aggregate/dealer/fixedoperation",
-		aggregateDealerFixedOp,
+		aggregateDealerFixedOpH,
 		acl.ACLStruct{
 			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
 		},
 	)
 
 	//log service start info
-	log.GenericInfo("", "", "", "Started Tekion tdealer on port:8079")
+	log.GenericInfo(apiContext.TContext{}, "Started Tekion tdealer on port:8079", nil)
 	tapi.Start("8079", "/tdealer")
 }
