@@ -15,6 +15,7 @@ import {
   TEKION_CREATE_DEALER_REQUEST,
   TEKION_CREATE_DEALER_SUCCESS,
   TEKION_CREATE_DEALER_FAILURE,
+  TEKION_DEALER_RESET_STATE,
 } from './constants';
 import Services from './services';
 
@@ -44,9 +45,13 @@ const createDealerRequest = createAction(TEKION_CREATE_DEALER_REQUEST);
 const createDealerSuccess = createAction(TEKION_CREATE_DEALER_SUCCESS);
 const createDealerFailure = createAction(TEKION_CREATE_DEALER_FAILURE);
 
+export const resetDealerStateWithGivenState = createAction(
+  TEKION_DEALER_RESET_STATE,
+);
+
 export function getDealerInfo(config) {
   return async (dispatch) => {
-    dispatch(getDealerInfoRequest);
+    dispatch(getDealerInfoRequest());
     const { error, response } = await Services.getDealerInfo(config);
     if (response) {
       dispatch(getDealerInfoSuccess({ dealerInfo: response.data }));
@@ -59,7 +64,7 @@ export function getDealerInfo(config) {
 
 export function getFixedOperationForDealer(config) {
   return async (dispatch) => {
-    dispatch(getFixedOperationsRequest);
+    dispatch(getFixedOperationsRequest());
     const { error, response } = await Services.getFixedOperation(config);
     if (response) {
       dispatch(getFixedOperationsSuccess(response));
@@ -73,6 +78,12 @@ export function getFixedOperationForDealer(config) {
 export function setDealerInfo(dealerInfo) {
   return async (dispatch) => {
     dispatch(getDealerInfoSuccess({ dealerInfo }));
+  };
+}
+
+export function setFixedOperationInfo(fixedOperationInfo) {
+  return async (dispatch) => {
+    dispatch(getFixedOperationsSuccess({ data: fixedOperationInfo }));
   };
 }
 
@@ -90,8 +101,6 @@ export function getDealerList(config, payload) {
 }
 
 export function updateDealerInfo(config, payload) {
-  console.log('config in action', config);
-
   return async (dispatch) => {
     dispatch(updateDealerInfoRequest);
     const { error, response } = await Services.updateDealerInfo(
@@ -108,8 +117,6 @@ export function updateDealerInfo(config, payload) {
 }
 
 export function createNewDealer(config, payload) {
-  console.log('config in action', config);
-
   return async (dispatch) => {
     dispatch(createDealerRequest);
     const { error, response } = await Services.createNewDealer(config, payload);
