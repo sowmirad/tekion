@@ -3,9 +3,10 @@ package dealerService
 // This file contains all the models related to dealer
 
 import (
+	"time"
+
 	"bitbucket.org/tekion/tbaas/tapi"
 	"bitbucket.org/tekion/tenums/constants"
-	"time"
 )
 
 // Collection names used by dealer service
@@ -325,9 +326,27 @@ type fixedOperation struct {
 	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
-	DocumentVersion     float32  `bson:"documentVersion" json:"documentVersion"`
-	RecallOpCodeMapping string   `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
-	Printers            Printers `bson:"printers" json:"printers"`
+	DocumentVersion     float32 `bson:"documentVersion" json:"documentVersion"`
+	RecallOpCodeMapping string  `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
+	// List of printer types and their email addresses
+	Printers Printers `bson:"printers" json:"printers"`
+	PayTypes payTypes `bson:"payTypes" json:"payTypes"`
+}
+
+type payTypes []payType
+type payType struct {
+	ID               string     `bson:"id" json:"payTypeID"`
+	Code             string     `bson:"code" json:"code"`
+	Description      string     `bson:"description" json:"description"`
+	DefaultLaborType laborType  `bson:"defaultLaborType" json:"defaultLaborType"`
+	LaborTypes       laborTypes `bson:"laborTypes" json:"laborTypes"`
+}
+
+type laborTypes []laborType
+type laborType struct {
+	ID          string `bson:"id" json:"laborTypeID"`
+	Code        string `bson:"code" json:"code"`
+	Description string `bson:"description" json:"description"`
 }
 
 // model for printer email addresses
