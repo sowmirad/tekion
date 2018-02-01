@@ -333,10 +333,9 @@ type fixedOperation struct {
 	PayTypes payTypes `bson:"payTypes" json:"payTypes"`
 }
 
-type payTypes []payType
+type payTypes map[string]payType
 type payType struct {
 	ID               string     `bson:"id" json:"payTypeID"`
-	Code             string     `bson:"code" json:"code"`
 	Description      string     `bson:"description" json:"description"`
 	DefaultLaborType laborType  `bson:"defaultLaborType" json:"defaultLaborType"`
 	LaborTypes       laborTypes `bson:"laborTypes" json:"laborTypes"`
