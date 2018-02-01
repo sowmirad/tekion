@@ -15,6 +15,7 @@ import {
   TEKION_CREATE_DEALER_REQUEST,
   TEKION_CREATE_DEALER_SUCCESS,
   TEKION_CREATE_DEALER_FAILURE,
+  TEKION_DEALER_RESET_STATE,
 } from './constants';
 
 const initialState = ip.freeze({
@@ -33,7 +34,7 @@ const initialState = ip.freeze({
 export default function (state = initialState, action) {
   switch (action.type) {
     case TEKION_DEALER_INFO_REQUEST:
-      state = ip.set(state, 'dealerInfo', null);
+      // state = ip.set(state, 'dealerInfo', null);
       state = ip.set(state, 'requestStatus', 'fetching');
       return state;
 
@@ -43,13 +44,13 @@ export default function (state = initialState, action) {
       return state;
 
     case TEKION_DEALER_INFO_FAILURE:
-      state = ip.set(state, 'dealerInfo', null);
+      // state = ip.set(state, 'dealerInfo', null);
       state = ip.set(state, 'requestStatus', 'failed');
       return state;
 
     case TEKION_GET_FIXED_OPERATION_REQUEST:
       state = ip.set(state, 'fixedOperationStatus', 'fetching');
-      state = ip.set(state, 'fixedOperationData', null);
+      // state = ip.set(state, 'fixedOperationData', null);
       return state;
 
     case TEKION_GET_FIXED_OPERATION_SUCCESS:
@@ -59,7 +60,7 @@ export default function (state = initialState, action) {
 
     case TEKION_GET_FIXED_OPERATION_FAILURE:
       state = ip.set(state, 'fixedOperationStatus', 'failed');
-      state = ip.set(state, 'fixedOperationData', null);
+      // state = ip.set(state, 'fixedOperationData', null);
       return state;
 
     case TEKION_DEALER_LIST_REQUEST:
@@ -106,6 +107,11 @@ export default function (state = initialState, action) {
       state = ip.set(state, 'newDealerData', null);
       state = ip.set(state, 'newDealerDataStatus', 'failed');
       return state;
+
+    case TEKION_DEALER_RESET_STATE:
+      let targetState = JSON.parse(JSON.stringify(action.payload));
+      targetState = ip.freeze(targetState);
+      return targetState;
 
     default:
       return state;
