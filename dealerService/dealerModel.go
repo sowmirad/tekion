@@ -287,6 +287,8 @@ type fixedOperation struct {
 	EPANumber string `bson:"EPANumber" json:"EPANumber"`
 	// BARNumber Bureau of Automotive Repair Number
 	BARNumber string `bson:"BARNumber" json:"BARNumber"`
+	//pdi customer id of customer master
+	PDICustomerID string `bson:"PDICustomerID" json:"PDICustomerID"`
 	// ManufacturerLogos list of manufacturer logos
 	ManufacturerLogos []image `bson:"manufacturerLogos" json:"manufacturerLogos"`
 	// Holidays list of holidays
@@ -333,7 +335,7 @@ type fixedOperation struct {
 	PayTypes payTypes `bson:"payTypes" json:"payTypes"`
 }
 
-type payTypes []payType
+type payTypes map[string]payType
 type payType struct {
 	ID               string     `bson:"id" json:"payTypeID"`
 	Code             string     `bson:"code" json:"code"`
