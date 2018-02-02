@@ -29,7 +29,35 @@ const initialState = ip.freeze({
   updateDealerDataStatus: null,
   newDealerData: null,
   newDealerDataStatus: null,
+  cpPayTypeList: [],
+  ipPayTypeList: [],
+  wpPayTypeList: [],
 });
+
+function convertPaytypeForUI(paytypeList) {
+  console.log('inside', paytypeList);
+
+  const result = [];
+  const payObj = {
+    laborTypeID: '',
+    code: '',
+    description: '',
+    key: '',
+  };
+
+  for (let index = 0; index < paytypeList.length; index++) {
+    const itemObj = paytypeList[index];
+
+    payObj.key = `${itemObj.code} |${itemObj.description}`;
+    payObj.code = itemObj.code;
+    payObj.description = itemObj.description;
+    payObj.laborTypeID = itemObj.laborTypeID;
+
+    result.push(payObj);
+  }
+
+  return result;
+}
 
 export default function (state = initialState, action) {
   switch (action.type) {
@@ -54,8 +82,25 @@ export default function (state = initialState, action) {
       return state;
 
     case TEKION_GET_FIXED_OPERATION_SUCCESS:
+      const paytype = action.payload.data.payTypes;
+
       state = ip.set(state, 'fixedOperationStatus', 'success');
       state = ip.set(state, 'fixedOperationData', action.payload.data);
+      state = ip.set(
+        state,
+        'cpPayTypeList',
+        convertPaytypeForUI(paytype.CustomerPay.laborTypes),
+      );
+      state = ip.set(
+        state,
+        'wpPayTypeList',
+        convertPaytypeForUI(paytype.WarrantyPay.laborTypes),
+      );
+      state = ip.set(
+        state,
+        'ipPayTypeList',
+        convertPaytypeForUI(paytype.InternalPay.laborTypes),
+      );
       return state;
 
     case TEKION_GET_FIXED_OPERATION_FAILURE:
