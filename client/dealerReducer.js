@@ -40,7 +40,7 @@ const initialState = ip.freeze({
 function convertPaytypeForUI(paytypeList) {
   console.log('inside', paytypeList);
 
-  const result = [];
+  let result = [];
   const payObj = {
     laborTypeID: '',
     code: '',
@@ -51,7 +51,7 @@ function convertPaytypeForUI(paytypeList) {
   for (let index = 0; index < paytypeList.length; index++) {
     let itemObj = paytypeList[index];
 
-    payObj.key = `${paytypeList[index].code} |${itemObj.description}`;
+    payObj.key = `${itemObj.code} |${itemObj.description}`;
     payObj.code = itemObj.code;
     payObj.description = itemObj.description;
     payObj.laborTypeID = itemObj.laborTypeID;
