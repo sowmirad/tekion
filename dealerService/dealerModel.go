@@ -287,6 +287,8 @@ type fixedOperation struct {
 	EPANumber string `bson:"EPANumber" json:"EPANumber"`
 	// BARNumber Bureau of Automotive Repair Number
 	BARNumber string `bson:"BARNumber" json:"BARNumber"`
+	//pdi customer id of customer master
+	PDICustomerID string `bson:"PDICustomerID" json:"PDICustomerID"`
 	// ManufacturerLogos list of manufacturer logos
 	ManufacturerLogos []image `bson:"manufacturerLogos" json:"manufacturerLogos"`
 	// Holidays list of holidays
