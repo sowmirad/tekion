@@ -41,7 +41,6 @@ const initialState = ip.freeze({
 });
 
 function convertPaytypeForUI(paytypeList) {
-  console.log('inside', paytypeList);
 
   const result = [];
   for (let index = 0; index < paytypeList.length; index++) {
@@ -59,7 +58,6 @@ function convertPaytypeForUI(paytypeList) {
     payObj.description = itemObj.description;
     payObj.laborTypeID = itemObj.laborTypeID;
 
-    console.log('pushing object is -', payObj);
     result[index] = payObj;
   }
 
