@@ -1,4 +1,6 @@
 import ip from 'icepick';
+import idx from 'idx';
+
 import {
   TEKION_DEALER_INFO_REQUEST,
   TEKION_DEALER_INFO_SUCCESS,
@@ -41,7 +43,6 @@ const initialState = ip.freeze({
 });
 
 function convertPaytypeForUI(paytypeList) {
-
   const result = [];
   for (let index = 0; index < paytypeList.length; index++) {
     const payObj = {
@@ -60,6 +61,28 @@ function convertPaytypeForUI(paytypeList) {
 
     result[index] = payObj;
   }
+
+  return result;
+}
+
+function convertDefaultPayTypeForUI(payTypeObject) {
+  const result = [];
+
+  const payObj = {
+    laborTypeID: '',
+    code: '',
+    description: '',
+    key: '',
+  };
+
+  const itemObj = payTypeObject;
+
+  payObj.key = `${itemObj.code} |${itemObj.description}`;
+  payObj.code = itemObj.code;
+  payObj.description = itemObj.description;
+  payObj.laborTypeID = itemObj.laborTypeID;
+
+  result[0] = payObj;
 
   return result;
 }
@@ -87,11 +110,7 @@ export default function (state = initialState, action) {
       return state;
 
     case TEKION_GET_FIXED_OPERATION_SUCCESS:
-      const paytype = action.payload.data.payTypes;
-
-      const cpDefautLaborTypeValue = `${action.payload.data.payTypes.CustomerPay.defaultLaborType.code} |${action.payload.data.payTypes.CustomerPay.defaultLaborType.description}`;
-      const wpDefautLaborTypeValue = `${action.payload.data.payTypes.WarrantyPay.defaultLaborType.code} |${action.payload.data.payTypes.WarrantyPay.defaultLaborType.description}`;
-      const ipDefautLaborTypeValue = `${action.payload.data.payTypes.InternalPay.defaultLaborType.code} |${action.payload.data.payTypes.InternalPay.defaultLaborType.description}`;
+      const paytype = idx(action.payload, _ => _.data.payTypes);
 
       state = ip.set(state, 'fixedOperationStatus', 'success');
       state = ip.set(state, 'fixedOperationData', action.payload.data);
@@ -110,9 +129,28 @@ export default function (state = initialState, action) {
         'ipPayTypeList',
         convertPaytypeForUI(paytype.InternalPay.laborTypes),
       );
-      state = ip.set(state, 'cpDefautLaborType', cpDefautLaborTypeValue);
-      state = ip.set(state, 'ipDefautLaborType', ipDefautLaborTypeValue);
-      state = ip.set(state, 'wpDefautLaborType', wpDefautLaborTypeValue);
+
+      state = ip.set(
+        state,
+        'cpDefautLaborType',
+        convertDefaultPayTypeForUI(
+          idx(action.payload.data, _ => _.payTypes.CustomerPay.defaultLaborType),
+        ),
+      );
+      state = ip.set(
+        state,
+        'ipDefautLaborType',
+        convertDefaultPayTypeForUI(
+          idx(action.payload.data, _ => _.payTypes.InternalPay.defaultLaborType),
+        ),
+      );
+      state = ip.set(
+        state,
+        'wpDefautLaborType',
+        convertDefaultPayTypeForUI(
+          idx(action.payload.data, _ => _.payTypes.WarrantyPay.defaultLaborType),
+        ),
+      );
 
       state = ip.set(
         state,
