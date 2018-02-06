@@ -1,4 +1,6 @@
 import ip from 'icepick';
+import idx from 'idx';
+
 import {
   TEKION_DEALER_INFO_REQUEST,
   TEKION_DEALER_INFO_SUCCESS,
@@ -108,7 +110,7 @@ export default function (state = initialState, action) {
       return state;
 
     case TEKION_GET_FIXED_OPERATION_SUCCESS:
-      const paytype = action.payload.data.payTypes;
+      const paytype = idx(action.payload, _ => _.data.payTypes);
 
       state = ip.set(state, 'fixedOperationStatus', 'success');
       state = ip.set(state, 'fixedOperationData', action.payload.data);
@@ -127,25 +129,26 @@ export default function (state = initialState, action) {
         'ipPayTypeList',
         convertPaytypeForUI(paytype.InternalPay.laborTypes),
       );
+
       state = ip.set(
         state,
         'cpDefautLaborType',
         convertDefaultPayTypeForUI(
-          action.payload.data.payTypes.CustomerPay.defaultLaborType,
+          idx(action.payload.data, _ => _.payTypes.CustomerPay.defaultLaborType),
         ),
       );
       state = ip.set(
         state,
         'ipDefautLaborType',
         convertDefaultPayTypeForUI(
-          action.payload.data.payTypes.InternalPay.defaultLaborType,
+          idx(action.payload.data, _ => _.payTypes.InternalPay.defaultLaborType),
         ),
       );
       state = ip.set(
         state,
         'wpDefautLaborType',
         convertDefaultPayTypeForUI(
-          action.payload.data.payTypes.WarrantyPay.defaultLaborType,
+          idx(action.payload.data, _ => _.payTypes.WarrantyPay.defaultLaborType),
         ),
       );
 
