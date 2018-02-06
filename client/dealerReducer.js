@@ -64,7 +64,8 @@ function convertPaytypeForUI(paytypeList) {
 }
 
 function convertDefaultPayTypeForUI(payTypeObject) {
-  const result = {};
+  const result = [];
+
   const payObj = {
     laborTypeID: '',
     code: '',
@@ -79,9 +80,7 @@ function convertDefaultPayTypeForUI(payTypeObject) {
   payObj.description = itemObj.description;
   payObj.laborTypeID = itemObj.laborTypeID;
 
-  result = payObj;
-
-  console.log('value is--', result);
+  result[0] = payObj;
 
   return result;
 }
