@@ -312,13 +312,23 @@ type fixedOperation struct {
 	// DoorRates fixed operation door rates
 	DoorRates []doorRate `bson:"doorRates" json:"doorRates"`
 	// Disclaimer dealers disclaimer message
-	Disclaimer            string         `bson:"disclaimer" json:"disclaimer"`
-	PayTypeMapping        payTypeMapping `bson:"payTypeMapping" json:"payTypeMapping"`
-	DefaultPrinter        string         `bson:"defaultPrinter" json:"defaultPrinter"`
-	ConcernType           []string       `bson:"concernType" json:"concernType"`
-	CustomConcernOpcode   string         `bson:"customConcernOpcode" json:"customConcernOpcode"`
-	ServiceMenuDisclaimer string         `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
-	PrinterEmail          string         `bson:"printerEmail" json:"printerEmail"`
+	Disclaimer     string   `bson:"disclaimer" json:"disclaimer"`
+	DefaultPrinter string   `bson:"defaultPrinter" json:"defaultPrinter"`
+	ConcernType    []string `bson:"concernType" json:"concernType"`
+
+	ServiceMenuDisclaimer string `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
+	PrinterEmail          string `bson:"printerEmail" json:"printerEmail"`
+	// List of printer types and their email addresses
+	Printers Printers `bson:"printers" json:"printers"`
+
+	CustomConcernOpcode string `bson:"customConcernOpcode" json:"customConcernOpcode"`
+	RecallOpCodeMapping string `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
+
+	PayTypeMapping payTypeMapping `bson:"payTypeMapping" json:"payTypeMapping"`
+	PayTypes       payTypes       `bson:"payTypes" json:"payTypes"`
+
+	ApplicationURLs map[string]string `bson:"applicationURLs" json:"applicationURLs"`
+
 	// IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// LastUpdatedByUser data updated by who
@@ -328,12 +338,7 @@ type fixedOperation struct {
 	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
-	DocumentVersion     float32           `bson:"documentVersion" json:"documentVersion"`
-	RecallOpCodeMapping string            `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
-	ApplicationURLs     map[string]string `bson:"applicationURLs" json:"applicationURLs"`
-	// List of printer types and their email addresses
-	Printers Printers `bson:"printers" json:"printers"`
-	PayTypes payTypes `bson:"payTypes" json:"payTypes"`
+	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
 }
 
 type payTypes map[string]payType
