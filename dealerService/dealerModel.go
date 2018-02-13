@@ -328,8 +328,9 @@ type fixedOperation struct {
 	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
-	DocumentVersion     float32 `bson:"documentVersion" json:"documentVersion"`
-	RecallOpCodeMapping string  `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
+	DocumentVersion     float32           `bson:"documentVersion" json:"documentVersion"`
+	RecallOpCodeMapping string            `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
+	ApplicationURLs     map[string]string `bson:"applicationURLs" json:"applicationURLs"`
 	// List of printer types and their email addresses
 	Printers Printers `bson:"printers" json:"printers"`
 	PayTypes payTypes `bson:"payTypes" json:"payTypes"`
