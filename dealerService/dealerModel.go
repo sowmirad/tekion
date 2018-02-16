@@ -287,8 +287,8 @@ type fixedOperation struct {
 	EPANumber string `bson:"EPANumber" json:"EPANumber"`
 	// BARNumber Bureau of Automotive Repair Number
 	BARNumber string `bson:"BARNumber" json:"BARNumber"`
-	//pdi customer id of customer master
-	PDICustomerID string `bson:"PDICustomerID" json:"PDICustomerID"`
+	//pdi user info
+	PDIDetail pdiDetail `bson:"PDIDetail" json:"PDIDetail"`
 	// ManufacturerLogos list of manufacturer logos
 	ManufacturerLogos []image `bson:"manufacturerLogos" json:"manufacturerLogos"`
 	// Holidays list of holidays
@@ -339,6 +339,13 @@ type fixedOperation struct {
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
 	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+}
+
+type pdiDetail struct {
+	//pdi customer id of customer master
+	CustomerID string `bson:"customerID" json:"customerID"`
+	//default opcode for PDI
+	DefaultOpcodes []string `bson:"defaultOperationCodes" json:"defaultOperationCodes"`
 }
 
 type payTypes map[string]payType
