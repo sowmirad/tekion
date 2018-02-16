@@ -13,15 +13,12 @@ const makeMethod = (method, hasBody) => urlTemplate => (config, data) => {
     delete data[tag.slice(1)];
   }
 
-  const headers = { ...config };
-  if (config && config.contentType) {
-    headers['content-type'] = config.contentType;
-  }
-  delete headers.contentType;
-  if (config && config.access_token) {
-    headers['tekion-api-token'] = config.access_token;
-  }
-  delete headers.access_token;
+  const headerKeys = (config && config.headerKeys) || {};
+  const configKeys = Object.keys(headerKeys);
+  const headers = {};
+  configKeys.forEach((key) => {
+    headers[headerKeys[key]] = config[key];
+  });
 
   if (!hasBody) {
     const qs = querystring.stringify(data);
