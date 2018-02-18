@@ -160,12 +160,12 @@ export default function (state = initialState, action) {
       state = ip.set(
         state,
         'ip_defaultLaborType',
-        action.payload.data.payTypes.WarrantyPay.defaultLaborType,
+        action.payload.data.payTypes.InternalPay.defaultLaborType,
       );
       state = ip.set(
         state,
         'wp_defaultLaborType',
-        action.payload.data.payTypes.InternalPay.defaultLaborType,
+        action.payload.data.payTypes.WarrantyPay.defaultLaborType,
       );
 
       return state;
