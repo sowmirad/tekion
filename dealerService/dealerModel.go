@@ -94,7 +94,9 @@ type dealer struct {
 	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
-	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+	DocumentVersion       float32 `bson:"documentVersion" json:"documentVersion"`
+	LateAppointemntMins   int     `bson:"lateAppointmentMins" json:"lateAppointmentMins"`
+	MissedAppointemntMins int     `bson:"missedAppointmentMins" json:"missedAppointmentMins"`
 }
 
 // dealerContact
