@@ -3,9 +3,10 @@ package dealerService
 // This file contains all the models related to dealer
 
 import (
+	"time"
+
 	"bitbucket.org/tekion/tbaas/tapi"
 	"bitbucket.org/tekion/tenums/constants"
-	"time"
 )
 
 // Collection names used by dealer service
@@ -93,7 +94,9 @@ type dealer struct {
 	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
-	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+	DocumentVersion       float32 `bson:"documentVersion" json:"documentVersion"`
+	LateAppointemntMins   int     `bson:"lateAppointmentMins" json:"lateAppointmentMins"`
+	MissedAppointemntMins int     `bson:"missedAppointmentMins" json:"missedAppointmentMins"`
 }
 
 // dealerContact
@@ -286,6 +289,8 @@ type fixedOperation struct {
 	EPANumber string `bson:"EPANumber" json:"EPANumber"`
 	// BARNumber Bureau of Automotive Repair Number
 	BARNumber string `bson:"BARNumber" json:"BARNumber"`
+	//pdi user info
+	PDIDetail pdiDetail `bson:"PDIDetail" json:"PDIDetail"`
 	// ManufacturerLogos list of manufacturer logos
 	ManufacturerLogos []image `bson:"manufacturerLogos" json:"manufacturerLogos"`
 	// Holidays list of holidays
@@ -309,13 +314,23 @@ type fixedOperation struct {
 	// DoorRates fixed operation door rates
 	DoorRates []doorRate `bson:"doorRates" json:"doorRates"`
 	// Disclaimer dealers disclaimer message
-	Disclaimer            string         `bson:"disclaimer" json:"disclaimer"`
-	PayTypeMapping        payTypeMapping `bson:"payTypeMapping" json:"payTypeMapping"`
-	DefaultPrinter        string         `bson:"defaultPrinter" json:"defaultPrinter"`
-	ConcernType           []string       `bson:"concernType" json:"concernType"`
-	CustomConcernOpcode   string         `bson:"customConcernOpcode" json:"customConcernOpcode"`
-	ServiceMenuDisclaimer string         `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
-	PrinterEmail          string         `bson:"printerEmail" json:"printerEmail"`
+	Disclaimer     string   `bson:"disclaimer" json:"disclaimer"`
+	DefaultPrinter string   `bson:"defaultPrinter" json:"defaultPrinter"`
+	ConcernType    []string `bson:"concernType" json:"concernType"`
+
+	ServiceMenuDisclaimer string `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
+	PrinterEmail          string `bson:"printerEmail" json:"printerEmail"`
+	// List of printer types and their email addresses
+	Printers Printers `bson:"printers" json:"printers"`
+
+	CustomConcernOpcode string `bson:"customConcernOpcode" json:"customConcernOpcode"`
+	RecallOpCodeMapping string `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
+
+	PayTypeMapping payTypeMapping `bson:"payTypeMapping" json:"payTypeMapping"`
+	PayTypes       payTypes       `bson:"payTypes" json:"payTypes"`
+
+	ApplicationURLs map[string]string `bson:"applicationURLs" json:"applicationURLs"`
+
 	// IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// LastUpdatedByUser data updated by who
@@ -325,9 +340,30 @@ type fixedOperation struct {
 	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
 	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
 	// DocumentVersion to keep track of the changes - DEFAULT 1.0
-	DocumentVersion     float32  `bson:"documentVersion" json:"documentVersion"`
-	RecallOpCodeMapping string   `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
-	Printers            Printers `bson:"printers" json:"printers"`
+	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+}
+
+type pdiDetail struct {
+	//pdi customer id of customer master
+	CustomerID string `bson:"customerID" json:"customerID"`
+	//default opcode for PDI
+	DefaultOpcodes []string `bson:"defaultOperationCodes" json:"defaultOperationCodes"`
+}
+
+type payTypes map[string]payType
+type payType struct {
+	ID               string     `bson:"id" json:"payTypeID"`
+	Code             string     `bson:"code" json:"code"`
+	Description      string     `bson:"description" json:"description"`
+	DefaultLaborType laborType  `bson:"defaultLaborType" json:"defaultLaborType"`
+	LaborTypes       laborTypes `bson:"laborTypes" json:"laborTypes"`
+}
+
+type laborTypes []laborType
+type laborType struct {
+	ID          string `bson:"id" json:"laborTypeID"`
+	Code        string `bson:"code" json:"code"`
+	Description string `bson:"description" json:"description"`
 }
 
 // model for printer email addresses

@@ -30,8 +30,10 @@ package dealerService
 import (
 	"net/http"
 
-	"bitbucket.org/tekion/tacl/acl"
-	"bitbucket.org/tekion/tbaas/log"
+	"bitbucket.org/tekion/tbaas/apiContext"
+	com "bitbucket.org/tekion/tenums/common"
+
+	log "bitbucket.org/tekion/tbaas/log/v1"
 	"bitbucket.org/tekion/tbaas/tapi"
 )
 
@@ -39,128 +41,103 @@ import (
 
 // Start add routes and start the service at specified port
 func Start() {
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"readDealer",
 		http.MethodGet,
 		"/dealer",
-		readDealer,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "ServiceDirector", "Technician", "Dispatcher", "BDCSpecialist"},
-		},
+		map[string]uint8{com.DealerResourceName: com.Read},
+		readDealerH,
 	)
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"dealersList",
 		http.MethodPost,
 		"/dealers",
-		dealersList,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "ServiceDirector"},
-		},
+		map[string]uint8{com.DealerResourceName: com.Read},
+		dealersListH,
 	)
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"patchDealer",
 		http.MethodPatch,
 		"/dealer",
-		patchDealer,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "ServiceDirector"},
-		},
+		map[string]uint8{com.DealerResourceName: com.Update},
+		patchDealerH,
 	)
-	// todo create and update should be one function. Figure out why and write one
-	/*	tapi.AddRoutes(
-		"createDealer",
-		http.MethodPost,
-		"/createDealer",
-		createDealer,
-		acl.ACLStruct{
-			// TODO PremittedRoles (SuperAdmin)
-			PermittedRoles: []string{"SystemUser", "ServiceAdvisor", "ServiceDirector"},
-		},
-	)*/
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"saveDealer",
 		http.MethodPost,
 		"/dealer",
-		saveDealer,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "ServiceDirector"},
-		},
+		map[string]uint8{com.DealerResourceName: com.Create + com.Update},
+		saveDealerH,
 	)
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"readFixedOperation",
 		http.MethodGet,
 		"/fixedoperation",
-		readFixedOperation,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher", "BDCSpecialist"},
-		},
+		map[string]uint8{com.FixedOperationResourceName: com.Read},
+		readFixedOperationH,
 	)
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"patchFixedOperation",
 		http.MethodPatch,
 		"/fixedoperation",
-		patchFixedOperation,
-		acl.ACLStruct{
-			// TODO PremittedRoles (SuperAdmin)
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "SystemAdmin", "ServiceAdvisor", "ServiceDirector"},
-		},
+		map[string]uint8{com.FixedOperationResourceName: com.Update},
+		patchFixedOperationH,
 	)
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"readDealerContact",
 		http.MethodGet,
 		"/contact/{cid}",
-		readDealerContact,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
-		},
+		map[string]uint8{com.ContactResourceName: com.Read},
+		readDealerContactH,
 	)
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"readDealerContacts",
 		http.MethodGet,
 		"/contacts",
-		readDealerContacts,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
-		},
+		map[string]uint8{com.ContactResourceName: com.Read},
+		readDealerContactsH,
 	)
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"readDealerGoal",
 		http.MethodGet,
 		"/goal/{gid}",
-		readDealerGoal,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
-		},
+		map[string]uint8{com.GoalResourceName: com.Read},
+		readDealerGoalH,
 	)
-	tapi.AddRoutes(
+	tapi.AddRoute(
 		"readDealerGoals",
 		http.MethodGet,
 		"/goals",
-		readDealerGoals,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
-		},
+		map[string]uint8{com.GoalResourceName: com.Read},
+		readDealerGoalsH,
 	)
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"readDealerGroups",
 		http.MethodGet,
 		"/groups",
-		readDealerGroups,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
-		},
+		map[string]uint8{com.GroupResourceName: com.Read},
+		readDealerGroupsH,
 	)
-	tapi.AddRoutes(
+
+	tapi.AddRoute(
 		"readDealerGroups",
 		http.MethodGet,
 		"/aggregate/dealer/fixedoperation",
-		aggregateDealerFixedOp,
-		acl.ACLStruct{
-			PermittedRoles: []string{"Accountant", "Manager", "SystemUser", "ServiceAdvisor", "ServiceDirector", "SystemAdmin", "Technician", "Dispatcher"},
-		},
+		map[string]uint8{com.DealerResourceName: com.Read, com.FixedOperationResourceName: com.Read},
+		aggregateDealerFixedOpH,
 	)
 
 	//log service start info
-	log.GenericInfo("", "", "", "Started Tekion tdealer on port:8079")
+	log.GenericInfo(apiContext.TContext{}, "Started Tekion tdealer on port:8079", nil)
 	tapi.Start("8079", "/tdealer")
 }
