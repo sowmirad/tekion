@@ -292,7 +292,7 @@ type fixedOperation struct {
 	//pdi user info
 	PDIDetail pdiDetail `bson:"PDIDetail" json:"PDIDetail"`
 	//enable sent welcome message for customer portal
-	EnableMsgCP bool `bson:"enableMsgCP" json:"enableMsgCP"`
+	EnableCustomerPortal bool `bson:"enableCustomerPortal" json:"enableCustomerPortal"`
 	// ManufacturerLogos list of manufacturer logos
 	ManufacturerLogos []image `bson:"manufacturerLogos" json:"manufacturerLogos"`
 	// Holidays list of holidays
