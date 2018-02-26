@@ -54,7 +54,12 @@ function convertPaytypeForUI(paytypeList) {
 
     const itemObj = paytypeList[index];
 
-    payObj.key = `${itemObj.code} |${itemObj.description}`;
+    if (itemObj.description && itemObj.description.length > 0) {
+      payObj.key = `${itemObj.code} | ${itemObj.description}`;
+    } else {
+      payObj.key = `${itemObj.code}`;
+    }
+
     payObj.code = itemObj.code;
     payObj.description = itemObj.description;
     payObj.laborTypeID = itemObj.laborTypeID;
