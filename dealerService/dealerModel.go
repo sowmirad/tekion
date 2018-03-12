@@ -291,6 +291,8 @@ type fixedOperation struct {
 	BARNumber string `bson:"BARNumber" json:"BARNumber"`
 	//pdi user info
 	PDIDetail pdiDetail `bson:"PDIDetail" json:"PDIDetail"`
+	//dealerShip working hours weekly
+	WorkingHours string `bson:"workingHours" json:"workingHours"`
 	//enable sent welcome message for customer portal
 	EnableCustomerPortal bool `bson:"enableCustomerPortal" json:"enableCustomerPortal"`
 	// ManufacturerLogos list of manufacturer logos
