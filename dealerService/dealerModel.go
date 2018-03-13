@@ -299,6 +299,8 @@ type fixedOperation struct {
 	ManufacturerLogos []image `bson:"manufacturerLogos" json:"manufacturerLogos"`
 	// Holidays list of holidays
 	Holidays []holiday `bson:"holidays" json:"holidays"`
+	//flags for dealerTire , mimic ro status update
+	Flags map[string]bool `bson:"flags" json:"flags"`
 	// ServiceAdvisors list of service advisors
 	ServiceAdvisors []users `bson:"serviceAdvisors" json:"serviceAdvisors"`
 	// FloorCapacity list of floor capacities
