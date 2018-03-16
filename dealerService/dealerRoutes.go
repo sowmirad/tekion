@@ -91,45 +91,6 @@ func Start() {
 	)
 
 	tapi.AddRoute(
-		"readDealerContact",
-		http.MethodGet,
-		"/contact/{cid}",
-		map[string]uint8{com.ContactResourceName: com.Read},
-		readDealerContactH,
-	)
-
-	tapi.AddRoute(
-		"readDealerContacts",
-		http.MethodGet,
-		"/contacts",
-		map[string]uint8{com.ContactResourceName: com.Read},
-		readDealerContactsH,
-	)
-
-	tapi.AddRoute(
-		"readDealerGoal",
-		http.MethodGet,
-		"/goal/{gid}",
-		map[string]uint8{com.GoalResourceName: com.Read},
-		readDealerGoalH,
-	)
-	tapi.AddRoute(
-		"readDealerGoals",
-		http.MethodGet,
-		"/goals",
-		map[string]uint8{com.GoalResourceName: com.Read},
-		readDealerGoalsH,
-	)
-
-	tapi.AddRoute(
-		"readDealerGroups",
-		http.MethodGet,
-		"/groups",
-		map[string]uint8{com.GroupResourceName: com.Read},
-		readDealerGroupsH,
-	)
-
-	tapi.AddRoute(
 		"readDealerGroups",
 		http.MethodGet,
 		"/aggregate/dealer/fixedoperation",
