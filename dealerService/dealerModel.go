@@ -356,7 +356,7 @@ type pdiDetail struct {
 	DefaultOpcodes []string `bson:"defaultOperationCodes" json:"defaultOperationCodes"`
 }
 
-type payTypes map[string]payType
+type payTypes map[string]map[string]payType
 type payType struct {
 	ID               string     `bson:"id" json:"payTypeID"`
 	Code             string     `bson:"code" json:"code"`
