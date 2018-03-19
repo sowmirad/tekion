@@ -58,11 +58,6 @@ type dealer struct {
 
 	// Contact list of dealerContact ids
 	Contact []string `bson:"dealerContact" json:"dealerContact"`
-	// BannerImages dealer banner image
-	BannerImages []image `bson:"bannerImages" json:"bannerImages"`
-	// VideoURL dealer video url
-	VideoURL string `bson:"videoURL" json:"videoURL"`
-
 	// IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'
 	IsActive bool `bson:"isActive" json:"isActive"`
 	// LastUpdatedByUser data updated by who
