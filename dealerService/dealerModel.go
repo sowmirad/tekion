@@ -13,6 +13,8 @@ const (
 	serviceID                    = "tdealer"
 	dealerCollectionName         = "DealerMaster"
 	fixedOperationCollectionName = "FixedOperation"
+	dealerGoalCollectionName     = "DealerGoal"
+	dealerGroupCollectionName    = "DealerGroup"
 )
 
 // dealer struct contains dealer details
@@ -249,4 +251,52 @@ type listDealersReq struct {
 type readDealerAndFixedOpRes struct {
 	Dealer         *dealer         `json:"dealer"`
 	FixedOperation *fixedOperation `json:"fixedOperation"`
+}
+
+// dealerGoal
+// swagger:model dealerGoal
+type dealerGoal struct {
+	// ID goal unique identifier
+	ID string `bson:"_id" json:"dealerGoalID"`
+	// DealerID dealer unique identifier
+	DealerID string `bson:"dealerID" json:"dealerID"`
+	// HoursPerRepairOrder time to be spent by service advisor per RO
+	HoursPerRepairOrder string `bson:"hoursPerRepairOrder" json:"hoursPerRepairOrder"`
+	// TotalHours total time spent by service advisor
+	TotalHours string `bson:"totalHours" json:"totalHours"`
+	// AverageLaborRate average labor rate for service advisor
+	AverageLaborRate string `bson:"averageLaborRate" json:"averageLaborRate"`
+	// IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'
+	IsActive bool `bson:"isActive" json:"isActive"`
+	// LastUpdatedByUser data updated by who
+	LastUpdatedByUser string `bson:"lastUpdatedByUser" json:"lastUpdatedByUser"`
+	// LastUpdatedByDisplayName this is to display the name in the application
+	LastUpdatedByDisplayName string `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName"`
+	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
+	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
+	// DocumentVersion to keep track of the changes - DEFAULT 1.0
+	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
+}
+
+// dealerGroup
+// swagger:model dealerGroup
+type dealerGroup struct {
+	// ID unique identifier of dealer group
+	ID string `bson:"_id" json:"groupID"`
+	// Name of group
+	Name string `bson:"groupName" json:"groupName"`
+	// Dealers list of dealer ids
+	Dealers []string `bson:"dealers" json:"dealers"`
+	// Description of group
+	Desc string `bson:"description" json:"description"`
+	// IsActive is active T or F (TRUE or FALSE) -- DEFAULT 'T'
+	IsActive bool `bson:"isActive" json:"isActive"`
+	// LastUpdatedByUser data updated by who
+	LastUpdatedByUser string `bson:"lastUpdatedByUser" json:"lastUpdatedByUser"`
+	// LastUpdatedByDisplayName this is to display the name in the application
+	LastUpdatedByDisplayName string `bson:"lastUpdatedByDisplayName" json:"lastUpdatedByDisplayName"`
+	// LastUpdatedDateTime when was this last updated date and time - type: datetime - DEFAULT CURRENT_TIMESTAMP
+	LastUpdatedDateTime time.Time `bson:"lastUpdatedDateTime" json:"lastUpdatedDateTime"`
+	// DocumentVersion to keep track of the changes - DEFAULT 1.0
+	DocumentVersion float32 `bson:"documentVersion" json:"documentVersion"`
 }

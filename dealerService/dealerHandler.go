@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
 	"time"
@@ -452,4 +453,214 @@ func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
 	dealerAndFixedOp.FixedOperation = fixedOp
 
 	tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "document found", docFound, dealerAndFixedOp)
+}
+
+// swagger:operation GET /goal/{gid} dealerGoal readDealerGoal
+//
+// Returns dealer goal identified by dealer goal id passed as part of url
+//
+// By default /goal/{gid} returns complete dealer goal object.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
+// passing a list of comma separated fields you want in response.
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: gid
+//   in: path
+//   description: unique identifier of the dealer goal
+//   required: true
+//   type: string
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: e.g /goal/{id}?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: dealer goal object
+//     schema:
+//         "$ref": "#/definitions/dealerGoal"
+//   '204':
+//     description: dealer goal not found in data base
+//   '400':
+//     description: error querying data base
+func readDealerGoalH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
+
+	vars := mux.Vars(r)
+	goalID := vars["gid"]
+
+	fields := fetchFieldsFromRequest(r)
+	var goal dealerGoal
+	err := mongoManager.ReadOne(ctx.Tenant, dealerGoalCollectionName,
+		bson.M{"_id": goalID, "dealerID": ctx.DealerID}, selectedFields(fields), &goal)
+
+	if err == mgo.ErrNotFound {
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
+		return
+	} else if err != nil {
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
+		return
+	}
+
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", goal)
+}
+
+// swagger:operation GET /goals dealerGoals readDealerGoals
+//
+// Returns list of dealer goals identified by dealer id passed in header
+//
+// By default /goals returns list of complete dealer goals objects.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
+// passing a list of comma separated fields you want in response.
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: e.g /goals?fields=hoursPerRepairOrderAdvisorGoal,totalHoursAdvisorGoal,averageLaborRateAdvisorGoal
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: list of dealer goals
+//     schema:
+//       type: array
+//       items:
+//         "$ref": "#/definitions/dealerGoal"
+//   '204':
+//     description: dealer goals not found in data base
+//   '400':
+//     description: error querying data base
+func readDealerGoalsH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
+	dealerID := ctx.DealerID // should be corrected to Dealer-ID
+
+	fields := fetchFieldsFromRequest(r)
+	var goals []dealerGoal
+	err := mongoManager.ReadAll(ctx.Tenant, dealerGoalCollectionName,
+		bson.M{"dealerID": dealerID}, selectedFields(fields), &goals)
+
+	if err != nil {
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
+		return
+	}
+
+	if len(goals) == 0 {
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
+		return
+	}
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", goals)
+}
+
+// swagger:operation GET /groups dealerGroups readDealerGroups
+//
+// Returns list of dealer groups identified by dealer id passed in header
+//
+// By default /groups returns list of complete dealer groups objects.
+// In case you need only certain fields, you can specify an optional query parameter "fields",
+// passing a list of comma separated fields you want in response.
+//
+// ---
+// produces:
+// - application/json
+// parameters:
+// - name: dealerid
+//   in: header
+//   description: unique identifier of the dealer
+//   required: true
+//   type: string
+// - name: clientid
+//   in: header
+//   description: client type
+//   required: true
+//   type: string
+// - name: tenantname
+//   in: header
+//   description: current tenant name
+//   required: true
+//   type: string
+// - name: tekion-api-token
+//   in: header
+//   description: auth token
+//   required: true
+//   type: string
+// - name: fields
+//   in: query
+//   description: e.g /groups?fields=dealerGroupName,dealerGroupName,dealers
+//   required: false
+//   type: string
+// responses:
+//   '200':
+//     description: list of dealer groups
+//     schema:
+//       type: array
+//       items:
+//         "$ref": "#/definitions/dealerGroup"
+//   '204':
+//     description: dealer groups not found in data base
+//   '400':
+//     description: error querying data base
+func readDealerGroupsH(w http.ResponseWriter, r *http.Request) {
+	ctx := getCustomCtx(r)
+	dealerID := ctx.DealerID // should be corrected to Dealer-ID
+
+	fields := fetchFieldsFromRequest(r)
+	var groups []dealerGroup
+	err := mongoManager.ReadAll(ctx.Tenant, dealerGroupCollectionName,
+		bson.M{"dealers": dealerID}, selectedFields(fields), &groups)
+	if err != nil {
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
+		return
+	}
+
+	if len(groups) == 0 {
+		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
+		return
+	}
+	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", groups)
 }

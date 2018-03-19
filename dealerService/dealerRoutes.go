@@ -97,6 +97,28 @@ func Start() {
 		map[string]uint8{com.DealerResourceName: com.Read, com.FixedOperationResourceName: com.Read},
 		aggregateDealerFixedOpH,
 	)
+	tapi.AddRoute(
+		"readDealerGoal",
+		http.MethodGet,
+		"/goal/{gid}",
+		map[string]uint8{com.GoalResourceName: com.Read},
+		readDealerGoalH,
+	)
+	tapi.AddRoute(
+		"readDealerGoals",
+		http.MethodGet,
+		"/goals",
+		map[string]uint8{com.GoalResourceName: com.Read},
+		readDealerGoalsH,
+	)
+
+	tapi.AddRoute(
+		"readDealerGroups",
+		http.MethodGet,
+		"/groups",
+		map[string]uint8{com.GroupResourceName: com.Read},
+		readDealerGroupsH,
+	)
 
 	//log service start info
 	log.GenericInfo(apiContext.TContext{}, "Started Tekion tdealer on port:8079", nil)
