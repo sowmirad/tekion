@@ -124,7 +124,7 @@ export default function (state = initialState, action) {
       return state;
     
     case TEKION_GET_LABORTYPES_FOR_MAKE: {
-      const make = action.payload;
+      const make = action.payload && action.payload.toLowerCase();
       const paytype = idx(state.fixedOperationData, _ => _.payTypes[make]);
       state = ip.set(
         state,
