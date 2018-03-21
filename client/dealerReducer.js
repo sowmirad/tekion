@@ -127,8 +127,12 @@ export default function (state = initialState, action) {
       return state;
     
     case TEKION_GET_LABORTYPES_FOR_MAKE: {
-      const make = action.payload && action.payload.toLowerCase();
-      const paytype = idx(state.fixedOperationData, _ => _.payTypes[make]);
+      let make = action.payload && action.payload.toLowerCase();
+      let paytype = idx(state.fixedOperationData, _ => _.makePayTypes.makePayTypesMap[make]);
+      if(!paytype) {
+        make = idx(state.fixedOperationData, _ => _.makePayTypes.defaultMake);
+        paytype = idx(state.fixedOperationData, _ => _.makePayTypes.makePayTypesMap[make]);
+      }
       state = ip.set(
         state,
         'cpPayTypeList',
