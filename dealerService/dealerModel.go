@@ -206,8 +206,8 @@ type pdiDetail struct {
 }
 
 type makePayTypes struct {
-	DefaultMake     string   `json:"defaultMake"`
-	MakePayTypesMap payTypes `json:"makePayTypesMap"`
+	DefaultMake     string   `bson:"defaultMake" json:"defaultMake"`
+	MakePayTypesMap payTypes `bson:"makePayTypesMap" json:"makePayTypesMap"`
 }
 
 type payTypes map[string]map[string]payType
