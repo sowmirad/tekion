@@ -180,9 +180,9 @@ type fixedOperation struct {
 	// List of printer types and their email addresses
 	Printers Printers `bson:"printers" json:"printers"`
 
-	CustomConcernOpcode string   `bson:"customConcernOpcode" json:"customConcernOpcode"`
-	RecallOpCodeMapping string   `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
-	PayTypes            payTypes `bson:"payTypes" json:"payTypes"`
+	CustomConcernOpcode string       `bson:"customConcernOpcode" json:"customConcernOpcode"`
+	RecallOpCodeMapping string       `bson:"recallOpCodeMapping" json:"recallOpCodeMapping"`
+	MakePayTypes        makePayTypes `bson:"makePayTypes" json:"makePayTypes"`
 
 	ApplicationURLs map[string]string `bson:"applicationURLs" json:"applicationURLs"`
 
@@ -203,6 +203,11 @@ type pdiDetail struct {
 	CustomerID string `bson:"customerID" json:"customerID"`
 	//default opcode for PDI
 	DefaultOpcodes []string `bson:"defaultOperationCodes" json:"defaultOperationCodes"`
+}
+
+type makePayTypes struct {
+	DefaultMake     string   `bson:"defaultMake" json:"defaultMake"`
+	MakePayTypesMap payTypes `bson:"makePayTypesMap" json:"makePayTypesMap"`
 }
 
 type payTypes map[string]map[string]payType
