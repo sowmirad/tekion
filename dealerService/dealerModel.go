@@ -159,8 +159,10 @@ type fixedOperation struct {
 	WorkingHours string `bson:"workingHours" json:"workingHours"`
 	//enable sent welcome message for customer portal
 	EnableCustomerPortal bool `bson:"enableCustomerPortal" json:"enableCustomerPortal"`
-	//flags for dealerTire , mimic ro status update
+	//generic bool flags for mimic ro status update etc.
 	Flags map[string]bool `bson:"flags" json:"flags"`
+	//generic int flags for dealerTire etc .
+	StateFlags map[string]int `bson:"stateFlags" json:"stateFlags"`
 	// DefaultOperationCodes dealers default operation codes
 	DefaultOperationCodes []string `bson:"defaultOperationCodes" json:"defaultOperationCodes"`
 	// RecommendedOperationCodes dealers recommended operation codes
