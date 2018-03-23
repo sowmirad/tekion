@@ -18,6 +18,7 @@ import {
   TEKION_CREATE_DEALER_SUCCESS,
   TEKION_CREATE_DEALER_FAILURE,
   TEKION_DEALER_RESET_STATE,
+  TEKION_GET_LABORTYPES_FOR_MAKE,
 } from './constants';
 
 const initialState = ip.freeze({
@@ -42,8 +43,9 @@ const initialState = ip.freeze({
   wp_defaultLaborType: null,
 });
 
-function convertPaytypeForUI(paytypeList) {
+function convertPaytypeForUI(paytypes) {
   const result = [];
+  const paytypeList = paytypes || [];
   for (let index = 0; index < paytypeList.length; index++) {
     const payObj = {
       laborTypeID: '',
@@ -81,8 +83,11 @@ function convertDefaultPayTypeForUI(payTypeObject) {
   };
 
   const itemObj = payTypeObject;
-
-  payObj.key = `${itemObj.code} |${itemObj.description}`;
+  if (itemObj.description && itemObj.description.length > 0) {
+    payObj.key = `${itemObj.code} | ${itemObj.description}`;
+  } else {
+    payObj.key = `${itemObj.code}`;
+  }
   payObj.code = itemObj.code;
   payObj.description = itemObj.description;
   payObj.laborTypeID = itemObj.laborTypeID;
@@ -119,61 +124,70 @@ export default function (state = initialState, action) {
 
       state = ip.set(state, 'fixedOperationStatus', 'success');
       state = ip.set(state, 'fixedOperationData', action.payload.data);
+      return state;
+    
+    case TEKION_GET_LABORTYPES_FOR_MAKE: {
+      let make = action.payload && action.payload.toLowerCase();
+      let paytype = idx(state.fixedOperationData, _ => _.makePayTypes.makePayTypesMap[make]);
+      if(!paytype) {
+        make = idx(state.fixedOperationData, _ => _.makePayTypes.defaultMake);
+        paytype = idx(state.fixedOperationData, _ => _.makePayTypes.makePayTypesMap[make]);
+      }
       state = ip.set(
         state,
         'cpPayTypeList',
-        convertPaytypeForUI(paytype.CustomerPay.laborTypes),
+        convertPaytypeForUI(idx(paytype, _ => _.CustomerPay.laborTypes)),
       );
       state = ip.set(
         state,
         'wpPayTypeList',
-        convertPaytypeForUI(paytype.WarrantyPay.laborTypes),
+        convertPaytypeForUI(idx(paytype, _ => _.WarrantyPay.laborTypes)),
       );
       state = ip.set(
         state,
         'ipPayTypeList',
-        convertPaytypeForUI(paytype.InternalPay.laborTypes),
+        convertPaytypeForUI(idx(paytype, _ => _.InternalPay.laborTypes)),
       );
 
       state = ip.set(
         state,
         'cpDefautLaborType',
         convertDefaultPayTypeForUI(
-          idx(action.payload.data, _ => _.payTypes.CustomerPay.defaultLaborType),
+          idx(paytype, _ => _.CustomerPay.defaultLaborType),
         ),
       );
       state = ip.set(
         state,
         'ipDefautLaborType',
         convertDefaultPayTypeForUI(
-          idx(action.payload.data, _ => _.payTypes.InternalPay.defaultLaborType),
+          idx(paytype, _ => _.InternalPay.defaultLaborType),
         ),
       );
       state = ip.set(
         state,
         'wpDefautLaborType',
         convertDefaultPayTypeForUI(
-          idx(action.payload.data, _ => _.payTypes.WarrantyPay.defaultLaborType),
+          idx(paytype, _ => _.WarrantyPay.defaultLaborType),
         ),
       );
 
       state = ip.set(
         state,
         'cp_defaultLaborType',
-        action.payload.data.payTypes.CustomerPay.defaultLaborType,
+        idx(paytype, _ => _.CustomerPay.defaultLaborType),
       );
       state = ip.set(
         state,
         'ip_defaultLaborType',
-        action.payload.data.payTypes.InternalPay.defaultLaborType,
+        idx(paytype, _ => _.InternalPay.defaultLaborType),
       );
       state = ip.set(
         state,
         'wp_defaultLaborType',
-        action.payload.data.payTypes.WarrantyPay.defaultLaborType,
+        idx(paytype, _ => _.WarrantyPay.defaultLaborType),
       );
-
       return state;
+    }
 
     case TEKION_GET_FIXED_OPERATION_FAILURE:
       state = ip.set(state, 'fixedOperationStatus', 'failed');

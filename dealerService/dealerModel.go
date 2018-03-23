@@ -53,6 +53,8 @@ type dealer struct {
 	DealershipCode string `bson:"dealershipCode" json:"dealershipCode"`
 	// Application code of dealer
 	ApplicationCode string `bson:"applicationCode" json:"applicationCode"`
+	// OperationSchedule list of operation hours of different units like sales, parts etc
+	OperationSchedule []dealerOperationSchedule `bson:"dealerOperationSchedule" json:"dealerOperationSchedule"`
 	// Group list of groups dealer is part of
 	Group []string `bson:"dealerGroup" json:"dealerGroup"`
 	// Address list of dealer addresses
@@ -75,6 +77,22 @@ type dealer struct {
 }
 
 // Embedded objects in dealer -- start
+
+// dealerOperationSchedule struct contains details of the dealer operation schedule,
+// stored as slice of embedded objects in dealer struct
+// swagger:model dealerOperationSchedule
+type dealerOperationSchedule struct {
+	// ID dealer operation schedule unique identifier
+	ID string `bson:"dealerOperationScheduleID" json:"dealerOperationScheduleID"` //
+	// DealerOperationType like service, sales, parts etc
+	DealerOperationType constants.DealerOperationType `bson:"dealerOperationType" json:"dealerOperationType"`
+	BusinessHours       []businessHours               `bson:"businessHours" json:"businessHours"`
+}
+
+type businessHours struct {
+	OpeningTime string `bson:"openingTime" json:"openingTime"`
+	ClosingTime string `bson:"closingTime" json:"closingTime"`
+}
 
 // image struct contains details of the image stored in S3 bucket, stored as slice of embedded objects in dealer struct
 // swagger:model image
