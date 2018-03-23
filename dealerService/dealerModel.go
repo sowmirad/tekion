@@ -86,7 +86,8 @@ type dealerOperationSchedule struct {
 	ID string `bson:"dealerOperationScheduleID" json:"dealerOperationScheduleID"` //
 	// DealerOperationType like service, sales, parts etc
 	DealerOperationType constants.DealerOperationType `bson:"dealerOperationType" json:"dealerOperationType"`
-	BusinessHours       []businessHours               `bson:"businessHours" json:"businessHours"`
+	//business hours of the dealer  per day ,follows iso weeks eg:- mon to sun
+	BusinessHours []businessHours `bson:"businessHours" json:"businessHours"`
 }
 
 type businessHours struct {
