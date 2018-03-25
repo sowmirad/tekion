@@ -91,21 +91,12 @@ func Start() {
 	)
 
 	tapi.AddRoute(
-		"readDealerContact",
+		"readDealerGroups",
 		http.MethodGet,
-		"/contact/{cid}",
-		map[string]uint8{com.ContactResourceName: com.Read},
-		readDealerContactH,
+		"/aggregate/dealer/fixedoperation",
+		map[string]uint8{com.DealerResourceName: com.Read, com.FixedOperationResourceName: com.Read},
+		aggregateDealerFixedOpH,
 	)
-
-	tapi.AddRoute(
-		"readDealerContacts",
-		http.MethodGet,
-		"/contacts",
-		map[string]uint8{com.ContactResourceName: com.Read},
-		readDealerContactsH,
-	)
-
 	tapi.AddRoute(
 		"readDealerGoal",
 		http.MethodGet,
@@ -127,14 +118,6 @@ func Start() {
 		"/groups",
 		map[string]uint8{com.GroupResourceName: com.Read},
 		readDealerGroupsH,
-	)
-
-	tapi.AddRoute(
-		"readDealerGroups",
-		http.MethodGet,
-		"/aggregate/dealer/fixedoperation",
-		map[string]uint8{com.DealerResourceName: com.Read, com.FixedOperationResourceName: com.Read},
-		aggregateDealerFixedOpH,
 	)
 
 	//log service start info

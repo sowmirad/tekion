@@ -16,6 +16,7 @@ import {
   TEKION_CREATE_DEALER_SUCCESS,
   TEKION_CREATE_DEALER_FAILURE,
   TEKION_DEALER_RESET_STATE,
+  TEKION_GET_LABORTYPES_FOR_MAKE,
 } from './constants';
 import Services from './services';
 
@@ -32,6 +33,8 @@ const getFixedOperationsSuccess = createAction(
 const getFixedOperationsFailure = createAction(
   TEKION_GET_FIXED_OPERATION_FAILURE,
 );
+
+export const getLaborTypesForMake = createAction(TEKION_GET_LABORTYPES_FOR_MAKE);
 
 const getDealerListRequest = createAction(TEKION_DEALER_LIST_REQUEST);
 const getDealerListSuccess = createAction(TEKION_DEALER_LIST_SUCCESS);

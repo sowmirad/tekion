@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
 	"time"
@@ -15,7 +16,6 @@ import (
 	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
 	"bitbucket.org/tekion/tbaas/tapi"
 
-	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -422,144 +422,37 @@ func patchFixedOperationH(w http.ResponseWriter, r *http.Request) {
 	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "fixed operations details updated successfully", nil)
 }
 
-// swagger:operation GET /contact/{cid} dealerContact readDealerContact
-//
-// Returns dealer contact identified by dealer contact id passed as part of url
-//
-// By default /contact/{cid} returns complete dealer contact object.
-// In case you need only certain fields, you can specify an optional query parameter "fields",
-// passing a list of comma separated fields you want in response.
-//
-// ---
-// produces:
-// - application/json
-// parameters:
-// - name: cid
-//   in: path
-//   description: unique identifier of the dealer contact
-//   required: true
-//   type: string
-// - name: dealerid
-//   in: header
-//   description: unique identifier of the dealer
-//   required: true
-//   type: string
-// - name: clientid
-//   in: header
-//   description: client type
-//   required: true
-//   type: string
-// - name: tenantname
-//   in: header
-//   description: current tenant name
-//   required: true
-//   type: string
-// - name: tekion-api-token
-//   in: header
-//   description: auth token
-//   required: true
-//   type: string
-// - name: fields
-//   in: query
-//   description: e.g /contact/{cid}?fields=user,userDisplayName,userDisplayTitle
-//   required: false
-//   type: string
-// responses:
-//   '200':
-//     description: dealer contact object
-//     schema:
-//         "$ref": "#/definitions/dealerContact"
-//   '204':
-//     description: dealer contact not found in data base
-//   '400':
-//     description: error querying data base
-func readDealerContactH(w http.ResponseWriter, r *http.Request) {
+func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
 	ctx := getCustomCtx(r)
+	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
-	vars := mux.Vars(r)
-	contactID := vars["cid"]
-
-	fields := fetchFieldsFromRequest(r)
-	var contact dealerContact
-	err := mongoManager.ReadOne(ctx.Tenant, dealerContactCollectionName,
-		bson.M{"_id": contactID, "dealerID": ctx.DealerID}, selectedFields(fields), &contact)
+	var dealer *dealer
+	err := mongoManager.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, nil, &dealer)
 	if err == mgo.ErrNotFound {
-		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
+		tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "dealer doc not found", dealerDocNotFound, nil)
 		return
 	} else if err != nil {
 		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
-	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", contact)
-}
-
-// swagger:operation GET /contacts dealerContacts readDealerContacts
-//
-// Returns list of dealer contacts identified by dealer id passed in header
-//
-// By default /contacts returns list of complete dealer contacts objects.
-// In case you need only certain fields, you can specify an optional query parameter "fields",
-// passing a list of comma separated fields you want in response.
-//
-// ---
-// produces:
-// - application/json
-// parameters:
-// - name: dealerid
-//   in: header
-//   description: unique identifier of the dealer
-//   required: true
-//   type: string
-// - name: clientid
-//   in: header
-//   description: client type
-//   required: true
-//   type: string
-// - name: tenantname
-//   in: header
-//   description: current tenant name
-//   required: true
-//   type: string
-// - name: tekion-api-token
-//   in: header
-//   description: auth token
-//   required: true
-//   type: string
-// - name: fields
-//   in: query
-//   description: e.g /contacts?fields=user,userDisplayName,userDisplayTitle
-//   required: false
-//   type: string
-// responses:
-//   '200':
-//     description: list of dealer contacts
-//     schema:
-//       type: array
-//       items:
-//         "$ref": "#/definitions/dealerContact"
-//   '204':
-//     description: dealer contacts not found in data base
-//   '400':
-//     description: error querying data base
-func readDealerContactsH(w http.ResponseWriter, r *http.Request) {
-	ctx := getCustomCtx(r)
-	dealerID := ctx.DealerID // should be corrected to Dealer-ID
-
-	fields := fetchFieldsFromRequest(r)
-	var contacts []dealerContact
-	err := mongoManager.ReadAll(ctx.Tenant, dealerContactCollectionName,
-		bson.M{"dealerID": dealerID}, selectedFields(fields), &contacts)
-	if err != nil {
+	var fixedOp *fixedOperation
+	err = mongoManager.ReadOne(ctx.Tenant, fixedOperationCollectionName,
+		bson.M{"dealerID": dealerID}, nil, &fixedOp)
+	if err == mgo.ErrNotFound {
+		tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusNoContent, "fixed operation doc not found",
+			fixedOpDocNotFound, nil)
+		return
+	} else if err != nil {
 		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
-	if len(contacts) == 0 {
-		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
-		return
-	}
-	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", contacts)
+	var dealerAndFixedOp readDealerAndFixedOpRes
+	dealerAndFixedOp.Dealer = dealer
+	dealerAndFixedOp.FixedOperation = fixedOp
+
+	tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "document found", docFound, dealerAndFixedOp)
 }
 
 // swagger:operation GET /goal/{gid} dealerGoal readDealerGoal
@@ -770,37 +663,4 @@ func readDealerGroupsH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", groups)
-}
-
-func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
-	ctx := getCustomCtx(r)
-	dealerID := ctx.DealerID // should be corrected to Dealer-ID
-
-	var dealer *dealer
-	err := mongoManager.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, nil, &dealer)
-	if err == mgo.ErrNotFound {
-		tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "dealer doc not found", dealerDocNotFound, nil)
-		return
-	} else if err != nil {
-		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
-		return
-	}
-
-	var fixedOp *fixedOperation
-	err = mongoManager.ReadOne(ctx.Tenant, fixedOperationCollectionName,
-		bson.M{"dealerID": dealerID}, nil, &fixedOp)
-	if err == mgo.ErrNotFound {
-		tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusNoContent, "fixed operation doc not found",
-			fixedOpDocNotFound, nil)
-		return
-	} else if err != nil {
-		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
-		return
-	}
-
-	var dealerAndFixedOp readDealerAndFixedOpRes
-	dealerAndFixedOp.Dealer = dealer
-	dealerAndFixedOp.FixedOperation = fixedOp
-
-	tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "document found", docFound, dealerAndFixedOp)
 }

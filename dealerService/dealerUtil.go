@@ -135,9 +135,6 @@ func (d *dealer) prepareUpdateQuery(ctx *customCtx) bson.M {
 	if len(d.Phone) != 0 {
 		updateQuery["phone"] = d.Phone
 	}
-	if len(d.VideoURL) != 0 {
-		updateQuery["videoURL"] = d.VideoURL
-	}
 
 	updateQuery["isActive"] = true
 	updateQuery["lastUpdatedByUser"] = d.LastUpdatedByUser
