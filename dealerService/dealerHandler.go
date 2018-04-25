@@ -93,7 +93,6 @@ func readDealerH(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var dealer dealer
-
 	err := mongoManager.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, selectedFields(fields), &dealer)
 	if err == mgo.ErrNotFound {
 		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
@@ -102,6 +101,10 @@ func readDealerH(w http.ResponseWriter, r *http.Request) {
 		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
+
+	//set dealer info in cache
+	go setCacheData(ctx, dealer, serviceID, dealerCollectionName, dealerID)
+
 	// No need to check if some thing was found or not. readOne returns "not found".
 	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", dealer)
 }
@@ -376,6 +379,7 @@ func readFixedOperationH(w http.ResponseWriter, r *http.Request) {
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	var fixedOperation fixedOperation
+
 	fields := fetchFieldsFromRequest(r)
 	err := mongoManager.ReadOne(ctx.Tenant, fixedOperationCollectionName,
 		bson.M{"dealerID": dealerID}, selectedFields(fields), &fixedOperation)
@@ -387,6 +391,10 @@ func readFixedOperationH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//set fixedOperation info in cache
+	go setCacheData(ctx, fixedOperation, serviceID, fixedOperationCollectionName, dealerID)
+
+	// No need to check if some thing was found or not. readOne returns "not found".
 	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", fixedOperation)
 }
 
@@ -451,7 +459,11 @@ func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
 	var dealerAndFixedOp readDealerAndFixedOpRes
 	dealerAndFixedOp.Dealer = dealer
 	dealerAndFixedOp.FixedOperation = fixedOp
+	//set dealer info in cache
+	go setCacheData(ctx, fixedOp, serviceID, fixedOperationCollectionName, dealerID)
 
+	//set dealer info in cache
+	go setCacheData(ctx, dealer, serviceID, dealerCollectionName, dealerID)
 	tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "document found", docFound, dealerAndFixedOp)
 }
 
