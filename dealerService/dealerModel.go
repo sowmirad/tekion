@@ -197,7 +197,6 @@ type fixedOperation struct {
 	ConcernType    []string `bson:"concernType" json:"concernType"`
 
 	ServiceMenuDisclaimer string `bson:"serviceMenuDisclaimer" json:"serviceMenuDisclaimer"`
-	PrinterEmail          string `bson:"printerEmail" json:"printerEmail"`
 	// List of printer types and their email addresses
 	Printers Printers `bson:"printers" json:"printers"`
 
