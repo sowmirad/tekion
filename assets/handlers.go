@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"fmt"
+
 	"bitbucket.org/tekion/erratum"
 	"bitbucket.org/tekion/tbaas/apiContext"
 	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
@@ -55,5 +57,11 @@ func assetsH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tapi.HTTPResponse(*ctx, w, http.StatusOK, "assets", assets)
+	if len(assets) != 1 {
+		err = fmt.Errorf(" multiple assets returned from db, request:%+v", arb)
+		tapi.HTTPErrorResponse(*ctx, w, serviceID, erratum.ErrorQueryingDB, err)
+		return
+	}
+
+	tapi.HTTPResponse(*ctx, w, http.StatusOK, "assets", assets[0])
 }

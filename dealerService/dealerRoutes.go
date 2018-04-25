@@ -121,14 +121,6 @@ func Start() {
 		readDealerGroupsH,
 	)
 
-	tapi.AddRoute(
-		"readDealerGroups",
-		http.MethodGet,
-		"/aggregate/dealer/fixedoperation/assets",
-		map[string]uint8{com.DealerResourceName: com.Read, com.FixedOperationResourceName: com.Read},
-		dealerFixedOpAssetsH,
-	)
-
 	//log service start info
 	log.GenericInfo(apiContext.TContext{}, "Started Tekion tdealer on port:8079", nil)
 	tapi.Start("8079", "/tdealer")

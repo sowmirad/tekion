@@ -664,36 +664,3 @@ func readDealerGroupsH(w http.ResponseWriter, r *http.Request) {
 	}
 	tapi.HTTPResponse(ctx.TContext, w, http.StatusOK, "Document found", groups)
 }
-
-func dealerFixedOpAssetsH(w http.ResponseWriter, r *http.Request) {
-	ctx := getCustomCtx(r)
-	dealerID := ctx.DealerID // should be corrected to Dealer-ID
-
-	var dealer *dealer
-	err := mMgr.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, nil, &dealer)
-	if err == mgo.ErrNotFound {
-		tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "dealer doc not found", dealerDocNotFound, nil)
-		return
-	} else if err != nil {
-		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
-		return
-	}
-
-	var fixedOp *fixedOperation
-	err = mMgr.ReadOne(ctx.Tenant, fixedOperationCollectionName,
-		bson.M{"dealerID": dealerID}, nil, &fixedOp)
-	if err == mgo.ErrNotFound {
-		tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusNoContent, "fixed operation doc not found",
-			fixedOpDocNotFound, nil)
-		return
-	} else if err != nil {
-		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)
-		return
-	}
-
-	var dealerAndFixedOp readDealerAndFixedOpRes
-	dealerAndFixedOp.Dealer = dealer
-	dealerAndFixedOp.FixedOperation = fixedOp
-
-	tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "document found", docFound, dealerAndFixedOp)
-}

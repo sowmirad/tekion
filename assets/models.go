@@ -7,24 +7,22 @@ type assets struct {
 	OEMs      []string `bson:"OEMs" json:"OEMs,omitempty"`
 	DealerIDs []string `bson:"dealerIDs" json:"dealerIDs,omitempty"`
 
-	Scheduling     []asset `bson:"scheduling" json:"scheduling,omitempty"`
-	Appointment    []asset `bson:"appointment" json:"appointment,omitempty"`
-	Estimate       []asset `bson:"estimate" json:"estimate,omitempty"`
-	CustomerPortal []asset `bson:"customerPortal" json:"customerPortal,omitempty"`
-	CDMSWeb        []asset `bson:"cdmsWeb" json:"cdmsWeb,omitempty"`
-	CDMSMobile     []asset `bson:"cdmsMobile" json:"cdmsMobile,omitempty"`
+	Scheduling     map[string]asset `bson:"scheduling" json:"scheduling,omitempty"`
+	Appointment    map[string]asset `bson:"appointment" json:"appointment,omitempty"`
+	Estimate       map[string]asset `bson:"estimate" json:"estimate,omitempty"`
+	CustomerPortal map[string]asset `bson:"customerPortal" json:"customerPortal,omitempty"`
+	CDMSWeb        map[string]asset `bson:"cdmsWeb" json:"cdmsWeb,omitempty"`
+	CDMSMobile     map[string]asset `bson:"cdmsMobile" json:"cdmsMobile,omitempty"`
 }
 
 // swagger:asset image
 type asset struct {
-	// Width of the stored image in pixels
-	Width int32 `bson:"width" json:"width"`
-	// Height of the stored image in pixels
-	Height int32 `bson:"height" json:"height"`
-	// Title image title - e.g Dublin logo
-	Title string `bson:"title" json:"title"`
-	// ImageID image id - unique identifier of the image in S3 bucket
-	ImageID string `bson:"imageID" json:"imageID"`
+	Width    int32  `bson:"width" json:"width"`   // Width of the stored image in pixels
+	Height   int32  `bson:"height" json:"height"` // Height of the stored image in pixels
+	MIMEType string `bson:"MIMEType" json:"MIMEType"`
+	URL      string `bson:"URL" json:"URL"` // S3 bucket url
+	FileSize int    `bson:"fileSize" json:"fileSize"`
+	IsActive bool   `bson:"isActive" json:"isActive"`
 }
 
 type assetsReqBody struct {
