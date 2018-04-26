@@ -12,7 +12,7 @@ func (arb *assetsReqBody) findQ() (bson.M, error) {
 		findQ["sources"] = bson.M{"$in": arb.Source}
 	}
 	if len(arb.OEMs) > 0 {
-		findQ["OEMs"] = bson.M{"$in": arb.OEMs}
+		findQ["Makes"] = bson.M{"$in": arb.OEMs}
 	}
 	if len(arb.DealerIDs) > 0 {
 		findQ["dealerIDs"] = bson.M{"$in": arb.DealerIDs}

@@ -3,8 +3,8 @@ package assets
 type assets struct {
 	ID string `bson:"_id" json:"-"`
 
-	Source    []string `bson:"sources" json:"sources,omitempty"`
-	OEMs      []string `bson:"OEMs" json:"OEMs,omitempty"`
+	Origins   []string `bson:"sources" json:"sources,omitempty"`
+	Makes     []string `bson:"makes" json:"makes,omitempty"`
 	DealerIDs []string `bson:"dealerIDs" json:"dealerIDs,omitempty"`
 
 	Scheduling     map[string]asset `bson:"scheduling" json:"scheduling,omitempty"`
@@ -26,8 +26,8 @@ type asset struct {
 }
 
 type assetsReqBody struct {
-	Source    []string `json:"sources"`
-	OEMs      []string `json:"OEMs"`
+	Origins   []string `json:"origins"`
+	Makes     []string `json:"makes"`
 	DealerIDs []string `json:"dealerIDs"`
 	Modules   []string `json:"modules"`
 }
