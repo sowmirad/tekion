@@ -8,7 +8,7 @@ import (
 
 func Start() {
 
-	tapi.AddNoAuthRoutes(
+	tapi.AddNoAuthServiceRoute(
 		"assets",
 		http.MethodPost,
 		"/assets",
