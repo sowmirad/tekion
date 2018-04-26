@@ -184,6 +184,7 @@ type fixedOperation struct {
 	StateFlags map[string]int `bson:"stateFlags" json:"stateFlags"`
 	// DefaultOperationCodes dealers default operation codes
 	DefaultOperationCodes []string `bson:"defaultOperationCodes" json:"defaultOperationCodes"`
+	DefaultDispatchCode   string   `bson:"defaultDispatchCode" json:"defaultDispatchCode"`
 	// RecommendedOperationCodes dealers recommended operation codes
 	RecommendedOperationCodes []string `bson:"recommendedOperationCodes" json:"recommendedOperationCodes"`
 	// TaxPercentage fixed operation tax percentage
