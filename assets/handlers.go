@@ -56,7 +56,7 @@ func assetsH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(assets) != 1 {
+	if len(assets) > 1 {
 		err = fmt.Errorf(" multiple assets returned from db, request:%+v", arb)
 		tapi.HTTPErrorResponse(ctx, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
