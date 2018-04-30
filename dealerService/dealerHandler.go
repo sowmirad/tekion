@@ -4,31 +4,29 @@ package dealerService
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
 	"time"
 
 	"bitbucket.org/tekion/erratum"
-	"bitbucket.org/tekion/tbaas/mongoManager"
 	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
 	"bitbucket.org/tekion/tbaas/tapi"
+	"github.com/gorilla/mux"
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
-const (
-	apiCtxKey = "apiContext"
-)
-
-var (
-	errDealerName       = errors.New("dealer name is empty")
-	errDealerID         = errors.New("empty dealer id")
-	errFixedOperationID = errors.New("empty fixed Operation id")
-)
+////const (
+////	apiCtxKey = "apiContext"
+////)
+//
+//var (
+////errDealerName       = errors.New("dealer name is empty")
+////errDealerID         = errors.New("empty dealer id")
+////errFixedOperationID = errors.New("empty fixed Operation id")
+//)
 
 func init() {
 	time.Local = time.UTC
@@ -94,7 +92,7 @@ func readDealerH(w http.ResponseWriter, r *http.Request) {
 	fields := fetchFieldsFromRequest(r)
 	var dealer dealer
 
-	err := mongoManager.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, selectedFields(fields), &dealer)
+	err := mMgr.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, selectedFields(fields), &dealer)
 	if err == mgo.ErrNotFound {
 		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
 		return
@@ -245,7 +243,8 @@ func patchDealerH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(d.ID) == 0 {
-		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload, errDealerID)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload,
+			fmt.Errorf(" empty dealer id "))
 		return
 	}
 
@@ -377,7 +376,7 @@ func readFixedOperationH(w http.ResponseWriter, r *http.Request) {
 
 	var fixedOperation fixedOperation
 	fields := fetchFieldsFromRequest(r)
-	err := mongoManager.ReadOne(ctx.Tenant, fixedOperationCollectionName,
+	err := mMgr.ReadOne(ctx.Tenant, fixedOperationCollectionName,
 		bson.M{"dealerID": dealerID}, selectedFields(fields), &fixedOperation)
 	if err == mgo.ErrNotFound {
 		tapi.HTTPResponse(ctx.TContext, w, http.StatusNoContent, "No document found", nil)
@@ -405,7 +404,8 @@ func patchFixedOperationH(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(fo.ID) == 0 {
-		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload, errFixedOperationID)
+		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorDecodingPayload,
+			fmt.Errorf(" empty fixed Operation id "))
 		return
 	}
 
@@ -427,7 +427,7 @@ func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
 	dealerID := ctx.DealerID // should be corrected to Dealer-ID
 
 	var dealer *dealer
-	err := mongoManager.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, nil, &dealer)
+	err := mMgr.ReadOne(ctx.Tenant, dealerCollectionName, bson.M{"_id": dealerID}, nil, &dealer)
 	if err == mgo.ErrNotFound {
 		tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusOK, "dealer doc not found", dealerDocNotFound, nil)
 		return
@@ -437,7 +437,7 @@ func aggregateDealerFixedOpH(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var fixedOp *fixedOperation
-	err = mongoManager.ReadOne(ctx.Tenant, fixedOperationCollectionName,
+	err = mMgr.ReadOne(ctx.Tenant, fixedOperationCollectionName,
 		bson.M{"dealerID": dealerID}, nil, &fixedOp)
 	if err == mgo.ErrNotFound {
 		tapi.CustomHTTPResponse(ctx.TContext, w, http.StatusNoContent, "fixed operation doc not found",
@@ -514,7 +514,7 @@ func readDealerGoalH(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var goal dealerGoal
-	err := mongoManager.ReadOne(ctx.Tenant, dealerGoalCollectionName,
+	err := mMgr.ReadOne(ctx.Tenant, dealerGoalCollectionName,
 		bson.M{"_id": goalID, "dealerID": ctx.DealerID}, selectedFields(fields), &goal)
 
 	if err == mgo.ErrNotFound {
@@ -582,7 +582,7 @@ func readDealerGoalsH(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var goals []dealerGoal
-	err := mongoManager.ReadAll(ctx.Tenant, dealerGoalCollectionName,
+	err := mMgr.ReadAll(ctx.Tenant, dealerGoalCollectionName,
 		bson.M{"dealerID": dealerID}, selectedFields(fields), &goals)
 
 	if err != nil {
@@ -651,7 +651,7 @@ func readDealerGroupsH(w http.ResponseWriter, r *http.Request) {
 
 	fields := fetchFieldsFromRequest(r)
 	var groups []dealerGroup
-	err := mongoManager.ReadAll(ctx.Tenant, dealerGroupCollectionName,
+	err := mMgr.ReadAll(ctx.Tenant, dealerGroupCollectionName,
 		bson.M{"dealers": dealerID}, selectedFields(fields), &groups)
 	if err != nil {
 		tapi.HTTPErrorResponse(ctx.TContext, w, serviceID, erratum.ErrorQueryingDB, err)

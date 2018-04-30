@@ -91,12 +91,13 @@ func Start() {
 	)
 
 	tapi.AddRoute(
-		"readDealerGroups",
+		"aggregateDealerFixedOpH",
 		http.MethodGet,
 		"/aggregate/dealer/fixedoperation",
 		map[string]uint8{com.DealerResourceName: com.Read, com.FixedOperationResourceName: com.Read},
 		aggregateDealerFixedOpH,
 	)
+
 	tapi.AddRoute(
 		"readDealerGoal",
 		http.MethodGet,
