@@ -30,7 +30,7 @@ func (arb *assetsReqBody) findQ() (bson.M, error) {
 }
 
 func sliceToLower(s []string) {
-	for i, _ := range s {
+	for i := range s {
 		s[i] = strings.ToLower(s[i])
 	}
 }
