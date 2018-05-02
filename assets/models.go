@@ -6,7 +6,7 @@ type assets struct {
 	Origins   []string          `bson:"sources" json:"sources,omitempty"`
 	Makes     []string          `bson:"makes" json:"makes,omitempty"`
 	DealerIDs []string          `bson:"dealerIDs" json:"dealerIDs,omitempty"`
-	Emails    map[string]string `bson:"emails" json:"emails,omitempty"`
+	Titles    map[string]string `bson:"titles" json:"titles,omitempty"`
 
 	Scheduling     map[string]asset `bson:"scheduling" json:"scheduling,omitempty"`
 	Appointment    map[string]asset `bson:"appointment" json:"appointment,omitempty"`
