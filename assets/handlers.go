@@ -55,7 +55,7 @@ func assetsH(w http.ResponseWriter, r *http.Request) {
 		tapi.HTTPErrorResponse(ctx, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
-
+	fmt.Println(fmt.Errorf(" no assets found in db, findQ:%+v, request:%+v ", findQ, arb))
 	if len(assets) == 0 {
 		err = fmt.Errorf(" no assets found in db, findQ:%+v, request:%+v ", findQ, arb)
 		tapi.HTTPErrorResponse(ctx, w, serviceID, erratum.ErrorQueryingDB, err)
