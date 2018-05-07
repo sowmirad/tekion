@@ -182,6 +182,8 @@ type fixedOperation struct {
 	Flags map[string]bool `bson:"flags" json:"flags"`
 	//generic int flags for dealerTire etc .
 	StateFlags map[string]int `bson:"stateFlags" json:"stateFlags"`
+	//generic strings related to dealership
+	GenericStrings map[string]string `bson:"genericStrings" json:"genericStrings"`
 	// DefaultOperationCodes dealers default operation codes
 	DefaultOperationCodes []string `bson:"defaultOperationCodes" json:"defaultOperationCodes"`
 	DefaultDispatchCode   string   `bson:"defaultDispatchCode" json:"defaultDispatchCode"`
