@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"fmt"
-
 	"bitbucket.org/tekion/erratum"
 	"bitbucket.org/tekion/tbaas/apiContext"
-	mMgr "bitbucket.org/tekion/tbaas/mongoManager"
 	"bitbucket.org/tekion/tbaas/tapi"
+
 	"github.com/pkg/errors"
 )
 
@@ -49,20 +47,15 @@ func assetsH(w http.ResponseWriter, r *http.Request) {
 	}
 	searchQ := arb.searchQ()
 
-	assets := make([]assets, 0, 0)
-	if err = mMgr.ReadAll(ctx.Tenant, assetCol, findQ, searchQ, &assets); err != nil {
-		err = errors.Wrap(err, " failed to read assets from db ")
-		tapi.HTTPErrorResponse(ctx, w, serviceID, erratum.ErrorQueryingDB, err)
-		return
-	}
-	if len(assets) == 0 {
-		err = fmt.Errorf(" no assets found in db, findQ:%+v, request:%+v ", findQ, arb)
+	assets, err := arb.findAsset(ctx, findQ, searchQ)
+	if err != nil {
+		err = errors.Wrap(err, " assets search failed ")
 		tapi.HTTPErrorResponse(ctx, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
 
-	if len(assets) > 1 {
-		err = fmt.Errorf(" multiple assets returned from db, findQ:%+v, request:%+v ", findQ, arb)
+	if err = arb.validateRes(assets, findQ); err != nil {
+		err = errors.Wrap(err, " assets response validation failed")
 		tapi.HTTPErrorResponse(ctx, w, serviceID, erratum.ErrorQueryingDB, err)
 		return
 	}
